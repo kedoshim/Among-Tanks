@@ -1,7 +1,6 @@
 import * as THREE from  'three';
-import Stats from '../build/jsm/libs/stats.module.js';
 import GUI from '../libs/util/dat.gui.module.js'
-import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
+import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js'
 import {initRenderer, 
         initDefaultBasicLight,
@@ -11,18 +10,15 @@ import {initRenderer,
 
 var scene = new THREE.Scene();    // Create main scene
 var clock = new THREE.Clock();
-var stats = new Stats();          // To show FPS information
-initDefaultBasicLight(scene, true, new THREE.Vector3(2, 2, 1), 10, 1024); // Create a 
-
+var light = initDefaultBasicLight(scene, true, new THREE.Vector3(2, 2, 1), 10, 1024); 
+    light.intensity = 1.0;
 var renderer = initRenderer();    // View function in util/utils
   renderer.setClearColor("rgb(30, 30, 42)");
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.lookAt(0, 0, 0);
   camera.position.set(2.8, 1.8, 4.0);
   camera.up.set( 0, 1, 0 );
-
-// Enable mouse rotation, pan, zoom etc.
-var trackballControls = new TrackballControls( camera, renderer.domElement );
+var orbit = new OrbitControls( camera, renderer.domElement ); 
 
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
@@ -148,11 +144,7 @@ function buildInterface()
 
 function render()
 {
-  stats.update();
-  var delta = clock.getDelta(); // Get the seconds passed since the time 'oldTime' was set and sets 'oldTime' to the current time.
-  trackballControls.update();
-  requestAnimationFrame(render);
-  renderer.render(scene, camera);
+  let delta = clock.getDelta(); 
 
   // Animation control
   if (playAction)
@@ -161,4 +153,8 @@ function render()
       mixer[i].update( delta );
     rotateMan(delta);
   }
+
+  requestAnimationFrame(render);
+  renderer.render(scene, camera);
+
 }
