@@ -3,7 +3,7 @@ Among Tanks is a 'Tiny Tanks' like game developed with Three.js as a project foo
 
 ## First Delivery To Do List
 ### Modelagem - 3 pts | Abraão
-- [ ] Modelagem geométrica do tanque
+- [x] Modelagem geométrica do tanque
 Utilização de no mínimo 7 geometrias seguindo a do enunciado (pequenas variações serão avaliadas) - 2
 - [ ] Criação do segundo tanque
 Geometricamente igual ao primeiro, mas com materiais diferentes. Espera-se o uso da mesma função - 1
