@@ -54,7 +54,7 @@ let plane = createGroundPlaneXZ(100, 100);
 scene.add(plane);
 
 const amogColor = "rgb(250,210,0)";
-const tankColor = "rgb(100,30,100)";
+const tankColor = "blue";
 let amog = createAmogus(10, 0, 0, amogColor);
 
 

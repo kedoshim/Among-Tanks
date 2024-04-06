@@ -1,19 +1,17 @@
 import * as THREE from "three";
 import { setDefaultMaterial } from "../libs/util/util.js";
 
-function darkenRGB(rgbString, factor) {
-  // Extracting the RGB values from the string
-  const [r, g, b] = rgbString.match(/\d+/g).map(Number);
+function darkenColor(rgbString, factor) {
+  // Parse the RGB string into a Three.js color object
+  const color = new THREE.Color(rgbString);
 
-  // Calculating darker color components
-  const darkR = Math.max(0, Math.round(r * (1 - factor)));
-  const darkG = Math.max(0, Math.round(g * (1 - factor)));
-  const darkB = Math.max(0, Math.round(b * (1 - factor)));
+  // Darken the color by multiplying its components by the factor
+  color.r *= 1 - factor;
+  color.g *= 1 - factor;
+  color.b *= 1 - factor;
 
-  // Constructing the darker RGB string
-  const darkerRGB = `rgb(${darkR}, ${darkG}, ${darkB})`;
-
-  return darkerRGB;
+  // Return the darkened color as an RGB string
+  return color.getStyle();
 }
 
 export function createAmogus(x, z, y, color) {
@@ -45,10 +43,6 @@ export function createAmogus(x, z, y, color) {
 }
 
 export function addTank(amogFather, tankColorRGB = "rgb(54, 64, 35)") {
-  if (!tankColorRGB.startsWith("rgb")) {
-    tankColorRGB = "rgb(54, 64, 35)";
-    console.warn("Non RGB colors are not supported")
-  }
 
   const groundLevel = -amogFather.position.y;
   const tank = createTankModel(tankColorRGB, groundLevel);
@@ -129,11 +123,11 @@ function createTankModel(tankColorRGB, groundLevel) {
   const detailModel = new THREE.BoxGeometry(1, 3, 5);
   let detailLeft = new THREE.Mesh(
     detailModel,
-    setDefaultMaterial(darkenRGB(tankColorRGB, 0.2))
+    setDefaultMaterial(darkenColor(tankColorRGB, 0.2))
   );
   let detailRight = new THREE.Mesh(
     detailModel,
-    setDefaultMaterial(darkenRGB(tankColorRGB, 0.2))
+    setDefaultMaterial(darkenColor(tankColorRGB, 0.2))
   );
   detailLeft.position.set(5, 1, 0);
   detailRight.position.set(-5, 1, 0);
@@ -241,7 +235,7 @@ export function addHelmet(amogFather, color = "darkgreen") {
     Math.PI / 2 //sets it to be a half sphere
   );
   helmetModel.rotateX(THREE.MathUtils.degToRad(-7));
-  let helmet = new THREE.Mesh(helmetModel, setDefaultMaterial(darkenRGB(color,0.5)));
+  let helmet = new THREE.Mesh(helmetModel, setDefaultMaterial(darkenColor(color,0.5)));
   helmet.position.set(0, 2.6, 0);
   amogFather.add(helmet);
 }
@@ -272,7 +266,6 @@ export function addBlowgun(amogFather, color = "green") {
     mouthBallModel,
     setDefaultMaterial(amogFather.material.color)
   );
-  console.log(amogFather)
   leftCheek.position.set(1.5, -0.8, 2);
   rightCheek.position.set(-1.5, -0.8, 2);
   amogFather.add(leftCheek);
