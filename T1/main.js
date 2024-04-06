@@ -19,6 +19,13 @@ import {
   addHelmet,
 } from "./playerModels.js";
 
+const NumberOfPlayers = 4;
+
+let players = [];
+const playerAmogusColors = ["dimgray", "antiquewhite", "purple", "pink"];
+const playerTankColors = ["darkblue", "red", "goldenrod", "green"];
+const playerSpawnPoint = [ [-20, -20], [20, -20], [-20, 20], [20, 20] ];
+
 let scene, renderer, camera, material, light, orbit; // Initial variables
 scene = new THREE.Scene(); // Create main scene
 renderer = initRenderer(); // Init a basic renderer
@@ -53,24 +60,54 @@ scene.add(axesHelper);
 let plane = createGroundPlaneXZ(100, 100);
 scene.add(plane);
 
-const amogColor = "rgb(250,210,0)";
-const tankColor = "blue";
-let amog = createAmogus(10, 0, 0, amogColor);
-
-
-addTank(amog,tankColor);
-addBlowgun(amog,tankColor);
-addHelmet(amog, tankColor);
-
-scene.add(amog);
-
-var cubeAxesHelper = new THREE.AxesHelper(9);
-amog.add(cubeAxesHelper);
+for (let i = 0; i < NumberOfPlayers; i++){
+  createPlayer();
+}
 
 var positionMessage = new SecondaryBox("");
 positionMessage.changeStyle("rgba(0,0,0,0)", "lightgray", "16px", "ubuntu");
 
+loadPlayers();
+
 render();
+
+function createPlayer() {
+  
+  const playerNumber = players.length
+  const amogColor = playerAmogusColors[playerNumber];
+  const tankColor = playerTankColors[playerNumber];
+
+  console.log("creating player " + (playerNumber + 1));
+
+  let amog = createAmogus(0, 0, amogColor);
+  addTank(amog,tankColor);
+  addBlowgun(amog,tankColor);
+  addHelmet(amog, tankColor);
+
+  var cubeAxesHelper = new THREE.AxesHelper(9);
+  amog.add(cubeAxesHelper);
+
+  players.push(amog);
+  console.log(players);
+}
+
+function loadPlayers() {
+  let i = 0;
+  console.log(players);
+  players.forEach((player) => {
+    console.log("loading player " + (i + 1));
+    scene.add(player);
+    setPlayerSpawn(i, player);
+    // addPlayerControls(i,player);
+    i++;
+  })
+}
+
+function setPlayerSpawn(playerNumber, player) {
+  const [x, z] = playerSpawnPoint[playerNumber];
+  player.position.x = x;
+  player.position.z = z;
+}
 
 function keyboardUpdate() {
   keyboard.update();
@@ -126,7 +163,7 @@ function showInformation() {
 }
 
 function render() {
-  keyboardUpdate();
+  // keyboardUpdate();
   requestAnimationFrame(render); // Show events
   renderer.render(scene, camera); // Render scene
 }

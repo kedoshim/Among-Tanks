@@ -14,11 +14,11 @@ function darkenColor(rgbString, factor) {
   return color.getStyle();
 }
 
-export function createAmogus(x, z, y, color) {
-  const bodyModel = new THREE.CapsuleGeometry(3.5, 3, 5, 15);
+export function createAmogus(x, y, color) {
+  const bodyModel = new THREE.CapsuleGeometry(3.5, 3, 5, 20);
   let body = new THREE.Mesh(bodyModel, setDefaultMaterial(color));
   // position the amog
-  body.position.set(x + 0, z + 6.4, y + 0.0);
+  body.position.set(x + 0, 6.4, y + 0.0);
 
   const legModel = new THREE.CylinderGeometry(2, 0.8, 5);
   let left_leg = new THREE.Mesh(legModel, setDefaultMaterial(color));
@@ -34,7 +34,7 @@ export function createAmogus(x, z, y, color) {
   body.add(backpack);
 
   const windowModel = new THREE.CapsuleGeometry(1.5, 1.5, 3);
-  let window = new THREE.Mesh(windowModel, setDefaultMaterial("white"));
+  let window = new THREE.Mesh(windowModel, setDefaultMaterial("aliceblue"));
   window.rotateZ(Math.PI / 2);
   window.position.set(0, 1.5, 2.5);
   body.add(window);
@@ -123,11 +123,11 @@ function createTankModel(tankColorRGB, groundLevel) {
   const detailModel = new THREE.BoxGeometry(1, 3, 5);
   let detailLeft = new THREE.Mesh(
     detailModel,
-    setDefaultMaterial(darkenColor(tankColorRGB, 0.2))
+    setDefaultMaterial(darkenColor(tankColorRGB, 0.5))
   );
   let detailRight = new THREE.Mesh(
     detailModel,
-    setDefaultMaterial(darkenColor(tankColorRGB, 0.2))
+    setDefaultMaterial(darkenColor(tankColorRGB, 0.5))
   );
   detailLeft.position.set(5, 1, 0);
   detailRight.position.set(-5, 1, 0);
@@ -256,7 +256,7 @@ export function addBlowgun(amogFather, color = "green") {
   blowgun.add(blowgunHole);
   amogFather.add(blowgun);
 
-  const mouthBallModel = new THREE.SphereGeometry(1.2);
+  const mouthBallModel = new THREE.SphereGeometry(1.5);
   let leftCheek = new THREE.Mesh(
     mouthBallModel,
     setDefaultMaterial(amogFather.material.color)
