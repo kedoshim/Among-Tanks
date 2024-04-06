@@ -159,7 +159,7 @@ function addWheels(tank, groundLevel, wheelColor = "rgb(30, 23, 7)") {
     return wheel;
   };
   const createBelt = (position) => {
-    const beltModel = new THREE.BoxGeometry(wheelRadius, beltThickness, 12);
+    const beltModel = new THREE.BoxGeometry(wheelRadius + 0.5, beltThickness, 12);
     const belt = new THREE.Mesh(
       beltModel,
       setDefaultMaterial(wheelColor)

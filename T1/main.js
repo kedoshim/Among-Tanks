@@ -84,8 +84,8 @@ function createPlayer() {
   addBlowgun(amog,tankColor);
   addHelmet(amog, tankColor);
 
-  var cubeAxesHelper = new THREE.AxesHelper(9);
-  amog.add(cubeAxesHelper);
+  // var cubeAxesHelper = new THREE.AxesHelper(9);
+  // amog.add(cubeAxesHelper);
 
   players.push(amog);
   console.log(players);
