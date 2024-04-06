@@ -22,9 +22,47 @@ import {
 const NumberOfPlayers = 4;
 
 let players = [];
+let controllers = [];
+
+
 const playerAmogusColors = ["dimgray", "antiquewhite", "purple", "pink"];
 const playerTankColors = ["darkblue", "red", "goldenrod", "green"];
-const playerSpawnPoint = [ [-20, -20], [20, -20], [-20, 20], [20, 20] ];
+const playerSpawnPoint = [
+  [-20, -20],
+  [20, -20],
+  [-20, 20],
+  [20, 20],
+];
+let playerControls = [
+  {
+    up: "W",
+    down: "S",
+    right: "D",
+    left: "A",
+    shoot: ["Space", "Q", "LeftShift"],
+  },
+  {
+    up: "up",
+    down: "down",
+    right: "right",
+    left: "left",
+    shoot: ["/", ","],
+  },
+  {
+    up: "I",
+    down: "K",
+    right: "L",
+    left: "J",
+    shoot: ["H"],
+  },
+  {
+    up: "h", //NumPad8
+    down: "e", //NumPad5
+    right: "f", //NumPad6
+    left: "d", //NumPad4
+    shoot: ["Enter"],
+  },
+];
 
 let scene, renderer, camera, material, light, orbit; // Initial variables
 scene = new THREE.Scene(); // Create main scene
@@ -60,7 +98,7 @@ scene.add(axesHelper);
 let plane = createGroundPlaneXZ(100, 100);
 scene.add(plane);
 
-for (let i = 0; i < NumberOfPlayers; i++){
+for (let i = 0; i < NumberOfPlayers; i++) {
   createPlayer();
 }
 
@@ -72,16 +110,15 @@ loadPlayers();
 render();
 
 function createPlayer() {
-  
-  const playerNumber = players.length
+  const playerNumber = players.length;
   const amogColor = playerAmogusColors[playerNumber];
   const tankColor = playerTankColors[playerNumber];
 
   console.log("creating player " + (playerNumber + 1));
 
   let amog = createAmogus(0, 0, amogColor);
-  addTank(amog,tankColor);
-  addBlowgun(amog,tankColor);
+  addTank(amog, tankColor);
+  addBlowgun(amog, tankColor);
   addHelmet(amog, tankColor);
 
   // var cubeAxesHelper = new THREE.AxesHelper(9);
@@ -93,14 +130,13 @@ function createPlayer() {
 
 function loadPlayers() {
   let i = 0;
-  console.log(players);
   players.forEach((player) => {
     console.log("loading player " + (i + 1));
     scene.add(player);
     setPlayerSpawn(i, player);
-    // addPlayerControls(i,player);
+    addPlayerControls(i,player);
     i++;
-  })
+  });
 }
 
 function setPlayerSpawn(playerNumber, player) {
@@ -109,43 +145,53 @@ function setPlayerSpawn(playerNumber, player) {
   player.position.z = z;
 }
 
-function keyboardUpdate() {
-  keyboard.update();
-  if (keyboard.pressed("S")) amog.translateZ(-1);
-  if (keyboard.pressed("W")) amog.translateZ(1);
-  if (keyboard.pressed("up")) amog.translateY(1);
-  if (keyboard.pressed("down")) amog.translateY(-1);
-  if (keyboard.pressed("pageup")) amog.translateZ(1);
-  if (keyboard.pressed("pagedown")) amog.translateZ(-1);
+function addPlayerControls(playerNumber, player) {
+  const controller = function () {
+    if (keyboard.pressed(playerControls[playerNumber].up)) player.translateZ(1);
+    if (keyboard.pressed(playerControls[playerNumber].down)) player.translateZ(-1);
+    if (keyboard.pressed(playerControls[playerNumber].right)) player.translateX(-1);
+    if (keyboard.pressed(playerControls[playerNumber].left)) player.translateX(1);
+    
+    // alreadyShot = false;
+    // playerControls[playerNumber].shoot.forEach((key) => {
+    //   if (keyboard.pressed(key) && !alreadyShot) {
+    //     player.shoot();
+    //     alreadyShot = true;
+    //   }
+    // });
 
-  let angle = THREE.MathUtils.degToRad(5);
-  if (keyboard.pressed("A")) amog.rotateY(angle);
-  if (keyboard.pressed("D")) amog.rotateY(-angle);
-  updatePositionMessage();
+    // updatePositionMessage(player);
+  }
+  controllers.push(controller);
 }
 
-function updatePositionMessage() {
+function keyboardUpdate() {
+  keyboard.update();
+  controllers.forEach((controller) =>controller())
+}
+
+function updatePositionMessage(player) {
   var str =
     "POS {" +
-    amog.position.x.toFixed(1) +
+    player.position.x.toFixed(1) +
     ", " +
-    amog.position.y.toFixed(1) +
+    player.position.y.toFixed(1) +
     ", " +
-    amog.position.z.toFixed(1) +
+    player.position.z.toFixed(1) +
     "} " +
     "| SCL {" +
-    amog.scale.x.toFixed(1) +
+    player.scale.x.toFixed(1) +
     ", " +
-    amog.scale.y.toFixed(1) +
+    player.scale.y.toFixed(1) +
     ", " +
-    amog.scale.z.toFixed(1) +
+    player.scale.z.toFixed(1) +
     "} " +
     "| ROT {" +
-    amog.rotation.x.toFixed(1) +
+    player.rotation.x.toFixed(1) +
     ", " +
-    amog.rotation.y.toFixed(1) +
+    player.rotation.y.toFixed(1) +
     ", " +
-    amog.rotation.z.toFixed(1) +
+    player.rotation.z.toFixed(1) +
     "}";
   positionMessage.changeMessage(str);
 }
@@ -163,7 +209,7 @@ function showInformation() {
 }
 
 function render() {
-  // keyboardUpdate();
+  keyboardUpdate();
   requestAnimationFrame(render); // Show events
   renderer.render(scene, camera); // Render scene
 }

@@ -9,7 +9,7 @@ Utilização de no mínimo 7 geometrias seguindo a do enunciado (pequenas varia�
 Geometricamente igual ao primeiro, mas com materiais diferentes. Espera-se o uso da mesma função - 1
 
 ### Movimentação do tanque - 4 pts | Abraão
-- [ ] Movimentação via teclado
+- [x] Movimentação via teclado
 Mapeamento de todas as teclas indicadas para movimentação dos dois tanques - 1
 - [ ] Qualidade da movimentação
 Avaliação da qualidade da movimentação levando-se em consideração o vídeo base e o exemplo fornecido - 3
