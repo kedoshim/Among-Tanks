@@ -1,0 +1,18 @@
+{
+    "ground_block": {
+        "color": {
+            "r": 196,
+            "g": 196,
+            "b": 196
+        },
+        "description": "Ground"
+    },
+    "collisor": {
+        "color": {
+            "r": 101,
+            "g": 124,
+            "b": 236
+        },
+        "description": "Collisor"
+    }
+}
