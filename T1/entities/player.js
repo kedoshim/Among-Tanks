@@ -1,5 +1,5 @@
 import { Entity } from "./entity.js";
-import { CommonTank } from "./models/common_tank.js";
+import { CommonTank } from "./tanks/common_tank.js";
 import { PlayerController } from "./controllers/player_controller.js";
 
 export class Player extends Entity {
