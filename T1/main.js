@@ -17,6 +17,8 @@ import { Player } from "./entities/player.js";
 const NumberOfPlayers = 4;
 
 let entities = [];
+let players = [];
+let connectedGamepads = [null, null, null, null];
 
 const playerSpawnPoint = [
   [-20, -20],
@@ -73,21 +75,31 @@ render();
 function createPlayer() {
   let new_player = new Player();
 
-  new_player.spawnPoint = playerSpawnPoint[Player.playerNumber-1]
+  new_player.spawnPoint = playerSpawnPoint[Player.playerNumber - 1];
 
-  entities.push(new_player);
+  players.push(new_player);
 }
 
 function loadPlayers() {
-  entities.forEach((entity) => {
+  players.forEach((entity) => {
     console.log("loading player " + entity.name);
-    entity.load(scene)
+    entity.load(scene);
   });
 }
 
 function keyboardUpdate() {
   keyboard.update();
-  entities.forEach((entity) => entity.runController(keyboard));
+  players.every((player, index) => {
+    let playerGamepad = null;
+    if (connectedGamepads[index] != null) {
+      playerGamepad = navigator.getGamepads()[index];
+      // console.log(playerGamepad);
+    } 
+    player.runController(keyboard, playerGamepad);
+  });
+  entities.forEach((entity) => {
+    entity.runController();
+  });
 }
 
 function showInformation() {
@@ -97,7 +109,7 @@ function showInformation() {
   controls.addParagraph();
   controls.add("Player - MOVE  SHOOT");
   controls.add("Player 1: WASD LeftShift");
-  controls.add("Player 2: arrows [\",\" \"/\"]");
+  controls.add('Player 2: arrows ["," "/"]');
   controls.add("Player 3: IJKL    H");
   controls.add("Player 4: 8456    Enter");
   controls.show();
@@ -108,3 +120,16 @@ function render() {
   requestAnimationFrame(render); // Show events
   renderer.render(scene, camera); // Render scene
 }
+
+window.addEventListener("gamepadconnected", (e) => {
+  const gamepad = e.gamepad;
+  connectedGamepads[gamepad.index] = gamepad.index;
+  console.log("gamepad " + gamepad.index + " connected");
+  console.log(gamepad);
+});
+
+window.addEventListener("gamepaddisconnected", (e) => {
+  const gamepad = e.gamepad;
+  connectedGamepads[gamepad.index] = null;
+  console.log("gamepad " + gamepad.index + " disconnected");
+});

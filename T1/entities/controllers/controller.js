@@ -10,5 +10,5 @@ export class Controller {
     this._target = target;
   }
 
-  control() {}
+  control(keyboard,gamepad=null) {}
 }

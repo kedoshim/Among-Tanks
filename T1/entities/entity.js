@@ -12,8 +12,8 @@ export class Entity {
     Entity.entityNumber++;
   }
 
-  runController(keyboard) {
-    this._controller.control(keyboard);
+  runController(keyboard,gamepad) {
+    this._controller.control(keyboard,gamepad);
   }
 
   load(scene) {
