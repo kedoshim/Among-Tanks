@@ -1,6 +1,11 @@
-const WIDTH = 2000;
-const HEIGHT = 1080;
+const WIDTH = 1000;
+const HEIGHT = 800;
 const START_SCROLL_X_PERCENTAGE = 0.05
+
+document.addEventListener('contextmenu', function(event) {
+    // Cancela a ação padrão do evento 'contextmenu'
+    event.preventDefault();
+});
 
 
 class LevelBuilder extends Phaser.Scene {
@@ -15,16 +20,33 @@ class LevelBuilder extends Phaser.Scene {
         this.currentScrollY = 0;
         this.selectedColor = 0x0000ff;
         this.blocksArray = []
+        this.blocksSelection = []
         this.tiles = []
+        this.globalSelectionIndex = 1;
+        this.isRightButtonDown = false
+        this.initialX
+        this.initialY;
         this.selectedBlock = new EmptyBlock()
+        this.graphics = null;
+        this.rectArea = null;
         this.availableBlocks = {
             "empty_block": () => {
                 return new EmptyBlock()
             },
             "ground_block": () => {
                 return new GroundBlock()
+            },
+            "collisor": () => {
+                return new WallBlock()
             }
         }
+    }
+
+    clearNotSelectedBlocks(jumpIndex) {
+        this.blocksSelection.forEach((block, index) => {
+            if(jumpIndex !== index) block.setStrokeStyle(1, 0x000000);
+            index++;
+        })
     }
 
     createGrid(tileSize) {
@@ -94,12 +116,26 @@ class LevelBuilder extends Phaser.Scene {
     setSelectedBlock(color, key) {
         this.selectedColor = color;
         this.selectedBlock = this.availableBlocks[key]()
-        console.log(this.selectedBlock)
     }
     
 
     async createBlocksSelector() {
-        let rectangle = this.add.rectangle(1800, 350, 300, 600, 0xcccccc, 0.5);
+        let rectangle = this.add.rectangle(800, 350, 300, 600, 0xcccccc, 0.5);
+
+        this.input.on('pointerdown', (pointer) => {
+            if (pointer.rightButtonDown()) {
+                this.isRightButtonDown = true;
+                this.initialX = pointer.x;
+                this.initialY = pointer.y;
+            }
+        });
+
+        this.input.on('pointerup', (pointer) => {
+            if (pointer.rightButtonReleased()) {
+                this.isRightButtonDown = false;
+                this.graphics.clear();
+            }
+        });
     
         // Add text in the center of the rectangle
         const text = this.add.text(rectangle.x, 100, 'Seletor de blocos', {
@@ -114,9 +150,10 @@ class LevelBuilder extends Phaser.Scene {
         const data = await block.json();
         const keys = Object.keys(data)
         let index = 1;
+        let global_index = 0
         let offset_y = 0;
         let offset_x = 0;
-        keys.forEach(key => {
+        keys.forEach((key, index) => {
             const blockInfo = data[key];
             const r = blockInfo["color"]["r"];
             const g = blockInfo["color"]["g"];
@@ -146,7 +183,8 @@ class LevelBuilder extends Phaser.Scene {
                 // Este código será executado quando o retângulo for clicado
                 selected = true
                 rect.setStrokeStyle(1, 0xEC8065)  
-                this.setSelectedBlock(this.rgbToHex(r, g, b), key)          
+                this.setSelectedBlock(this.rgbToHex(r, g, b), key)
+                this.clearNotSelectedBlocks(index)          
             });
         
             const blockDescription = this.add.text(rectangle.x - 10 - rect.width / 2 + offset_x, rect.y + rect.height / 2 - 20, blockInfo["description"], {
@@ -157,8 +195,9 @@ class LevelBuilder extends Phaser.Scene {
         
             // Center the text vertically in the middle of the rectangle
             blockDescription.setOrigin(0.5);
+            this.blocksSelection.push(rect)
         
-            if(index % 2 === 0) offset_y += 12;
+            if(index + 1 % 2 === 0) offset_y += 12;
             offset_x = offset_x === 0 ? 120 : 0;
         });
     }
@@ -166,6 +205,7 @@ class LevelBuilder extends Phaser.Scene {
 
     create ()
     {
+        this.graphics = this.add.graphics();
         this.cursorKeys = this.input.keyboard.createCursorKeys();
         this.createGrid(32)
         this.cameras.main.setBackgroundColor(0xcccccc);
@@ -178,6 +218,7 @@ class LevelBuilder extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, 4000, 3240); // Define os limites do mundo de física para o tamanho total do seu cenário
         // Isso colocaria seu personagem na posição x=1200, y=0, que está fora dos limites do canvas visível
         this.createBlocksSelector()
+        
         // Configurar a câmera
         this.cameras.main.setBounds(0, 0, 4000, 3240); // Define os limites da câmera para o tamanho total do seu cenário
         this.cameras.main.startFollow(this.cameraRef);
@@ -212,6 +253,13 @@ class LevelBuilder extends Phaser.Scene {
         this.circle.y = this.mousePos.y;
         this.posY.setText(`Y: ${this.cameras.main.scrollY}`)
         this.posX.setText(`X: ${this.cameras.main.scrollX}`)
+
+        
+    }
+
+    drawRectangle(x1, y1, x2, y2, color) {
+        this.rectArea = this.add.rectangle(x1, y1, x2 - x1, y2 - y1, 0xAA4A44);   
+        this.rectArea.setInteractive() 
     }
 }
 
