@@ -39,6 +39,7 @@ export function createAmogus(x, y, color) {
   window.position.set(0, 1.5, 2.5);
   body.add(window);
 
+  body.rotateY(Math.PI);
   return body;
 }
 

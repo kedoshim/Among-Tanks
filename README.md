@@ -11,7 +11,7 @@ Geometricamente igual ao primeiro, mas com materiais diferentes. Espera-se o uso
 ### Movimentação do tanque - 4 pts | Abraão
 - [x] Movimentação via teclado
 Mapeamento de todas as teclas indicadas para movimentação dos dois tanques - 1
-- [ ] Qualidade da movimentação
+- [x] Qualidade da movimentação
 Avaliação da qualidade da movimentação levando-se em consideração o vídeo base e o exemplo fornecido - 3
 
 ### Ambiente e Lógica - 6 pts | Gustavo (Level Maker and Builder) & Yan

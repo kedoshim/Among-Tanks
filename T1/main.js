@@ -19,11 +19,10 @@ import {
   addHelmet,
 } from "./playerModels.js";
 
-const NumberOfPlayers = 4;
+const NumberOfPlayers = 1;
 
 let players = [];
 let controllers = [];
-
 
 const playerAmogusColors = ["dimgray", "antiquewhite", "purple", "pink"];
 const playerTankColors = ["darkblue", "red", "goldenrod", "green"];
@@ -134,7 +133,7 @@ function loadPlayers() {
     console.log("loading player " + (i + 1));
     scene.add(player);
     setPlayerSpawn(i, player);
-    addPlayerControls(i,player);
+    addPlayerControls(i, player);
     i++;
   });
 }
@@ -147,27 +146,57 @@ function setPlayerSpawn(playerNumber, player) {
 
 function addPlayerControls(playerNumber, player) {
   const controller = function () {
-    if (keyboard.pressed(playerControls[playerNumber].up)) player.translateZ(1);
-    if (keyboard.pressed(playerControls[playerNumber].down)) player.translateZ(-1);
-    if (keyboard.pressed(playerControls[playerNumber].right)) player.translateX(-1);
-    if (keyboard.pressed(playerControls[playerNumber].left)) player.translateX(1);
-    
-    // alreadyShot = false;
-    // playerControls[playerNumber].shoot.forEach((key) => {
-    //   if (keyboard.pressed(key) && !alreadyShot) {
-    //     player.shoot();
-    //     alreadyShot = true;
-    //   }
-    // });
+    var moveSpeed = 1;
 
-    // updatePositionMessage(player);
-  }
+    // Variables to store movement direction
+    var moveX = 0;
+    var moveZ = 0;
+
+    // Check movement direction based on pressed keys
+    if (keyboard.pressed(playerControls[playerNumber].up)) {
+      moveZ--;
+    }
+    if (keyboard.pressed(playerControls[playerNumber].down)) {
+      moveZ++;
+    }
+    if (keyboard.pressed(playerControls[playerNumber].right)) {
+      moveX++;
+    }
+    if (keyboard.pressed(playerControls[playerNumber].left)) {
+      moveX--;
+    }
+
+    // Calculate diagonal movement direction
+    var moveMagnitude = Math.sqrt(moveX * moveX + moveZ * moveZ);
+    if (moveMagnitude > 0) {
+      moveX /= moveMagnitude;
+      moveZ /= moveMagnitude;
+    }
+
+    // Normalize the movement speed for diagonal movement
+    if (moveMagnitude === 2) {
+      moveSpeed /= Math.sqrt(2);
+    }
+
+    // Rotate player to face the movement direction
+    if (moveX !== 0 || moveZ !== 0) {
+      player.lookAt(
+        player.position.x + moveX,
+        player.position.y,
+        player.position.z + moveZ
+      );
+    }
+
+    // Move player
+    player.position.x += moveSpeed * moveX;
+    player.position.z += moveSpeed * moveZ;
+  };
   controllers.push(controller);
 }
 
 function keyboardUpdate() {
   keyboard.update();
-  controllers.forEach((controller) =>controller())
+  controllers.forEach((controller) => controller());
 }
 
 function updatePositionMessage(player) {
