@@ -120,7 +120,7 @@ export class Tank {
     projectile_position.add(direction);
     direction = direction.normalize();
 
-    let projectile = new Projectile(projectile_position,direction,0.5,1,2,"white");
+    let projectile = new Projectile(projectile_position,direction);
 
     return projectile;
   }
