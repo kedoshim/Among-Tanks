@@ -12,7 +12,7 @@ class CollisionSystem {
     }
 }
 
-class ProjectileCollisionSystem extends CollisionSystem {
+export class ProjectileCollisionSystem extends CollisionSystem {
     constructor(players, map, minDistanceForDanger=5) {
         super(players, map);
         this.minDistanceForDanger = minDistanceForDanger;
@@ -55,7 +55,7 @@ class ProjectileCollisionSystem extends CollisionSystem {
     }
 }
 
-class TankCollisionSystem extends CollisionSystem {
+export class TankCollisionSystem extends CollisionSystem {
     constructor(players, map) {
         super(players, map);
     }

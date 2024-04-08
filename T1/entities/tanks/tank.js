@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { Projectile } from "../../Projectiles/projectile";
 
 /**
 * General class that represents any tank model
