@@ -1,5 +1,14 @@
 import * as THREE from "three";
-import { setDefaultMaterial } from "../libs/util/util.js";
+import { setDefaultMaterial } from "../../../libs/util/util.js";
+
+export function createCommonTank(tankColor, amogColor) {
+  let amog = createAmogus(0, 0, amogColor);
+  addTank(amog, tankColor);
+  addBlowgun(amog, tankColor);
+  addHelmet(amog, tankColor);
+
+  return amog;
+}
 
 function darkenColor(rgbString, factor) {
   // Parse the RGB string into a Three.js color object
@@ -44,11 +53,10 @@ export function createAmogus(x, y, color) {
 }
 
 export function addTank(amogFather, tankColorRGB = "rgb(54, 64, 35)") {
-
   const groundLevel = -amogFather.position.y;
   const tank = createTankModel(tankColorRGB, groundLevel);
 
-  addWheels(tank,groundLevel)
+  addWheels(tank, groundLevel);
 
   amogFather.add(tank);
 
@@ -160,11 +168,12 @@ function addWheels(tank, groundLevel, wheelColor = "rgb(30, 23, 7)") {
     return wheel;
   };
   const createBelt = (position) => {
-    const beltModel = new THREE.BoxGeometry(wheelRadius + 0.5, beltThickness, 12);
-    const belt = new THREE.Mesh(
-      beltModel,
-      setDefaultMaterial(wheelColor)
+    const beltModel = new THREE.BoxGeometry(
+      wheelRadius + 0.5,
+      beltThickness,
+      12
     );
+    const belt = new THREE.Mesh(beltModel, setDefaultMaterial(wheelColor));
     belt.position.copy(position);
     return belt;
   };
@@ -236,7 +245,10 @@ export function addHelmet(amogFather, color = "darkgreen") {
     Math.PI / 2 //sets it to be a half sphere
   );
   helmetModel.rotateX(THREE.MathUtils.degToRad(-7));
-  let helmet = new THREE.Mesh(helmetModel, setDefaultMaterial(darkenColor(color,0.5)));
+  let helmet = new THREE.Mesh(
+    helmetModel,
+    setDefaultMaterial(darkenColor(color, 0.5))
+  );
   helmet.position.set(0, 2.6, 0);
   amogFather.add(helmet);
 }

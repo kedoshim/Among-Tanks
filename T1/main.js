@@ -12,56 +12,19 @@ import {
   createGroundPlaneXZ,
 } from "../libs/util/util.js";
 
-import {
-  createAmogus,
-  addTank,
-  addBlowgun,
-  addHelmet,
-} from "./playerModels.js";
+import { Player } from "./entities/player.js";
 
 const NumberOfPlayers = 2;
 
-let players = [];
+let entities = [];
 let controllers = [];
-let lastValidTargetAngle = [0,0,0,0];
+let lastValidTargetAngle = [0, 0, 0, 0];
 
-const playerAmogusColors = ["dimgray", "antiquewhite", "purple", "pink"];
-const playerTankColors = ["darkblue", "red", "goldenrod", "green"];
 const playerSpawnPoint = [
   [-20, -20],
   [20, -20],
   [-20, 20],
   [20, 20],
-];
-let playerControls = [
-  {
-    up: "W",
-    down: "S",
-    right: "D",
-    left: "A",
-    shoot: ["Space", "Q", "LeftShift"],
-  },
-  {
-    up: "up",
-    down: "down",
-    right: "right",
-    left: "left",
-    shoot: ["/", ","],
-  },
-  {
-    up: "I",
-    down: "K",
-    right: "L",
-    left: "J",
-    shoot: ["H"],
-  },
-  {
-    up: "h", //NumPad8
-    down: "e", //NumPad5
-    right: "f", //NumPad6
-    left: "d", //NumPad4
-    shoot: ["Enter"],
-  },
 ];
 
 let scene, renderer, camera, material, light, orbit; // Initial variables
@@ -110,109 +73,23 @@ loadPlayers();
 render();
 
 function createPlayer() {
-  const playerNumber = players.length;
-  const amogColor = playerAmogusColors[playerNumber];
-  const tankColor = playerTankColors[playerNumber];
+  let new_player = new Player();
 
-  console.log("creating player " + (playerNumber + 1));
+  new_player.spawnPoint = playerSpawnPoint[Player.playerNumber-1]
 
-  let amog = createAmogus(0, 0, amogColor);
-  addTank(amog, tankColor);
-  addBlowgun(amog, tankColor);
-  addHelmet(amog, tankColor);
-
-  // var cubeAxesHelper = new THREE.AxesHelper(9);
-  // amog.add(cubeAxesHelper);
-
-  players.push(amog);
-  console.log(players);
+  entities.push(new_player);
 }
 
 function loadPlayers() {
-  let i = 0;
-  players.forEach((player) => {
-    console.log("loading player " + (i + 1));
-    scene.add(player);
-    setPlayerSpawn(i, player);
-    addPlayerControls(i, player);
-    i++;
+  entities.forEach((entity) => {
+    console.log("loading player " + entity.name);
+    entity.load(scene)
   });
-}
-
-function setPlayerSpawn(playerNumber, player) {
-  const [x, z] = playerSpawnPoint[playerNumber];
-  player.position.x = x;
-  player.position.z = z;
-}
-
-function addPlayerControls(playerNumber, player) {
-  const controller = function () {
-    var moveSpeed = 1;
-    var rotationSpeed = 0.15;
-
-    // Variables to store movement direction
-    var moveX = 0;
-    var moveZ = 0;
-
-    // Check movement direction based on pressed keys
-    if (keyboard.pressed(playerControls[playerNumber].up)) {
-      moveZ--;
-    }
-    if (keyboard.pressed(playerControls[playerNumber].down)) {
-      moveZ++;
-    }
-    if (keyboard.pressed(playerControls[playerNumber].right)) {
-      moveX++;
-    }
-    if (keyboard.pressed(playerControls[playerNumber].left)) {
-      moveX--;
-    }
-
-    // Calculate diagonal movement direction
-    var moveMagnitude = Math.sqrt(moveX * moveX + moveZ * moveZ);
-    if (moveMagnitude > 0) {
-      moveX /= moveMagnitude;
-      moveZ /= moveMagnitude;
-    }
-
-    // If there's movement input, calculate the target angle
-    var targetAngle = null;
-    if (moveX !== 0 || moveZ !== 0) {
-      targetAngle = Math.atan2(moveZ, moveX);
-      targetAngle += Math.PI / 2; // Adjust rotation since lookAt is rotated 90 degrees
-    }
-
-    // If there's no movement input, use the last valid target angle
-    // Makes it so the rotation animation only stops at the last inputed direction
-    if (targetAngle === null) {
-      targetAngle = lastValidTargetAngle[playerNumber];
-    } else {
-      // Update last valid target angle
-      lastValidTargetAngle[playerNumber] = targetAngle;
-    }
-
-    // Calculate the difference between current rotation and target angle
-    var rotationDifference = targetAngle - player.rotation.y;
-    // Wrap the difference into range [-π, π]
-    rotationDifference =
-      THREE.MathUtils.euclideanModulo(
-        rotationDifference + Math.PI,
-        2 * Math.PI
-      ) - Math.PI;
-
-    // Smoothly rotate player towards the target angle
-    player.rotation.y += rotationDifference * rotationSpeed;
-
-    // Move player
-    player.position.x += moveSpeed * moveX;
-    player.position.z += moveSpeed * moveZ;
-  };
-  controllers.push(controller);
 }
 
 function keyboardUpdate() {
   keyboard.update();
-  controllers.forEach((controller) => controller());
+  entities.forEach((entity) => entity.runController(keyboard));
 }
 
 function updatePositionMessage(player) {
