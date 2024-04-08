@@ -22,7 +22,7 @@ export class Player extends Entity {
       down: "S",
       right: "D",
       left: "A",
-      shoot: ["Space", "Q", "LeftShift"],
+      shoot: ["space", "Q", "shift"],
     },
     {
       up: "up",
@@ -43,7 +43,7 @@ export class Player extends Entity {
       down: "e", //NumPad5
       right: "f", //NumPad6
       left: "d", //NumPad4
-      shoot: ["Enter"],
+      shoot: ["enter"],
     },
   ];
 

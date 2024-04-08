@@ -110,6 +110,7 @@ export class Tank {
   }
 
   shoot() {
+    // console.log("shoot");
     //shooting logic
     let sine = Math.sin(this.model.rotation.y);
     let cosine = Math.cos(this.model.rotation.y);

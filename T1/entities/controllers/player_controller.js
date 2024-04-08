@@ -7,7 +7,7 @@ export class PlayerController extends Controller {
   constructor(target, keys) {
     super(target);
 
-    console.log(keys);
+    // console.log(keys);
 
     this._up = keys.up;
     this._down = keys.down;
@@ -64,6 +64,15 @@ export class PlayerController extends Controller {
     if (keyboard.pressed(this._left)) {
       moveX--;
     }
+
+    this._shoot.every((key,index) => {
+      if (keyboard.pressed(key)) {
+        this._target.shoot();
+        return false;
+      } else {
+        return true;
+      }
+    });
 
     this._target.move(moveX, moveZ);
   }
