@@ -1,10 +1,10 @@
 export class Controller {
-  constructor(model) {
-    this._model = model;
+  constructor(target) {
+    this._target = target;
   }
 
-  set model(model) {
-    this._model = model;
+  set target(target) {
+    this._target = target;
   }
 
   control() {}

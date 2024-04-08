@@ -1,8 +1,8 @@
 import { Controller } from "./controller.js";
 
 export class PlayerController extends Controller {
-  constructor(model, keys) {
-    super(model);
+  constructor(target, keys) {
+    super(target);
 
     console.log(keys);
 
@@ -62,6 +62,6 @@ export class PlayerController extends Controller {
       moveX--;
     }
 
-    this._model.move(moveX, moveZ);
+    this._target.move(moveX, moveZ);
   }
 }
