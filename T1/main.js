@@ -19,10 +19,11 @@ import {
   addHelmet,
 } from "./playerModels.js";
 
-const NumberOfPlayers = 1;
+const NumberOfPlayers = 2;
 
 let players = [];
 let controllers = [];
+let lastValidTargetAngle = [0,0,0,0];
 
 const playerAmogusColors = ["dimgray", "antiquewhite", "purple", "pink"];
 const playerTankColors = ["darkblue", "red", "goldenrod", "green"];
@@ -147,6 +148,7 @@ function setPlayerSpawn(playerNumber, player) {
 function addPlayerControls(playerNumber, player) {
   const controller = function () {
     var moveSpeed = 1;
+    var rotationSpeed = 0.15;
 
     // Variables to store movement direction
     var moveX = 0;
@@ -173,19 +175,33 @@ function addPlayerControls(playerNumber, player) {
       moveZ /= moveMagnitude;
     }
 
-    // Normalize the movement speed for diagonal movement
-    if (moveMagnitude === 2) {
-      moveSpeed /= Math.sqrt(2);
+    // If there's movement input, calculate the target angle
+    var targetAngle = null;
+    if (moveX !== 0 || moveZ !== 0) {
+      targetAngle = Math.atan2(moveZ, moveX);
+      targetAngle += Math.PI / 2; // Adjust rotation since lookAt is rotated 90 degrees
     }
 
-    // Rotate player to face the movement direction
-    if (moveX !== 0 || moveZ !== 0) {
-      player.lookAt(
-        player.position.x + moveX,
-        player.position.y,
-        player.position.z + moveZ
-      );
+    // If there's no movement input, use the last valid target angle
+    // Makes it so the rotation animation only stops at the last inputed direction
+    if (targetAngle === null) {
+      targetAngle = lastValidTargetAngle[playerNumber];
+    } else {
+      // Update last valid target angle
+      lastValidTargetAngle[playerNumber] = targetAngle;
     }
+
+    // Calculate the difference between current rotation and target angle
+    var rotationDifference = targetAngle - player.rotation.y;
+    // Wrap the difference into range [-π, π]
+    rotationDifference =
+      THREE.MathUtils.euclideanModulo(
+        rotationDifference + Math.PI,
+        2 * Math.PI
+      ) - Math.PI;
+
+    // Smoothly rotate player towards the target angle
+    player.rotation.y += rotationDifference * rotationSpeed;
 
     // Move player
     player.position.x += moveSpeed * moveX;
