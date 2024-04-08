@@ -2,12 +2,12 @@ import * as THREE from "three";
 import { setDefaultMaterial } from "../../../../libs/util/util.js";
 
 export function createCommonTank(tankColor, amogColor) {
-  let amog = createAmogus(0, 0, amogColor);
-  addTank(amog, tankColor);
-  addBlowgun(amog, tankColor);
-  addHelmet(amog, tankColor);
+  let tank = createAmogus(0, 0, amogColor);
+  addTank(tank, tankColor);
+  addBlowgun(tank, tankColor);
+  addHelmet(tank, tankColor);
 
-  return amog;
+  return tank;
 }
 
 function darkenColor(rgbString, factor) {
@@ -23,7 +23,7 @@ function darkenColor(rgbString, factor) {
   return color.getStyle();
 }
 
-export function createAmogus(x, y, color) {
+function createAmogus(x, y, color) {
   const bodyModel = new THREE.CapsuleGeometry(3.5, 3, 5, 20);
   let body = new THREE.Mesh(bodyModel, setDefaultMaterial(color));
   // position the amog
@@ -52,7 +52,7 @@ export function createAmogus(x, y, color) {
   return body;
 }
 
-export function addTank(amogFather, tankColorRGB = "rgb(54, 64, 35)") {
+function addTank(amogFather, tankColorRGB = "rgb(54, 64, 35)") {
   const groundLevel = -amogFather.position.y;
   const tank = createTankModel(tankColorRGB, groundLevel);
 
@@ -234,7 +234,7 @@ function addWheels(tank, groundLevel, wheelColor = "rgb(30, 23, 7)") {
   wheels.forEach((wheel) => tank.add(wheel));
 }
 
-export function addHelmet(amogFather, color = "darkgreen") {
+function addHelmet(amogFather, color = "darkgreen") {
   const helmetModel = new THREE.SphereGeometry(
     3.7,
     100,
@@ -253,7 +253,7 @@ export function addHelmet(amogFather, color = "darkgreen") {
   amogFather.add(helmet);
 }
 
-export function addBlowgun(amogFather, color = "green") {
+function addBlowgun(amogFather, color = "green") {
   const blowgunModel = new THREE.CylinderGeometry(0.6, 0.6, 8);
   let blowgun = new THREE.Mesh(blowgunModel, setDefaultMaterial(color));
   blowgun.rotateX(THREE.MathUtils.degToRad(90));
@@ -285,7 +285,7 @@ export function addBlowgun(amogFather, color = "green") {
   amogFather.add(rightCheek);
 }
 
-export function addHat(amogFather, color = "black") {
+function addHat(amogFather, color = "black") {
   const hatModel = new THREE.CylinderGeometry(3, 3, 5);
   let hat = new THREE.Mesh(hatModel, setDefaultMaterial("rgb(80,58,11)"));
   hat.position.set(0, 3, 0);

@@ -1,5 +1,6 @@
-import { Controller } from "./controllers/controller.js";
-
+/**
+* Represents players and enemies
+*/
 export class Entity {
   static entityNumber = 0;
   constructor(name = "", spawnPoint = [0, 0], tank = null, controller = null) {

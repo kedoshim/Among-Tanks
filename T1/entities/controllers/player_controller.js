@@ -1,5 +1,8 @@
 import { Controller } from "./controller.js";
 
+/**
+* Represents the controller used by the player
+*/
 export class PlayerController extends Controller {
   constructor(target, keys) {
     super(target);

@@ -2,6 +2,9 @@ import { Entity } from "./entity.js";
 import { CommonTank } from "./tanks/common_tank.js";
 import { PlayerController } from "./controllers/player_controller.js";
 
+/**
+* Represents the players
+*/
 export class Player extends Entity {
   static playerNumber = 0;
 
@@ -55,14 +58,14 @@ export class Player extends Entity {
       tankColor = Player.defaultPlayerTankColors[Player.playerNumber];
     }
 
-    console.info("creating player " + (Player.playerNumber + 1));
-
+    
     let tank = new CommonTank(tankColor, amogColor);
     super(name, spawnPoint, tank, null);
-
+    
     let controllerKeys = Player.defaultPlayerControls[Player.playerNumber];
     this._controller = new PlayerController(this._tank, controllerKeys);
-
+    
+    console.info("creating player " + this._name);
     Player.playerNumber++;
   }
 }

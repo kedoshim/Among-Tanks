@@ -1,5 +1,8 @@
 import * as THREE from "three";
 
+/**
+* General class that represents any tank model
+*/
 export class Tank {
   constructor(tankColor, amogColor, moveSpeed = 1, rotationSpeed = 0.15) {
     this._tankColor = tankColor;
