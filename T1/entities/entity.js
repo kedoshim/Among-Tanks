@@ -2,10 +2,10 @@ import { Controller } from "./controllers/controller.js";
 
 export class Entity {
   static entityNumber = 0;
-  constructor(name = "", spawnPoint = [0, 0], model = null, controller = null) {
+  constructor(name = "", spawnPoint = [0, 0], tank = null, controller = null) {
     this._name = name || `Entity_${Entity.entityNumber}`;
     this._spawnPoint = spawnPoint;
-    this._model = model;
+    this._tank = tank;
     this._controller = controller;
 
     Entity.entityNumber++;
@@ -16,12 +16,12 @@ export class Entity {
   }
 
   load(scene) {
-    scene.add(this._model._model);
+    scene.add(this._tank._model);
 
     let [x, z] = this._spawnPoint;
 
-    this._model._model.position.x = x;
-    this._model._model.position.z = z;
+    this._tank._model.position.x = x;
+    this._tank._model.position.z = z;
   }
 
   set name(name) {
@@ -40,12 +40,12 @@ export class Entity {
     return this.spawnPoint;
   }
 
-  set model(model) {
-    this._model = model;
+  set tank(tank) {
+    this._tank = model;
   }
 
-  get model() {
-    return this._model;
+  get tank() {
+    return this._tank;
   }
 
   set controller(controller) {
