@@ -14,11 +14,9 @@ import {
 
 import { Player } from "./entities/player.js";
 
-const NumberOfPlayers = 2;
+const NumberOfPlayers = 4;
 
 let entities = [];
-let controllers = [];
-let lastValidTargetAngle = [0, 0, 0, 0];
 
 const playerSpawnPoint = [
   [-20, -20],
@@ -92,41 +90,16 @@ function keyboardUpdate() {
   entities.forEach((entity) => entity.runController(keyboard));
 }
 
-function updatePositionMessage(player) {
-  var str =
-    "POS {" +
-    player.position.x.toFixed(1) +
-    ", " +
-    player.position.y.toFixed(1) +
-    ", " +
-    player.position.z.toFixed(1) +
-    "} " +
-    "| SCL {" +
-    player.scale.x.toFixed(1) +
-    ", " +
-    player.scale.y.toFixed(1) +
-    ", " +
-    player.scale.z.toFixed(1) +
-    "} " +
-    "| ROT {" +
-    player.rotation.x.toFixed(1) +
-    ", " +
-    player.rotation.y.toFixed(1) +
-    ", " +
-    player.rotation.z.toFixed(1) +
-    "}";
-  positionMessage.changeMessage(str);
-}
-
 function showInformation() {
   // Use this to show information onscreen
   var controls = new InfoBox();
   controls.add("Geometric Transformation");
   controls.addParagraph();
-  controls.add("Use keyboard arrows to move the amog in XY.");
-  controls.add("Press Page Up or Page down to move the amog over the Z axis");
-  controls.add("Press 'A' and 'D' to rotate.");
-  controls.add("Press 'W' and 'S' to change scale");
+  controls.add("Player - MOVE  SHOOT");
+  controls.add("Player 1: WASD LeftShift");
+  controls.add("Player 2: arrows [\",\" \"/\"]");
+  controls.add("Player 3: IJKL    H");
+  controls.add("Player 4: 8456    Enter");
   controls.show();
 }
 
