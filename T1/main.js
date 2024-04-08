@@ -126,7 +126,7 @@ window.addEventListener("gamepadconnected", (e) => {
   const gamepad = e.gamepad;
   connectedGamepads[gamepad.index] = gamepad.index;
   console.log("gamepad " + gamepad.index + " connected");
-  console.log(gamepad);
+  // console.log(gamepad);
 });
 
 window.addEventListener("gamepaddisconnected", (e) => {

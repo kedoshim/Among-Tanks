@@ -8,7 +8,8 @@ export class Tank {
     this._tankColor = tankColor;
     this._amogColor = amogColor;
     this._moveSpeed = moveSpeed;
-    this._rotationSpeed = rotationSpeed;
+    this._rotationSpeed = rotationSpeed/2;
+    this._animationRotationSpeed = rotationSpeed;
 
     this._model = null;
 
@@ -101,11 +102,23 @@ export class Tank {
       ) - Math.PI;
 
     // Smoothly rotate this.model towards the target angle
-    this.model.rotation.y += rotationDifference * this._rotationSpeed;
+    this.model.rotation.y += rotationDifference * this._animationRotationSpeed;
 
     // Move this.model
     this.model.position.x += this._moveSpeed * moveX;
     this.model.position.z += this._moveSpeed * moveZ;
+  }
+
+  moveRotating(forwardForce, rotationDirection) {
+
+    if (Math.abs(forwardForce) > 1) {
+      forwardForce = (forwardForce >= 0) ? 1 : -1;
+    }
+    this.model.translateZ(forwardForce * this._moveSpeed);
+
+    this.model.rotateY(this._rotationSpeed * rotationDirection);
+
+    this._lastValidTargetAngle = this._model.rotation.y;
   }
 
   shoot() {
