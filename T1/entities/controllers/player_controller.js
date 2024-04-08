@@ -1,8 +1,8 @@
 import { Controller } from "./controller.js";
 
 /**
-* Represents the controller used by the player
-*/
+ * Represents the controller used by the player
+ */
 export class PlayerController extends Controller {
   static defaultGamepadButtons = {
     //left axis for movement too
@@ -117,6 +117,7 @@ export class PlayerController extends Controller {
     if (gamepad) {
       console.log(gamepad);
       const gamepadButtons = gamepad.buttons;
+      const gamepadAxes = gamepad.axes;
       // Check movement direction based on pressed keys
       if (gamepadButtons[this._buttons.up].value == 1) {
         moveZ--;
@@ -130,10 +131,19 @@ export class PlayerController extends Controller {
       if (gamepadButtons[this._buttons.right].value > 0) {
         moveX++;
       }
-      
+
       if (gamepadButtons[this._buttons.shoot].value > 1) {
         this._target.shoot();
       }
+
+      // Sticks
+      const multiplyer = 1;
+      const deadzone = 0.1;
+
+      if (gamepadAxes[1] > deadzone || gamepadAxes[1] < -deadzone)
+        moveZ += gamepadAxes[1] * multiplyer;
+      if (gamepadAxes[0] > deadzone || gamepadAxes[0] < -deadzone)
+        moveX += gamepadAxes[0] * multiplyer;
     }
 
     this._target.move(moveX, moveZ);
