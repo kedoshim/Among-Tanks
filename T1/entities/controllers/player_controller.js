@@ -115,7 +115,7 @@ export class PlayerController extends Controller {
     });
 
     if (gamepad) {
-      console.log(gamepad);
+      // console.log(gamepad);
       const gamepadButtons = gamepad.buttons;
       const gamepadAxes = gamepad.axes;
       // Check movement direction based on pressed keys

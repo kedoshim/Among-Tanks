@@ -93,9 +93,10 @@ function keyboardUpdate() {
     let playerGamepad = null;
     if (connectedGamepads[index] != null) {
       playerGamepad = navigator.getGamepads()[index];
-      // console.log(playerGamepad);
+      console.log("controller " + (index+1));
     } 
     player.runController(keyboard, playerGamepad);
+    return true;
   });
   entities.forEach((entity) => {
     entity.runController();
