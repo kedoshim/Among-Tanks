@@ -109,6 +109,7 @@ export class Tank {
   }
 
   shoot() {
+    // console.log("shoot");
     //shooting logic
   }
 }
