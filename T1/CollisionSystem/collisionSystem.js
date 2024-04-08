@@ -45,8 +45,10 @@ class ProjectileCollisionSystem extends CollisionSystem {
         for(let key in projectilesNearPlayers) {
             if (projectilesNearPlayers.hasOwnProperty(key)) {
                 let projectiles = projectilesNearPlayers[key];
-                if(this.checkCollisionBetwennCollisionShapes(player.collisionShape, projectile.collisionShape)) {
-                    // TODO: aplicar o dano ao jogador e remover projétil da tela
+                for (let projectileIndex = 0; projectileIndex < projectiles.length; projectileIndex++) {
+                    if(this.checkCollisionBetwennCollisionShapes(player.collisionShape, projectiles[projectileIndex].collisionShape)) {
+                        // TODO: aplicar o dano ao jogador e remover projétil da tela
+                    }
                 }
             }
         }
