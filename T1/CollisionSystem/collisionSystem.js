@@ -38,6 +38,19 @@ class ProjectileCollisionSystem extends CollisionSystem {
             projectilesNearPlayer = [];
         }
     }
+
+    checkForCollision() {
+        let projectilesNearPlayers = this.projectilesNearPlayers;
+
+        for(let key in projectilesNearPlayers) {
+            if (projectilesNearPlayers.hasOwnProperty(key)) {
+                let projectiles = projectilesNearPlayers[key];
+                if(this.checkCollisionBetwennCollisionShapes(player.collisionShape, projectile.collisionShape)) {
+                    // TODO: aplicar o dano ao jogador e remover projétil da tela
+                }
+            }
+        }
+    }
 }
 
 class TankCollisionSystem extends CollisionSystem {
