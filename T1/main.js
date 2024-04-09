@@ -1,5 +1,4 @@
 import * as THREE from "three";
-import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
 import KeyboardState from "../libs/util/KeyboardState.js";
 import {
   initRenderer,
@@ -32,9 +31,9 @@ scene = new THREE.Scene(); // Create main scene
 renderer = initRenderer(); // Init a basic renderer
 material = setDefaultMaterial(); // create a basic material
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
-cameraController = new CameraControls()
+cameraController = new CameraControls(renderer)
 camera = cameraController.camera;
-// orbit = new OrbitControls(camera, renderer.domElement); // Enable mouse rotation, pan, zoom etc.
+
 
 // Listen window size changes
 window.addEventListener(
@@ -88,8 +87,16 @@ function loadPlayers() {
   });
 }
 
+function manageOrbitControls() {
+  if (keyboard.pressed('O')) {
+    console.log("in")
+    cameraController.changeCameraMode();
+  }
+}
+
 function keyboardUpdate() {
   keyboard.update();
+  manageOrbitControls();
   players.every((player, index) => {
     let playerGamepad = null;
     if (connectedGamepads[index] != null) {

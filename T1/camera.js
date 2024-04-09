@@ -1,7 +1,8 @@
 import * as THREE from "three";
+import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
 
 export class CameraControls {
-  constructor() {
+  constructor(renderer) {
     this._camera = new THREE.PerspectiveCamera(
       45,
       window.innerWidth / window.innerHeight,
@@ -13,6 +14,26 @@ export class CameraControls {
     this._camera.lookAt(this._mediumPoint);
     this._padding = 20;
     this._height = 40;
+
+    this._orbit = new OrbitControls(this._camera, renderer.domElement); // Enable mouse rotation, pan, zoom etc.
+    this._orbit.enabled = false;
+  }
+
+  enableOrbitControls() {
+    this._lastPosition = this._camera.position;
+    this._orbit.enabled = true;
+  }
+
+  disableOrbitControls() {
+    this._orbit.enabled = false;
+    this._camera.position.copy(this._lastPosition);
+  }
+
+  changeCameraMode() {
+    if (this._orbit.enabled == false)
+      this.enableOrbitControls();
+    else
+      this.disableOrbitControls();
   }
 
   _getExtremes(players) {
@@ -67,6 +88,9 @@ export class CameraControls {
   }
 
   calculatePosition(players) {
+    if (this._orbit.enabled) {
+      return;
+    }
     let borders = this._getExtremes(players);
 
     const point1 = [borders.minX, borders.minZ];
