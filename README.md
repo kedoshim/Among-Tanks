@@ -25,7 +25,7 @@ Computar e mostrar na tela os tiros que atingiram o tanque adversário - 1
 O tanque que receber 10 tiros perde e o sistema reiniciará - 1
 
 ### Controle de câmera - 6 pts | Abraão
-- [ ] Criação e movimentação da câmera
+- [x] Criação e movimentação da câmera
 A câmera apontará para o ponto médio entre os tanques e deve ter recursos para aproximar e afastar conforme
 necessário. A avaliação será feita analisando a qualidade da movimentação da câmera. - 4
 - [ ] Orbit Controls

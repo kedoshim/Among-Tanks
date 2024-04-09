@@ -3,7 +3,6 @@ import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
 import KeyboardState from "../libs/util/KeyboardState.js";
 import {
   initRenderer,
-  initCamera,
   initDefaultBasicLight,
   setDefaultMaterial,
   InfoBox,
@@ -12,6 +11,7 @@ import {
   createGroundPlaneXZ,
 } from "../libs/util/util.js";
 
+import {CameraControls} from "./camera.js";
 import { Player } from "./entities/player.js";
 
 const NumberOfPlayers = 4;
@@ -27,13 +27,14 @@ const playerSpawnPoint = [
   [20, 20],
 ];
 
-let scene, renderer, camera, material, light, orbit; // Initial variables
+let scene, renderer, material, light, orbit, cameraController,camera; // Initial variables
 scene = new THREE.Scene(); // Create main scene
 renderer = initRenderer(); // Init a basic renderer
-camera = initCamera(new THREE.Vector3(0, 30, 30)); // Init camera in this position
 material = setDefaultMaterial(); // create a basic material
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
-orbit = new OrbitControls(camera, renderer.domElement); // Enable mouse rotation, pan, zoom etc.
+cameraController = new CameraControls()
+camera = cameraController.camera;
+// orbit = new OrbitControls(camera, renderer.domElement); // Enable mouse rotation, pan, zoom etc.
 
 // Listen window size changes
 window.addEventListener(
@@ -58,7 +59,7 @@ var axesHelper = new THREE.AxesHelper(12);
 scene.add(axesHelper);
 
 // create the ground plane
-let plane = createGroundPlaneXZ(100, 100);
+let plane = createGroundPlaneXZ(1000, 1000);
 scene.add(plane);
 
 for (let i = 0; i < NumberOfPlayers; i++) {
@@ -116,8 +117,13 @@ function showInformation() {
   controls.show();
 }
 
+function cameraUpdate() {
+  cameraController.calculatePosition(players);
+}
+
 function render() {
   keyboardUpdate();
+  cameraUpdate();
   requestAnimationFrame(render); // Show events
   renderer.render(scene, camera); // Render scene
 }
