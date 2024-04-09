@@ -2,25 +2,12 @@ import { Controller } from "./controller.js";
 import KeyboardState from "../../../libs/util/KeyboardState.js";
 import { Tank } from "../tanks/tank.js";
 
+import { getConfig } from "../../config.js";
+
 /**
  * Represents the controller used by the player
  */
 export class PlayerController extends Controller {
-  /**
-   * The default Gamepad controller configuration
-   *
-   * @static
-   * @type {{ up: number; down: number; left: number; right: number; shoot: number; }}
-   */
-  static defaultGamepadButtons = {
-    //left axis for movement too
-
-    up: 12, // dpad up
-    down: 13, // dpad down
-    left: 14, // dpad left
-    right: 15, // dpad right
-    shoot: 0, //A
-  };
   /**
    * Creates an instance of PlayerController.
    *
@@ -30,16 +17,21 @@ export class PlayerController extends Controller {
    * @param {{ up: number; down: number; left: number; right: number; shoot: number; }} [gamepadButtons=""]
    */
   constructor(target, keyboardKeys, gamepadButtons = "") {
+    const config = getConfig();
+    const gamepadConfig = config.gamepadConfig;
+
     super(target);
 
     this._keys = keyboardKeys;
 
     if (gamepadButtons === "") {
-      this._buttons = PlayerController.defaultGamepadButtons;
+      this._buttons = gamepadConfig.defaultGamepadButtons;
     } else {
       this._buttons = gamepadButtons;
     }
-    this._readConfig = false;
+    this._directionalMovementEnabled = config.directionalMovementEnabled;
+    this._deadzone = gamepadConfig.deadzone;
+    this._stickMultiplier = gamepadConfig.stickMultiplier
   }
 
   set upKey(key) {
@@ -174,13 +166,11 @@ export class PlayerController extends Controller {
       }
 
       // Sticks
-      const multiplyer = 1;
-      const deadzone = 0.1;
 
-      if (gamepadAxes[1] > deadzone || gamepadAxes[1] < -deadzone)
-        moveZ += gamepadAxes[1] * multiplyer;
-      if (gamepadAxes[0] > deadzone || gamepadAxes[0] < -deadzone)
-        moveX += gamepadAxes[0] * multiplyer;
+      if (gamepadAxes[1] > this._deadzone || gamepadAxes[1] < -this._deadzone)
+        moveZ += gamepadAxes[1] * this._stickMultiplier;
+      if (gamepadAxes[0] > this._deadzone || gamepadAxes[0] < -this._deadzone)
+        moveX += gamepadAxes[0] * this._stickMultiplier;
     }
 
     this._target.moveDirectional(moveX, moveZ);
@@ -239,16 +229,14 @@ export class PlayerController extends Controller {
       }
 
       // Sticks
-      const multiplyer = 1;
-      const deadzone = 0.1;
 
       //left stick y axis
-      if (gamepadAxes[1] > deadzone || gamepadAxes[1] < -deadzone) {
-        movement -= gamepadAxes[1] * multiplyer;
+      if (gamepadAxes[1] > this._deadzone || gamepadAxes[1] < -this._deadzone) {
+        movement -= gamepadAxes[1] * this._stickMultiplier;
       }
       //right stick x axis
-      if (gamepadAxes[2] > deadzone || gamepadAxes[2] < -deadzone) {
-        rotation -= gamepadAxes[2] * multiplyer;
+      if (gamepadAxes[2] > this._deadzone || gamepadAxes[2] < -this._deadzone) {
+        rotation -= gamepadAxes[2] * this._stickMultiplier;
       }
     }
     // makes so it always uses the directional movement mode if using the gamepad

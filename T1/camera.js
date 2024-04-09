@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
-import { Player } from "./entities/player.js";
 import { Entity } from "./entities/entity.js";
+import { getConfig } from "./config.js";
 
 /**
  * Class used to manage the camera during the game
@@ -14,12 +14,16 @@ export class CameraControls {
    * @param {THREE.WebGLRenderer} renderer
    */
   constructor(renderer) {
+    const cameraConfig = getConfig().cameraConfig;
+
     this._camera = new THREE.PerspectiveCamera(
-      45,
+      cameraConfig.FOV,
       window.innerWidth / window.innerHeight,
-      0.1,
-      2000
+      cameraConfig.near,
+      cameraConfig.far
     );
+    this._camera.name = "Main Camera";
+
     this._camera.position.copy(new THREE.Vector3(-30, 40, 30));
     this._mediumPoint = new THREE.Vector3(0, 0, 0);
     this._camera.lookAt(this._mediumPoint);
