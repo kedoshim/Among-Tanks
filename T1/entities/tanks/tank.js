@@ -13,6 +13,8 @@ export class Tank {
 
     this._model = null;
 
+    this._projectiles = [];
+
     this._lastValidTargetAngle = 0;
   }
 
@@ -122,7 +124,6 @@ export class Tank {
     direction = direction.normalize();
 
     let projectile = new Projectile(projectile_position,direction);
-
-    return projectile;
+    this._projectiles.push(projectile);
   }
 }

@@ -81,7 +81,7 @@ function createPlayer() {
 function loadPlayers() {
   entities.forEach((entity) => {
     console.log("loading player " + entity.name);
-    entity.load(scene)
+    entity.loadPlayer(scene);
   });
 }
 

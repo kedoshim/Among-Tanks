@@ -16,7 +16,7 @@ export class Entity {
     this._controller.control(keyboard);
   }
 
-  load(scene) {
+  loadPlayer(scene) {
     scene.add(this._tank._model);
 
     let [x, z] = this._spawnPoint;
