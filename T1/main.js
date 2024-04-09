@@ -96,6 +96,7 @@ function manageOrbitControls() {
 function keyboardUpdate() {
   keyboard.update();
   manageOrbitControls();
+
   players.every((player, index) => {
     let playerGamepad = null;
     if (connectedGamepads[index] != null) {
@@ -105,6 +106,7 @@ function keyboardUpdate() {
     player.runController(keyboard, playerGamepad);
     return true;
   });
+  
   entities.forEach((entity) => {
     entity.runController();
   });

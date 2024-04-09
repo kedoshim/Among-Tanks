@@ -1,9 +1,17 @@
+import { Object3D } from "../../../build/three.module.js";
 import { Controller } from "./controller.js";
+import KeyboardState from "../../../libs/util/KeyboardState.js";
 
 /**
  * Represents the controller used by the player
  */
 export class PlayerController extends Controller {
+  /**
+   * The default Gamepad controller configuration
+   *
+   * @static
+   * @type {{ up: number; down: number; left: number; right: number; shoot: number; }}
+   */
   static defaultGamepadButtons = {
     //left axis for movement too
 
@@ -13,10 +21,16 @@ export class PlayerController extends Controller {
     right: 15, // dpad right
     shoot: 0, //A
   };
+  /**
+   * Creates an instance of PlayerController.
+   *
+   * @constructor
+   * @param {Object3D} target
+   * @param {*} keyboardKeys
+   * @param {{ up: number; down: number; left: number; right: number; shoot: number; }} [gamepadButtons=""]
+   */
   constructor(target, keyboardKeys, gamepadButtons = "") {
     super(target);
-
-    // console.log(keyboardKeys);
 
     this._keys = keyboardKeys;
 
@@ -88,11 +102,15 @@ export class PlayerController extends Controller {
     return this._buttons;
   }
 
+  /**
+   * Reads the config.json file and returns if the directional movement is enabled   *
+   * @async
+   * @returns {boolean}
+   */
   async isDirectionalMovement() {
     if (this._readConfig == true) {
       return this._directionalMovementEnabled;
     }
-    
 
     const config = await fetch("./config.json");
     const json = await config.json();
@@ -102,8 +120,11 @@ export class PlayerController extends Controller {
     this._readConfig = true;
     return this._directionalMovementEnabled;
   }
-
-  directionalMovement(keyboard, gamepad) {
+  /**
+   * Movement mode where the movement is based on the input direction
+   * Called when "directionalMovement" is enabled in the config.json
+   */
+  _directionalMovement(keyboard, gamepad) {
     var moveX = 0;
     var moveZ = 0;
 
@@ -165,7 +186,11 @@ export class PlayerController extends Controller {
     this._target.move(moveX, moveZ);
   }
 
-  rotatingMovement(keyboard, gamepad) {
+  /**
+   * Movement mode where the left and right inputs make the player rotate
+   * Called when "directionalMovement" is disabled in the config.json
+   */
+  _rotatingMovement(keyboard, gamepad) {
     var rotation = 0;
     var movement = 0;
 
@@ -230,13 +255,18 @@ export class PlayerController extends Controller {
     this._target.moveRotating(movement, rotation);
   }
 
+  /** 
+   * @async
+   * @param {KeyboardState} keyboard The keyboard assigned to the player
+   * @param {Gamepad} [gamepad=null] The gamepad assigned to the player
+   * @returns {null}
+   */
   async control(keyboard, gamepad = null) {
-    if (await this.isDirectionalMovement()) {
-      this.directionalMovement(keyboard, gamepad);
+    if (this.isDirectionalMovement()) {
+      this._directionalMovement(keyboard, gamepad);
+    } else {
+      this._rotatingMovement(keyboard, gamepad);
     }
-    else {
-      this.rotatingMovement(keyboard, gamepad);
-    }
-
   }
 }
+

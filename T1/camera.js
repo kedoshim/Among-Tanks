@@ -1,7 +1,18 @@
 import * as THREE from "three";
 import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
+import { Player } from "./entities/player.js";
+import { Entity } from "./entities/entity.js";
 
+/**
+ * Class used to manage the camera during the game
+ */
 export class CameraControls {
+  /**
+   * Creates an instance of CameraControls.
+   *
+   * @constructor
+   * @param {THREE.WebGLRenderer} renderer
+   */
   constructor(renderer) {
     this._camera = new THREE.PerspectiveCamera(
       45,
@@ -29,13 +40,21 @@ export class CameraControls {
     this._camera.position.copy(this._lastPosition);
   }
 
+  /**
+   * Activates or deactivates Orbit controls
+   */
   changeCameraMode() {
-    if (this._orbit.enabled == false)
-      this.enableOrbitControls();
-    else
-      this.disableOrbitControls();
+    if (this._orbit.enabled == false) this.enableOrbitControls();
+    else this.disableOrbitControls();
   }
 
+  /**
+   * Receives an array of players and calculates the edges of a rectangle that
+   * contains all players
+   *
+   * @param {Array.<Entity>} players
+   * @returns {{ maxX: number; minX: number; maxZ: number; minZ: number; }}
+   */
   _getExtremes(players) {
     let extremes = {
       maxX: 0,
@@ -57,28 +76,48 @@ export class CameraControls {
     extremes.maxX += this._padding;
     extremes.maxZ += this._padding;
     extremes.minX -= this._padding;
-    extremes.minZ -= this._padding/(this._height/100);
+    extremes.minZ -= this._padding / (this._height / 100);
 
     // console.log(extremes);
     return extremes;
   }
 
+  /**
+   * Receives two coordinates and based on them, the camera FOV
+   * and the window aspect ratio, calculates the height the camera
+   * should be to show every player in the screen
+   *
+   * @param {Array.<number>} point1
+   * @param {Array.<number>} point2
+   * @returns {number}
+   */
   _calculateHeight(point1, point2) {
     let distanceX = Math.abs(point1[0] - point2[0]);
     let distanceZ = Math.abs(point1[1] - point2[1]);
 
     let height = this._camera.position.y;
+    const halfCameraAngle = this._camera.fov / 2
+
+
     let xVirtualDistance = distanceX / this._camera.aspect;
     if (xVirtualDistance < distanceZ)
-      height = distanceZ / (Math.tan(THREE.MathUtils.degToRad(22, 5)) * 2);
+      height = distanceZ / (Math.tan(THREE.MathUtils.degToRad(halfCameraAngle)) * 2);
     else {
       height =
-        xVirtualDistance / (Math.tan(THREE.MathUtils.degToRad(22, 5)) * 2);
+        xVirtualDistance / (Math.tan(THREE.MathUtils.degToRad(halfCameraAngle)) * 2);
     }
     // console.log(height);
     return height;
   }
 
+  /**
+   * Receives two coordinates and calculates the
+   * point perfectly between them
+   *
+   * @param {Array.<number>} point1
+   * @param {Array.<number>} point2
+   * @returns {Array.<number>}
+   */
   _calculateMediumPoint(point1, point2) {
     let mediumX = (point1[0] + point2[0]) / 2;
     let mediumZ = (point1[1] + point2[1]) / 2;
@@ -86,6 +125,11 @@ export class CameraControls {
     return [mediumX, mediumZ];
   }
 
+  /**
+   * Description placeholder
+   *
+   * @param {Array.<Entity>} players
+   */
   calculatePosition(players) {
     if (this._orbit.enabled) {
       return;
@@ -100,17 +144,24 @@ export class CameraControls {
 
     this._camera.position.x = this._mediumPoint[0];
     this._camera.position.y = this._height;
-    this._camera.position.z =
-      this._mediumPoint[1] + this._height / 4;
+    this._camera.position.z = this._mediumPoint[1] + this._height / 4;
     this._camera.lookAt(
       new THREE.Vector3(this._mediumPoint[0], 0, this._mediumPoint[1])
     );
   }
 
+  /**
+   * Gets the Camera being controlled
+   */
   get camera() {
     return this._camera;
   }
 
+  /**
+   * Sets the Camera being controlled
+   *
+   * @type {THREE.PerspectiveCamera}
+   */
   set camera(camera) {
     this._camera = camera;
   }
