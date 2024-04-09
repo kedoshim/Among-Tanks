@@ -1,6 +1,6 @@
-import { Object3D } from "../../../build/three.module.js";
 import { Controller } from "./controller.js";
 import KeyboardState from "../../../libs/util/KeyboardState.js";
+import { Tank } from "../tanks/tank.js";
 
 /**
  * Represents the controller used by the player
@@ -25,7 +25,7 @@ export class PlayerController extends Controller {
    * Creates an instance of PlayerController.
    *
    * @constructor
-   * @param {Object3D} target
+   * @param {Tank} target
    * @param {*} keyboardKeys
    * @param {{ up: number; down: number; left: number; right: number; shoot: number; }} [gamepadButtons=""]
    */
@@ -183,7 +183,7 @@ export class PlayerController extends Controller {
         moveX += gamepadAxes[0] * multiplyer;
     }
 
-    this._target.move(moveX, moveZ);
+    this._target.moveDirectional(moveX, moveZ);
   }
 
   /**
@@ -259,10 +259,9 @@ export class PlayerController extends Controller {
    * @async
    * @param {KeyboardState} keyboard The keyboard assigned to the player
    * @param {Gamepad} [gamepad=null] The gamepad assigned to the player
-   * @returns {null}
    */
   async control(keyboard, gamepad = null) {
-    if (this.isDirectionalMovement()) {
+    if (await this.isDirectionalMovement()) {
       this._directionalMovement(keyboard, gamepad);
     } else {
       this._rotatingMovement(keyboard, gamepad);

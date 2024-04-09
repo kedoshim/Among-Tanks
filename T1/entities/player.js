@@ -3,9 +3,15 @@ import { CommonTank } from "./tanks/common_tank.js";
 import { PlayerController } from "./controllers/player_controller.js";
 
 /**
-* Represents the players
-*/
+ * Represents the players
+ */
 export class Player extends Entity {
+  /**
+   * The total number of create Player objects
+   *
+   * @static
+   * @type {number}
+   */
   static playerNumber = 0;
 
   static defaultPlayerAmogusColors = [
@@ -14,8 +20,10 @@ export class Player extends Entity {
     "purple",
     "pink",
   ];
+
   static defaultPlayerTankColors = ["darkblue", "red", "goldenrod", "green"];
 
+  
   static defaultPlayerControls = [
     {
       up: "W",
@@ -47,6 +55,15 @@ export class Player extends Entity {
     },
   ];
 
+  /**
+   * Creates an instance of Player.
+   *
+   * @constructor
+   * @param {string} [name=""]
+   * @param {Array.<number>} [spawnPoint=[0, 0]] [x,z] coordinates
+   * @param {string} [amogColor=""]
+   * @param {string} [tankColor=""]
+   */
   constructor(name = "", spawnPoint = [0, 0], amogColor = "", tankColor = "") {
     if (name === "") {
       name = `Player_${Player.playerNumber}`;
@@ -58,13 +75,12 @@ export class Player extends Entity {
       tankColor = Player.defaultPlayerTankColors[Player.playerNumber];
     }
 
-    
     let tank = new CommonTank(tankColor, amogColor);
     super(name, spawnPoint, tank, null);
-    
+
     let controllerKeys = Player.defaultPlayerControls[Player.playerNumber];
     this._controller = new PlayerController(this._tank, controllerKeys);
-    
+
     console.info("creating player " + this._name);
     Player.playerNumber++;
   }
