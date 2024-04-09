@@ -88,22 +88,22 @@ export class PlayerController extends Controller {
     return this._buttons;
   }
 
-  async isCoolMovement() {
+  async isDirectionalMovement() {
     if (this._readConfig == true) {
-      return this._coolMovementEnabled;
+      return this._directionalMovementEnabled;
     }
     
 
     const config = await fetch("./config.json");
     const json = await config.json();
 
-    this._coolMovementEnabled = json.coolMovementEnabled;
+    this._directionalMovementEnabled = json.directionalMovementEnabled;
 
     this._readConfig = true;
-    return this._coolMovementEnabled;
+    return this._directionalMovementEnabled;
   }
 
-  coolMovement(keyboard, gamepad) {
+  directionalMovement(keyboard, gamepad) {
     var moveX = 0;
     var moveZ = 0;
 
@@ -226,13 +226,13 @@ export class PlayerController extends Controller {
         rotation -= gamepadAxes[2] * multiplyer;
       }
     }
-    // makes so it always uses the cool movement mode if using the gamepad
+    // makes so it always uses the directional movement mode if using the gamepad
     this._target.moveRotating(movement, rotation);
   }
 
   async control(keyboard, gamepad = null) {
-    if (await this.isCoolMovement()) {
-      this.coolMovement(keyboard, gamepad);
+    if (await this.isDirectionalMovement()) {
+      this.directionalMovement(keyboard, gamepad);
     }
     else {
       this.rotatingMovement(keyboard, gamepad);
