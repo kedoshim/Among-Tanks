@@ -9,7 +9,7 @@
   ],
 
   "playerConfig": {
-    "defaultPlayerAmogusColors": ["dimgray", "antiquewhite", "purple", "pink"],
+    "defaultPlayerAmogusColors": ["darkorange", "antiquewhite", "purple", "pink"],
     "defaultPlayerTankColors": ["darkblue", "red", "goldenrod", "green"],
     "defaultPlayerControls": [
       {
@@ -56,7 +56,7 @@
   },
 
   "cameraConfig":{
-    "FOV" : 50,
+    "FOV" : 45,
     "near":0.1,
     "far": 2000
   }
