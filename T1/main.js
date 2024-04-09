@@ -118,7 +118,7 @@ function showInformation() {
   controls.addParagraph();
   controls.add("Player - MOVE  SHOOT");
   controls.add("Player 1: WASD LeftShift");
-  controls.add('Player 2: arrows ["," "/"]');
+  controls.add('Player 2: arrows [\' , \', \' / \']');
   controls.add("Player 3: IJKL    H");
   controls.add("Player 4: 8456    Enter");
   controls.show();
