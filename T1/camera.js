@@ -74,7 +74,6 @@ export class CameraControls {
     else {
       height =
         xVirtualDistance / (Math.tan(THREE.MathUtils.degToRad(22, 5)) * 2);
-      console.log("x");
     }
     // console.log(height);
     return height;

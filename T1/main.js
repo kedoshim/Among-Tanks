@@ -88,8 +88,7 @@ function loadPlayers() {
 }
 
 function manageOrbitControls() {
-  if (keyboard.pressed('O')) {
-    console.log("in")
+  if (keyboard.down('O')) {
     cameraController.changeCameraMode();
   }
 }
