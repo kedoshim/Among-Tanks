@@ -25,6 +25,12 @@ export class Entity {
     this._tank._model.position.z = z;
   }
 
+  loadProjectile(scene) {
+    // TODO: carregar os projéteis na cena
+    let projectile = this._tank.projectiles[this._tank.projectiles.lenght - 1];
+    scene.add(projectile);
+  }
+
   set name(name) {
     this._name = name;
   }

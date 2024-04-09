@@ -125,5 +125,6 @@ export class Tank {
 
     let projectile = new Projectile(projectile_position,direction);
     this._projectiles.push(projectile);
+    console.log("Tiro dado!");
   }
 }

@@ -66,7 +66,7 @@ export class PlayerController extends Controller {
     }
 
     this._shoot.every((key,index) => {
-      if (keyboard.pressed(key)) {
+      if (keyboard.down(key)) {
         this._target.shoot();
         return false;
       } else {
