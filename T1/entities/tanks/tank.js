@@ -1,15 +1,26 @@
 import * as THREE from "three";
 import { Projectile } from "../../Projectiles/projectile.js";
+import { Object3D } from "../../../build/three.module.js";
 
 /**
 * General class that represents any tank model
 */
 export class Tank {
+  /**
+   * Creates an instance of Tank.
+   *
+   * @constructor
+   * @param {string} tankColor
+   * @param {string} amogColor
+   * @param {number} [moveSpeed=1]
+   * @param {number} [rotationSpeed=0.15]
+   */
   constructor(tankColor, amogColor, moveSpeed = 1, rotationSpeed = 0.15) {
     this._tankColor = tankColor;
     this._amogColor = amogColor;
     this._moveSpeed = moveSpeed;
-    this._rotationSpeed = rotationSpeed;
+    this._rotationSpeed = rotationSpeed / 2;
+    this._animationRotationSpeed = rotationSpeed;
 
     this._model = null;
 
@@ -19,56 +30,102 @@ export class Tank {
   }
 
   // Getters
+  /**
+   * Description placeholder
+   */
   get tankColor() {
     return this._tankColor;
   }
 
+  /**
+   * Description placeholder
+   */
   get amogColor() {
     return this._amogColor;
   }
 
+  /**
+   * Description placeholder
+   */
   get moveSpeed() {
     return this._moveSpeed;
   }
 
+  /**
+   * Description placeholder
+   */
   get rotationSpeed() {
     return this._rotationSpeed;
   }
 
+  /**
+   * Description placeholder
+   */
   get model() {
     return this._model;
   }
 
+  /**
+   * Sets the last movement direction angle selected by
+   * the player
+   */
   get lastValidTargetAngle() {
     return this._lastValidTargetAngle;
   }
 
   // Setters
+  /**
+   * @type {String}
+   */
   set tankColor(color) {
     this._tankColor = color;
   }
 
+  /**
+   * @type {*}
+   */
   set amogColor(color) {
     this._amogColor = color;
   }
 
+  /**
+   * @type {number}
+   */
   set moveSpeed(speed) {
     this._moveSpeed = speed;
   }
 
+  /**
+   * @type {number}
+   */
   set rotationSpeed(speed) {
     this._rotationSpeed = speed;
   }
 
+  /**
+   * @type {Object3D}
+   */
   set model(model) {
     this._model = model;
   }
 
+  /**
+   * Sets the last movement direction angle selected by
+   * the player
+   *
+   * @type {number}
+   */
   set lastValidTargetAngle(angle) {
     this._lastValidTargetAngle = angle;
   }
 
-  move(moveX, moveZ) {
+  /**
+   * Moves the tank following the directionalMovement mode
+   *
+   * @param {number} moveX The amount and direction of movement in the X axis [-1,1]
+   * @param {number} moveZ The amount and direction of movement in the X axis [-1,1]
+   */
+  moveDirectional(moveX, moveZ) {
     // if (moveX !== 0 || moveZ !== 0) console.log("moving ["+moveX+","+moveZ+"]");
 
     // Calculate diagonal movement direction
@@ -104,13 +161,37 @@ export class Tank {
       ) - Math.PI;
 
     // Smoothly rotate this.model towards the target angle
-    this.model.rotation.y += rotationDifference * this._rotationSpeed;
+    this.model.rotation.y += rotationDifference * this._animationRotationSpeed;
 
     // Move this.model
     this.model.position.x += this._moveSpeed * moveX;
     this.model.position.z += this._moveSpeed * moveZ;
   }
 
+  /**
+   * Moves the tank following the rotationalMovement mode
+   *
+   * @param {number} forwardForce Varies from -1 (moves backwards) to 1 (moves frontwards)
+   * @param {number} rotationDirection Varies from -1 (left) to 1 (right)
+   */
+  moveRotating(forwardForce, rotationDirection) {
+    if (Math.abs(forwardForce) > 1) {
+      forwardForce = forwardForce >= 0 ? 1 : -1;
+    }
+    if (Math.abs(rotationDirection) > 1) {
+      rotationDirection = rotationDirection >= 0 ? 1 : -1;
+    }
+
+    this.model.translateZ(forwardForce * this._moveSpeed);
+
+    this.model.rotateY(this._rotationSpeed * rotationDirection);
+
+    this._lastValidTargetAngle = this._model.rotation.y;
+  }
+
+  /**
+   * Makes the tank shoot
+   */
   shoot() {
     // console.log("shoot");
     //shooting logic
