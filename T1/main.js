@@ -144,6 +144,19 @@ async function main() {
     cameraController.calculatePosition(players);
   }
 
+  function updateProjectiles() {
+    players.forEach(player => {
+      let projectiles = player._tank.projectiles;
+      for (let index = projectiles.length - 1; index >= 0; index--) {
+        if (projectiles[index].hitAnyTank || projectiles[index].ricochetsLeft === 0) {
+          // TODO: remover projétil da cena
+          projectiles.splice(index, 1);
+        }
+      }
+      player._tank.projectiles = projectiles;
+    })
+  }
+
   function render() {
     keyboardUpdate();
     cameraUpdate();
