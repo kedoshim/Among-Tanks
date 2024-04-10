@@ -195,17 +195,20 @@ export class Tank {
   shoot() {
     // console.log("shoot");
     //shooting logic
-    let sine = Math.sin(this.model.rotation.y);
-    let cosine = Math.cos(this.model.rotation.y);
+    let sine = Math.sin(this.model.rotation.y + THREE.MathUtils.degToRad(-90));
+    let cosine = Math.cos(this.model.rotation.y + THREE.MathUtils.degToRad(-90));
     const length = 5;
 
     let direction = new THREE.Vector3(length*cosine, 0.0, length*sine);
-    let projectile_position = new THREE.Vector3(this.model.x, this.model.y, this.model.z);
+    let projectile_position = new THREE.Vector3(this.model.position.x, this.model.position.y, this.model.position.z);
     projectile_position.add(direction);
     direction = direction.normalize();
 
     let projectile = new Projectile(projectile_position,direction);
     this._projectiles.push(projectile);
-    console.log("Tiro dado!");
+    
+    //console.log("Tank position: [" + )
+    console.log("Vetor direção: [" + direction.x + ", " + direction.y + ", " + direction.z + "]");
+    console.log("Tiro dado! {" + projectile_position.x + ", " + projectile_position.y + ", " + projectile_position.z + "}");
   }
 }
