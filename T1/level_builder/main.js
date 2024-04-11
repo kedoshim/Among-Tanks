@@ -1,7 +1,10 @@
-const WIDTH = 2000;
-const HEIGHT = 1080;
+const WIDTH = window.innerWidth;
+const HEIGHT = window.innerHeight;
 const START_SCROLL_X_PERCENTAGE = 0.05
-
+document.addEventListener('contextmenu', function(event) {
+    // Previna o comportamento padrão do navegador
+    event.preventDefault();
+});
 
 class LevelBuilder extends Phaser.Scene {
 
@@ -14,7 +17,13 @@ class LevelBuilder extends Phaser.Scene {
         this.currentScrollX = 0;
         this.currentScrollY = 0;
         this.selectedColor = 0x0000ff;
+        this.gameWidth = window.innerWidth;
+        this.rightButtonIsPressed = false;
+        this.gameHeight = window.innerHeight;
         this.blocksArray = []
+        this.gridMouseIndex = {}
+        this.mouseIsPressed = false;
+        this.blocksSelection = []
         this.tiles = []
         this.selectedBlock = new EmptyBlock()
         this.availableBlocks = {
@@ -23,8 +32,20 @@ class LevelBuilder extends Phaser.Scene {
             },
             "ground_block": () => {
                 return new GroundBlock()
+            },
+            "collisor": () => {
+                return new WallBlock()
+            },
+            "spawn": () => {
+                return new SpawnBlock()
             }
         }
+    }
+
+    calculateGridIndex(mouseX, mouseY, tileSize) {
+        const i = Math.floor(mouseX / tileSize);
+        const j = Math.floor(mouseY / tileSize);
+        return { i, j };
     }
 
     createGrid(tileSize) {
@@ -96,10 +117,17 @@ class LevelBuilder extends Phaser.Scene {
         this.selectedBlock = this.availableBlocks[key]()
         console.log(this.selectedBlock)
     }
+
+    clearNotSelectedBlocks(jumpIndex) {
+        this.blocksSelection.forEach((block, index) => {
+            if(jumpIndex !== index) block.setStrokeStyle(1, 0x000000);
+            index++;
+        })
+    }
     
 
     async createBlocksSelector() {
-        let rectangle = this.add.rectangle(1800, 350, 300, 600, 0xcccccc, 0.5);
+        let rectangle = this.add.rectangle(window.innerWidth*0.90, 350, 300, 600, 0xcccccc, 0.5);
     
         // Add text in the center of the rectangle
         const text = this.add.text(rectangle.x, 100, 'Seletor de blocos', {
@@ -113,10 +141,9 @@ class LevelBuilder extends Phaser.Scene {
         const block = await fetch("blocks.json")
         const data = await block.json();
         const keys = Object.keys(data)
-        let index = 1;
         let offset_y = 0;
         let offset_x = 0;
-        keys.forEach(key => {
+        keys.forEach((key, index) => {
             const blockInfo = data[key];
             const r = blockInfo["color"]["r"];
             const g = blockInfo["color"]["g"];
@@ -146,8 +173,10 @@ class LevelBuilder extends Phaser.Scene {
                 // Este código será executado quando o retângulo for clicado
                 selected = true
                 rect.setStrokeStyle(1, 0xEC8065)  
-                this.setSelectedBlock(this.rgbToHex(r, g, b), key)          
+                this.setSelectedBlock(this.rgbToHex(r, g, b), key)   
+                this.clearNotSelectedBlocks(index)            
             });
+
         
             const blockDescription = this.add.text(rectangle.x - 10 - rect.width / 2 + offset_x, rect.y + rect.height / 2 - 20, blockInfo["description"], {
                 fontSize: '22px',
@@ -157,15 +186,75 @@ class LevelBuilder extends Phaser.Scene {
         
             // Center the text vertically in the middle of the rectangle
             blockDescription.setOrigin(0.5);
+            this.blocksSelection.push(rect)
         
-            if(index % 2 === 0) offset_y += 12;
+            if(index % 2 === 1) offset_y += 160;
             offset_x = offset_x === 0 ? 120 : 0;
+        });
+    }
+
+    downloadJSON(jsonData, filename) {
+        // Converta o objeto JSON em uma string JSON
+        var jsonString = JSON.stringify(jsonData);
+    
+        // Crie um novo Blob com o conteúdo JSON
+        var blob = new Blob([jsonString], { type: "application/json" });
+    
+        // Crie um URL para o Blob
+        var url = URL.createObjectURL(blob);
+    
+        // Crie um elemento de link para fazer o download
+        var link = document.createElement("a");
+        link.href = url;
+        link.download = filename; // Nome do arquivo que será baixado
+        link.click();
+    
+        // Limpe o URL criado para o Blob
+        URL.revokeObjectURL(url);
+    }
+
+    createGenerateJsonButton() {
+        let rectangle = this.add.rectangle(window.innerWidth*0.90,750, 300, 120, 0xffffff);
+        rectangle.setStrokeStyle(1,0x000000)
+        const text = this.add.text(rectangle.x, 750, 'Gerar JSON', {
+            fontSize: '22px',
+            fill: '#000000',
+            align: 'center',
+        });
+    
+        // Center the text in the middle of the rectangle
+        text.setOrigin(0.5);
+
+        rectangle.setInteractive();
+
+        rectangle.on('pointerover', function () {
+            rectangle.setFillStyle(0xcccccc); // Define a cor do retângulo para cinza
+        });
+
+        rectangle.on('pointerout', function () {
+            // Este código será executado quando o mouse sair do retângulo
+            
+            rectangle.setFillStyle(0xffffff);
+        });
+
+        rectangle.on('pointerdown', () => {
+            // Este código será executado quando o retângulo for clicado
+            let jsonData = []
+            for(let i = 0; i < this.blocksArray.length; i++) {
+                for(let j = 0; j < this.blocksArray[i].length; j++) {
+                    let block = this.blocksArray[i][j]
+                    jsonData.push(block)
+                }
+            }       
+            this.downloadJSON(jsonData)
         });
     }
     
 
     create ()
     {
+        this.gameWidth = window.innerWidth;
+        this.gameHeight = window.innerHeight;
         this.cursorKeys = this.input.keyboard.createCursorKeys();
         this.createGrid(32)
         this.cameras.main.setBackgroundColor(0xcccccc);
@@ -178,6 +267,7 @@ class LevelBuilder extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, 4000, 3240); // Define os limites do mundo de física para o tamanho total do seu cenário
         // Isso colocaria seu personagem na posição x=1200, y=0, que está fora dos limites do canvas visível
         this.createBlocksSelector()
+        this.createGenerateJsonButton()
         // Configurar a câmera
         this.cameras.main.setBounds(0, 0, 4000, 3240); // Define os limites da câmera para o tamanho total do seu cenário
         this.cameras.main.startFollow(this.cameraRef);
@@ -191,13 +281,40 @@ class LevelBuilder extends Phaser.Scene {
 
             this.mousePos.x = worldMouseX
             this.mousePos.y = worldMouseY
+
+            if(this.rightButtonIsPressed) {
+                let calculated = this.calculateGridIndex(this.mousePos.x, this.mousePos.y, 32)
+                this.gridMouseIndex = calculated
+                this.blocksArray[calculated.i][calculated.j] = this.selectedBlock
+                this.tiles[calculated.i][calculated.j].setFillStyle(this.selectedColor)
+            }
         });
         this.input.on('wheel', this.onScroll.bind(this));
 
-        
+        this.cameras.main.setSize(this.gameWidth, this.gameHeight);
+        this.cameras.main.setZoom(1);
+
+        // Recalcular o número de linhas e colunas do grid
+        const numRows = Math.ceil(this.gameHeight / this.tileSize);
+        const numCols = Math.ceil(this.gameWidth / this.tileSize);
+
+        this.input.on('pointerdown', (pointer, gameObjects) => {
+            // Verifique se o botão direito do mouse foi pressionado
+            if (pointer.rightButtonDown()) {
+                // Evite o comportamento padrão do menu de contexto
+                event.preventDefault();
+
+                this.rightButtonIsPressed = !this.rightButtonIsPressed;
+            }
+        });
     }
 
     update() {
+        if(this.mouseIsPressed) {
+            const tileSize = 32; // Tamanho do tile, ajuste conforme necessário
+            const { i, j } = this.calculateGridIndex(this.mousePos.x, this.mousePos.y, tileSize);
+            this.tiles[i][j].setFillStyle(this.selectedColor);
+        }
         this.cameraRef.y += this.cameraRefVertical;
         this.circle.x = this.mousePos.x;
         if (this.cursorKeys.left.isDown) {
