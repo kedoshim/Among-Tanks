@@ -161,7 +161,7 @@ export class PlayerController extends Controller {
         moveX++;
       }
 
-      if (gamepadButtons[this._buttons.shoot].value > 1) {
+      if (gamepadButtons[this._buttons.shoot].value > 0) {
         this._target.shoot();
       }
 
@@ -224,7 +224,7 @@ export class PlayerController extends Controller {
         rotation++;
       }
 
-      if (gamepadButtons[this._buttons.shoot].value > 1) {
+      if (gamepadButtons[this._buttons.shoot].value > 0) {
         this._target.shoot();
       }
 
@@ -235,8 +235,8 @@ export class PlayerController extends Controller {
         movement -= gamepadAxes[1] * this._stickMultiplier;
       }
       //right stick x axis
-      if (gamepadAxes[2] > this._deadzone || gamepadAxes[2] < -this._deadzone) {
-        rotation -= gamepadAxes[2] * this._stickMultiplier;
+      if (gamepadAxes[0] > this._deadzone || gamepadAxes[0] < -this._deadzone) {
+        rotation -= gamepadAxes[0] * this._stickMultiplier;
       }
     }
     // makes so it always uses the directional movement mode if using the gamepad
