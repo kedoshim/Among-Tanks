@@ -15,6 +15,8 @@ import { Player } from "./entities/player.js";
 
 import { getConfig, loadConfig } from "./config.js";
 
+let connectedGamepads = [null, null, null, null];
+
 window.addEventListener("gamepadconnected", (e) => {
   const gamepad = e.gamepad;
   connectedGamepads[gamepad.index] = gamepad.index;
@@ -38,7 +40,6 @@ async function main() {
 
   let entities = [];
   let players = [];
-  let connectedGamepads = [null, null, null, null];
 
   const playerSpawnPoint = config.playerSpawnPoint;
 
