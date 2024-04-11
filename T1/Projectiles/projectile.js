@@ -2,21 +2,35 @@ import * as THREE from 'three';
 import { setDefaultMaterial } from "../../libs/util/util.js";
 
 export class Projectile {
-    constructor(position, direction, speed=0.5, damage=1, ricochetsAmount=2, color="white") {
+    constructor(position, direction, speed=0.5, damage=1, ricochetsAmount=2, color="red") {
         this.damage = damage;
         this.speed = speed;
         this.ricochetsAmount = ricochetsAmount;
         this.ricochetsLeft = ricochetsAmount;
+        this.hitAnyTank = false;
+        this.alreadyInScene = false;
         this.direction = direction.normalize();
 
-        this.projectile = this.build_projectile(0.5, color);
-        this.projectile.position.set(position);
+        this.projectile = this.build_projectile(1, color);
+        this.projectile.position.set(position.x, position.y, position.z);
 
         this.collisionShape = new THREE.Box3().setFromObject(this.projectile);
     }
 
     setDirection(direction) {
         this.direction = direction.normalize();
+    }
+
+    hitTank() {
+        this.hitAnyTank = true;
+    }
+
+    isAlreadyInScene() {
+        return this.alreadyInScene;
+    }
+
+    setAlreadyInScene(value) {
+        this.alreadyInScene = value;
     }
 
     getProjectile() {
@@ -32,8 +46,8 @@ export class Projectile {
     }
 
     build_projectile(radius, color) {
-        const projectile_sphere = new THREE.SphereGeometry(radius);
-        const material = setDefaultMaterial(color);
+        let projectile_sphere = new THREE.SphereGeometry(radius);
+        let material = setDefaultMaterial(color);
         return new THREE.Mesh(projectile_sphere, material);
     }
 

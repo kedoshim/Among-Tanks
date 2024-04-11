@@ -73,6 +73,10 @@ export class Tank {
     return this._lastValidTargetAngle;
   }
 
+  get projectiles() {
+    return this._projectiles;
+  }
+
   // Setters
   /**
    * @type {String}
@@ -193,22 +197,20 @@ export class Tank {
    * Makes the tank shoot
    */
   shoot() {
-    // console.log("shoot");
-    //shooting logic
-    let sine = Math.sin(this.model.rotation.y + THREE.MathUtils.degToRad(-90));
-    let cosine = Math.cos(this.model.rotation.y + THREE.MathUtils.degToRad(-90));
-    const length = 5;
+    const length = 10; // Posição de disparo do projétil em relação ao tanque
+    const projectilePosition = this.model.position.clone(); // Posição inicial do projétil é a mesma do tanque
 
-    let direction = new THREE.Vector3(length*cosine, 0.0, length*sine);
-    let projectile_position = new THREE.Vector3(this.model.position.x, this.model.position.y, this.model.position.z);
-    projectile_position.add(direction);
-    direction = direction.normalize();
+    const tankForwardVector = new THREE.Vector3(0, 0, 1); // Vetor de avanço do tanque na direção Z positiva
+    tankForwardVector.applyQuaternion(this.model.quaternion); // Aplicar rotação do tanque ao vetor de avanço
 
-    let projectile = new Projectile(projectile_position,direction);
+    // Calcular a direção do projétil com base no vetor de avanço do tanque
+    const direction = tankForwardVector.normalize();
+
+    // Adicionar a direção ao vetor posição para obter a posição final do projétil
+    projectilePosition.addScaledVector(direction, length);
+
+    // Criar o projétil na posição calculada e com a direção correta
+    let projectile = new Projectile(projectilePosition, direction);
     this._projectiles.push(projectile);
-    
-    //console.log("Tank position: [" + )
-    console.log("Vetor direção: [" + direction.x + ", " + direction.y + ", " + direction.z + "]");
-    console.log("Tiro dado! {" + projectile_position.x + ", " + projectile_position.y + ", " + projectile_position.z + "}");
-  }
+}
 }
