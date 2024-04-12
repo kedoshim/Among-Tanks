@@ -193,6 +193,18 @@ class LevelBuilder extends Phaser.Scene {
         });
     }
 
+    findFirstNotEmpty() {
+        let block = null;
+        for(let i = 0; i < this.blocksArray.length; i++) {
+            for(let j = 0; j < this.blocksArray[i].length; j++) {
+                if(!(this.blocksArray[i][j] instanceof EmptyBlock)) {
+                    block = this.blocksArray[i][j]
+                }
+            }
+        }
+        return block;
+    }
+
     downloadJSON(jsonData, filename) {
         // Converta o objeto JSON em uma string JSON
         var jsonString = JSON.stringify(jsonData);
