@@ -14,6 +14,17 @@
       <script type="importmap"> 
          {"imports": {"three": "../build/three.module.js"}} 
       </script>  
+      <script src="./level_builder_interpreter/JsonDecoder.js"></script>
+
+      <script>
+         async function levelCall() {
+            const level = await fetch("http://localhost:5500/T1/level_builder_interpreter/level.json")
+            const level_decoded = await level.json();
+            console.log(JsonDecoder.decode(level_decoded))
+         }
+
+         levelCall()
+      </script>
 
       <div id="webgl-output">     
          <script type="module" src="main.js"></script>
