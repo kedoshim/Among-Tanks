@@ -1,7 +1,7 @@
 
 
 
-class CollisionSystem {
+export class CollisionSystem {
     constructor(players, map) {
         this.players = players;
         this.map = map;
@@ -13,42 +13,31 @@ class CollisionSystem {
 }
 
 export class ProjectileCollisionSystem extends CollisionSystem {
-    constructor(players, map, minDistanceForDanger=5) {
+    constructor(players, map=null, minDistanceForDanger=5) {
         super(players, map);
-        this.minDistanceForDanger = minDistanceForDanger;
-        this.projectiles = [];
-        this.projectilesNearPlayers = {}; // chave: índice do jogador, valor: lista de projéteis próximos.
     }
 
-    addProjectile(projectile) {
-        this.projectiles.push(projectile);
-    }
-
-    checkForProjectilesNearPlayers() {
+    checkIfThereHasBeenCollisionWithTanks() {
         let players = this.players;
-        let projectiles = this.projectiles;
-        let minDistanceForDanger = this.minDistanceForDanger;
-        let projectilesNearPlayer;
+        let player = null;
+        let hitTank = false;
+        let projectiles = [];
+
+        for (let playerIndex = 0; playerIndex < players.length; playerIndex++) {
+            player = players[playerIndex];
+            for (let projectileIndex = 0; projectileIndex < player._tank.projectiles.length; projectileIndex++) {
+                projectiles.push(player._tank.projectiles[projectileIndex]);
+            }
+        }
         
         for (let playerIndex = 0; playerIndex < players.length; playerIndex++) {
-            projectilesNearPlayer = projectiles.filter((projectile) => {
-                return players[playerIndex].position.distanceTo(projectile.position) < minDistanceForDanger;
-            });
-            this.projectilesNearPlayers[playerIndex] = projectilesNearPlayer;
-            projectilesNearPlayer = [];
-        }
-    }
+            player = players[playerIndex];
+            for (let projectileIndex = 0; projectileIndex < projectiles.length; projectileIndex++) {
+                hitTank = this.checkCollisionBetwennCollisionShapes(player._tank.collisionShape, projectiles[projectileIndex].collisionShape)
 
-    checkForCollision() {
-        let projectilesNearPlayers = this.projectilesNearPlayers;
-
-        for(let key in projectilesNearPlayers) {
-            if (projectilesNearPlayers.hasOwnProperty(key)) {
-                let projectiles = projectilesNearPlayers[key];
-                for (let projectileIndex = 0; projectileIndex < projectiles.length; projectileIndex++) {
-                    if(this.checkCollisionBetwennCollisionShapes(player.collisionShape, projectiles[projectileIndex].collisionShape)) {
-                        // TODO: aplicar o dano ao jogador e remover projétil da tela
-                    }
+                if(hitTank) {
+                    projectiles[projectileIndex].hitTank();
+                    // TODO: diminuir a vida do tank
                 }
             }
         }

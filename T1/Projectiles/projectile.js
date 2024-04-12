@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { setDefaultMaterial } from "../../libs/util/util.js";
 
 export class Projectile {
-    constructor(position, direction, speed=0.5, damage=1, ricochetsAmount=2, color="red") {
+    constructor(position, direction, speed=0.5, damage=1, ricochetsAmount=2, color="white") {
         this.damage = damage;
         this.speed = speed;
         this.ricochetsAmount = ricochetsAmount;
@@ -54,6 +54,7 @@ export class Projectile {
     moveStep() {
         let step = this.direction.clone().multiplyScalar(this.speed);
         this.projectile.position.add(step);
+        this.collisionShape = null;
         this.collisionShape = new THREE.Box3().setFromObject(this.projectile);
     }
 }

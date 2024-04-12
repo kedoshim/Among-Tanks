@@ -12,6 +12,7 @@ import {
 
 import { CameraControls } from "./camera.js";
 import { Player } from "./entities/player.js";
+import { ProjectileCollisionSystem } from "./CollisionSystem/collisionSystem.js"
 
 import { getConfig, loadConfig } from "./config.js";
 
@@ -82,6 +83,8 @@ async function main() {
 
   var positionMessage = new SecondaryBox("");
   positionMessage.changeStyle("rgba(0,0,0,0)", "lightgray", "16px", "ubuntu");
+
+  let projectileCollisionSystem = new ProjectileCollisionSystem(players);
 
   loadPlayers();
 
@@ -154,17 +157,25 @@ async function main() {
         }
         if (projectiles[index].hitAnyTank || projectiles[index].ricochetsLeft === 0) {
           // TODO: remover projétil da cena
+          scene.remove(projectiles[index].projectile);
           projectiles.splice(index, 1);
         }
-        projectiles[index].moveStep();
+        else {
+          projectiles[index].moveStep();
+        }
       }
       //player._tank.projectiles = projectiles;
     })
   }
 
+  function checkCollision() {
+    projectileCollisionSystem.checkIfThereHasBeenCollisionWithTanks();
+  }
+
   function render() {
     keyboardUpdate();
     cameraUpdate();
+    checkCollision();
     updateProjectiles();
     requestAnimationFrame(render); // Show events
     renderer.render(scene, camera); // Render scene

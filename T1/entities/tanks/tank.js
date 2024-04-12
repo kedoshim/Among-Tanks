@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { Projectile } from "../../Projectiles/projectile.js";
-import { Object3D } from "../../../build/three.module.js";
+import { Box3, Object3D } from "../../../build/three.module.js";
 
 /**
 * General class that represents any tank model
@@ -25,6 +25,7 @@ export class Tank {
     this._model = null;
 
     this._projectiles = [];
+    this.collisionShape = null;
 
     this._lastValidTargetAngle = 0;
   }
@@ -111,6 +112,7 @@ export class Tank {
    */
   set model(model) {
     this._model = model;
+    this.collisionShape = new THREE.Box3().setFromObject(model);
   }
 
   /**
@@ -170,6 +172,9 @@ export class Tank {
     // Move this.model
     this.model.position.x += this._moveSpeed * moveX;
     this.model.position.z += this._moveSpeed * moveZ;
+
+    this.collisionShape = null;
+    this.collisionShape = new THREE.Box3().setFromObject(this.model);
   }
 
   /**
@@ -191,13 +196,16 @@ export class Tank {
     this.model.rotateY(this._rotationSpeed * rotationDirection);
 
     this._lastValidTargetAngle = this._model.rotation.y;
+
+    this.collisionShape = null;
+    this.collisionShape = new THREE.Box3().setFromObject(this.model);
   }
 
   /**
    * Makes the tank shoot
    */
   shoot() {
-    const length = 10; // Posição de disparo do projétil em relação ao tanque
+    const length = 15; // Posição de disparo do projétil em relação ao tanque
     const projectilePosition = this.model.position.clone(); // Posição inicial do projétil é a mesma do tanque
 
     const tankForwardVector = new THREE.Vector3(0, 0, 1); // Vetor de avanço do tanque na direção Z positiva
