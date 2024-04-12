@@ -37,7 +37,8 @@ export class ProjectileCollisionSystem extends CollisionSystem {
 
                 if(hitTank) {
                     projectiles[projectileIndex].hitTank();
-                    // TODO: diminuir a vida do tank
+                    player.lifes -= projectiles[projectileIndex].damage;
+                    console.log(player);
                 }
             }
         }

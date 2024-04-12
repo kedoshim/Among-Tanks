@@ -23,11 +23,12 @@ export class Entity {
    * @param {Tank} [tank=null] The tank assigned to the entity
    * @param {Controller} [controller=null] The controller assigned to the entity
    */
-  constructor(name = "", spawnPoint = [0, 0], tank = null, controller = null) {
+  constructor(name = "", spawnPoint = [0, 0], tank = null, controller = null, lifes=10) {
     this._name = name || `Entity_${Entity.entityNumber}`;
     this._spawnPoint = spawnPoint;
     this._tank = tank;
     this._controller = controller;
+    this._lifes = lifes;
 
     Entity.entityNumber++;
   }
@@ -115,6 +116,12 @@ export class Entity {
     return Entity.entityNumber;
   }
 
+  /**
+   * @type {int}
+   */
+  get lifes() {
+    return this._lifes;
+  }
 
   // Setters
 
@@ -144,5 +151,12 @@ export class Entity {
    */
   set controller(controller) {
     this._controller = controller;
+  }
+
+  /**
+   * @param {int} lifes 
+   */
+  set lifes(lifes) {
+    this._lifes = lifes;
   }
 }
