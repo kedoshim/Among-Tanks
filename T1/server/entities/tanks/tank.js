@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import { Object3D } from "../../../build/three.module.js";
+// import { Object3D } from "../../../../build/three.module.js";
 
 /**
-* General class that represents any tank model
-*/
+ * General class that represents any tank model
+ */
 export class Tank {
   /**
    * Creates an instance of Tank.

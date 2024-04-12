@@ -1,0 +1,10 @@
+{
+  "main": "./T1/server/server.js",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.19.2",
+    "node-fetch": "^3.3.2",
+    "socket.io": "^4.7.5",
+    "three": "^0.163.0"
+  }
+}

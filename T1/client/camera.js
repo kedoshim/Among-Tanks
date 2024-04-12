@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
+import { OrbitControls } from "../../build/jsm/controls/OrbitControls.js";
 import { Entity } from "./entities/entity.js";
 import { getConfig } from "./config.js";
 

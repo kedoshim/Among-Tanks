@@ -9,53 +9,12 @@ import { getConfig } from "../config.js";
  */
 export class Player extends Entity {
   /**
-   * The total number of create Player objects
+   * The total number of created Player objects
    *
    * @static
    * @type {number}
    */
   static playerNumber = 0;
-
-  static defaultPlayerAmogusColors = [
-    "dimgray",
-    "antiquewhite",
-    "purple",
-    "pink",
-  ];
-
-  static defaultPlayerTankColors = ["darkblue", "red", "goldenrod", "green"];
-
-
-  static defaultPlayerControls = [
-    {
-      up: "W",
-      down: "S",
-      right: "D",
-      left: "A",
-      shoot: ["space", "Q", "shift"],
-    },
-    {
-      up: "up",
-      down: "down",
-      right: "right",
-      left: "left",
-      shoot: ["/", ","],
-    },
-    {
-      up: "I",
-      down: "K",
-      right: "L",
-      left: "J",
-      shoot: ["H"],
-    },
-    {
-      up: "h", //NumPad8
-      down: "e", //NumPad5
-      right: "f", //NumPad6
-      left: "d", //NumPad4
-      shoot: ["enter"],
-    },
-  ];
 
   /**
    * Creates an instance of Player.

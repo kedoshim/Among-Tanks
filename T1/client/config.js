@@ -7,7 +7,7 @@ export function getConfig() {
 export async function loadConfig() {
   try {
     // Fetch the JSON file
-    const response = await fetch("config.json");
+    const response = await fetch("client-config.json");
     // Parse JSON data
     config = await response.json();
   }catch (error) {

@@ -1,5 +1,6 @@
 import * as THREE from "three";
-import { setDefaultMaterial } from "../../../../libs/util/util.js";
+import {setDefaultMaterial} from "../../../../../libs/util/util.js";
+
 
 export function createCommonTank(tankColor, amogColor) {
   let tank = createAmogus(0, 0, amogColor);

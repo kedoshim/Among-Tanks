@@ -1,5 +1,5 @@
-import { Scene } from "../../build/three.module.js";
-import KeyboardState from "../../libs/util/KeyboardState.js";
+// import { Scene } from "../../../build/three.module.js";
+import KeyboardState from "../../../libs/util/KeyboardState.js";
 import { Controller } from "./controllers/controller.js";
 import { Tank } from "./tanks/tank.js";
 
@@ -45,18 +45,20 @@ export class Entity {
       );
       return;
     }
-    
+
     this._controller.control(keyboard, gamepad);
   }
 
   /**
    * Loads entity's tanks in the provided scene
-   * 
+   *
    * @param {Scene} scene
    */
   load(scene) {
     if (this._tank == null) {
-      console.warn(`Tried to load Entity ${this._name} but their '_tank' attribute was 'null'`)
+      console.warn(
+        `Tried to load Entity ${this._name} but their '_tank' attribute was 'null'`
+      );
       return;
     }
 
@@ -105,7 +107,6 @@ export class Entity {
   get totalEntitiesNumber() {
     return Entity.entityNumber;
   }
-
 
   // Setters
 
