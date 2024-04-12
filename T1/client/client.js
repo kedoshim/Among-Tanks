@@ -1,6 +1,6 @@
-import io from 'socket.io'
-import { getConfig } from './config';
-import { PlayerController } from './entities/controllers/player_controller';
+import { loadConfig, getConfig } from "./config.js";
+import InputListener from "./input/inputListener.js";
+import Game from "./game.js";
 
 window.addEventListener("gamepadconnected", (e) => {
   const gamepad = e.gamepad;
@@ -15,14 +15,6 @@ window.addEventListener("gamepaddisconnected", (e) => {
   console.log("gamepad " + gamepad.index + " disconnected");
 });
 
-// Listen window size changes
-window.addEventListener(
-  "resize",
-  function () {
-    onWindowResize(camera, renderer);
-  },
-  false
-);
 
 let config = null;
 async function configSetup() {
@@ -30,35 +22,40 @@ async function configSetup() {
   config = getConfig();
 }
 
+await configSetup();
+
 let connectedGamepads = [null, null, null, null];
 
-const socket = io()
+const socket = io();
+
+let game = new Game()
+let inputListener = new InputListener(document,config);
 
 socket.on("connect", () => {
   try {
     for (let i; i < config.numberOfPlayers; i++) {
-      const playerId = socket.id + "."+i;
+      const playerId = socket.id + "." + i;
       console.log(`Player connected on Client with id: ${playerId}`);
     }
 
     // renderScreen(screen, game, requestAnimationFrame, playerId);
-  }
-  catch {
-    console.log(`Error on connect: ${e}`)
+  } catch (error) {
+    console.log(`Error on connect: ${error}`);
   }
 
 });
 
 socket.on("setup", (state) => {
-  game.setState(state);
+  game.createGame(state);
+  game.render()
 
   for (let i; i < config.numberOfPlayers; i++) {
     const playerId = socket.id + "." + i;
-    keyboardListener.registerPlayerId(playerId);
+    // keyboardListener.registerPlayerId(playerId);
   }
-  
-  keyboardListener.subscribe(game.movePlayer);
-  keyboardListener.subscribe((command) => {
+
+  inputListener.subscribe(game.movePlayer);
+  inputListener.subscribe((command) => {
     socket.emit("move-player", command);
   });
 });
@@ -85,77 +82,10 @@ socket.on("move-player", (command) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-await loadConfig();
-
-const NumberOfPlayers = config.numberOfPlayers; //local players
-
-  // Show text information onscreen
-showInformation();
-
-// To use the keyboard
-var keyboard = new KeyboardState();
-  
-for (let i = 0; i < NumberOfPlayers; i++) {
-  createPlayer();
-}
-
-var positionMessage = new SecondaryBox("");
-positionMessage.changeStyle("rgba(0,0,0,0)", "lightgray", "16px", "ubuntu");
-
 function manageOrbitControls() {
   if (keyboard.down("O")) {
     cameraController.changeCameraMode();
   }
 }
 
-function keyboardUpdate() {
-  keyboard.update();
-  manageOrbitControls();
 
-  gameState.players.every((player, index) => {
-    let playerGamepad = null;
-    if (connectedGamepads[index] != null) {
-      playerGamepad = navigator.getGamepads()[index];
-      // console.log("controller " + (index+1));
-    }
-    player.runController(keyboard, playerGamepad);
-    return true;
-  });
-
-  gameState.entities.forEach((entity) => {
-    entity.runController();
-  });
-}
-
-function showInformation() {
-  // Use this to show information onscreen
-  var controls = new InfoBox();
-  controls.add("Geometric Transformation");
-  controls.addParagraph();
-  controls.add("Player - MOVE  SHOOT");
-  controls.add("Player 1: WASD LeftShift");
-  controls.add("Player 2: arrows [' , ', ' / ']");
-  controls.add("Player 3: IJKL    H");
-  controls.add("Player 4: 8456    Enter");
-  controls.show();
-}
-
-function cameraUpdate() {
-  cameraController.calculatePosition(gameState.players);
-}

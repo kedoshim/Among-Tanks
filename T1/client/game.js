@@ -1,5 +1,4 @@
-import * as THREE from "three";
-import KeyboardState from "../../libs/util/KeyboardState.js";
+import * as THREE from "./public/three/build/three.module.js";
 import {
   initRenderer,
   initDefaultBasicLight,
@@ -8,98 +7,99 @@ import {
   SecondaryBox,
   onWindowResize,
   createGroundPlaneXZ,
-} from "../libs/util/util.js";
+} from "./public/util/util.js";
 
 import { CameraControls } from "./camera.js";
-import { Player } from "./entities/player.js";
 
 import { getConfig, loadConfig } from "./config.js";
 
-// class Game{
+export default class Game {
+  constructor() {
+    this.gameState = {
+      scene: null,
+      players: {},
+      entities: [],
+    };
+    this.config = null;
+    this.playerSpawnPoint = null;
 
+    this.gameState.scene = new THREE.Scene(); // Create main scene
+    initDefaultBasicLight(this.gameState.scene); // Create a basic light to illuminate the scene
 
-let gameState = {
-  scene,
-  players : [],
-  entities : [],
-}
-
-function setState(state) {
-  this.gameState = state;
-}
-
-
-
-async function main() {
-  await loadConfig();
-
-  const config = getConfig();
-  // console.log("Configuration loaded:", config);
-
-  
-
-  
-
-  const playerSpawnPoint = config.playerSpawnPoint;
-
-  let scene, renderer, material, light, orbit, cameraController, camera; // Initial variables
-  scene = new THREE.Scene(); // Create main scene
-  renderer = initRenderer(); // Init a basic renderer
-  material = setDefaultMaterial(); // create a basic material
-  light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
-  cameraController = new CameraControls(renderer);
-  camera = cameraController.camera;
-
-
-  // // Show axes (parameter is size of each axis)
-  // var axesHelper = new THREE.AxesHelper(12);
-  // scene.add(axesHelper);
-
-  // create the ground plane
-  let plane = createGroundPlaneXZ(1000, 1000);
-  scene.add(plane);
-
-  
-
-  
-
-  loadPlayers();
-
-  render();
-
-  function createPlayer() {
-    let new_player = new Player();
-
-    new_player.spawnPoint = playerSpawnPoint[Player.playerNumber - 1];
-
-    gameState.players.push(new_player);
+    const plane = createGroundPlaneXZ(1000, 1000);
+    this.gameState.scene.add(plane);
   }
 
-  function loadPlayers() {
-    gameState.players.forEach((entity) => {
-      console.log("loading player " + entity.name);
-      entity.load(scene);
+  async createGame(state) {
+    this.config = getConfig();
+
+    this.setState(state);
+
+    this.renderer = initRenderer(); // Init a basic renderer
+    this.material = setDefaultMaterial(); // create a basic material
+    this.cameraController = new CameraControls(this.renderer);
+    this.camera = this.cameraController.camera;
+
+    this.positionMessage = new SecondaryBox("");
+    this.positionMessage.changeStyle(
+      "rgba(0,0,0,0)",
+      "lightgray",
+      "16px",
+      "ubuntu"
+    );
+
+    this.showInformation();
+
+    // Listen window size changes
+    window.addEventListener(
+      "resize",
+      function () {
+        onWindowResize(camera, renderer);
+      },
+      false
+    );
+  }
+
+  setState(state) {
+    if(state)
+      this.gameState = state;
+    console.log(state)
+  }
+
+  removePlayer(command) {
+    const id = command.playerId;
+    this.gameState.players.id = null;
+  }
+
+  loadPlayers() {
+    const { scene, players } = this.gameState;
+    players.forEach((player) => {
+      console.log("loading player " + player.name);
+      player.load(scene);
     });
   }
 
-  
-
-  
-
-  
-
-  
-
-  function render() {
-    keyboardUpdate();
-    cameraUpdate();
-    requestAnimationFrame(render); // Show events
-    renderer.render(scene, camera); // Render scene
+  updateCamera() {
+    if (Object.keys(this.gameState.players).length > 0)
+      this.cameraController.calculatePosition(this.gameState.players);
   }
+
+  showInformation() {
+  // Use this to show information onscreen
+  var controls = new InfoBox();
+  controls.add("Geometric Transformation");
+  controls.addParagraph();
+  controls.add("Player - MOVE  SHOOT");
+  controls.add("Player 1: WASD LeftShift");
+  controls.add("Player 2: arrows [' , ', ' / ']");
+  controls.add("Player 3: IJKL    H");
+  controls.add("Player 4: 8456    Enter");
+  controls.show();
 }
 
-main().catch((error) => {
-  console.error("Error initializing:", error);
-});
-
-// }
+  render() {
+    this.updateCamera();
+    requestAnimationFrame(this.render); // Show events
+    this.renderer.render(this.gameState.scene, this.camera); // Render scene
+  }
+}

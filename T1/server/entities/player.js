@@ -42,8 +42,7 @@ export class Player extends Entity {
 
     this._tank = new CommonTank(tankColor, amogColor);
     
-    let controllerKeys = playerConfig.defaultPlayerControls[Player.playerNumber];
-    this._controller = new PlayerController(this._tank, controllerKeys);
+    this._controller = new PlayerController(this._tank);
     
     console.info("creating player " + this._name);
     Player.playerNumber++;

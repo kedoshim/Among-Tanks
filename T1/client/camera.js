@@ -1,6 +1,5 @@
-import * as THREE from "three";
-import { OrbitControls } from "../../build/jsm/controls/OrbitControls.js";
-import { Entity } from "./entities/entity.js";
+import * as THREE from "./public/three/build/three.module.js";
+import { OrbitControls } from "./public/jsm/controls/OrbitControls.js";
 import { getConfig } from "./config.js";
 
 /**
@@ -100,15 +99,16 @@ export class CameraControls {
     let distanceZ = Math.abs(point1[1] - point2[1]);
 
     let height = this._camera.position.y;
-    const halfCameraAngle = this._camera.fov / 2
-
+    const halfCameraAngle = this._camera.fov / 2;
 
     let xVirtualDistance = distanceX / this._camera.aspect;
     if (xVirtualDistance < distanceZ)
-      height = distanceZ / (Math.tan(THREE.MathUtils.degToRad(halfCameraAngle)) * 2);
+      height =
+        distanceZ / (Math.tan(THREE.MathUtils.degToRad(halfCameraAngle)) * 2);
     else {
       height =
-        xVirtualDistance / (Math.tan(THREE.MathUtils.degToRad(halfCameraAngle)) * 2);
+        xVirtualDistance /
+        (Math.tan(THREE.MathUtils.degToRad(halfCameraAngle)) * 2);
     }
     // console.log(height);
     return height;

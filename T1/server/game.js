@@ -1,9 +1,9 @@
 import * as THREE from "three";
 
-import { initDefaultBasicLight,createGroundPlaneXZ } from "../../libs/util/util.js";
-
-
-
+import {
+  initDefaultBasicLight,
+  createGroundPlaneXZ,
+} from "../../libs/util/util.js";
 
 import { Player } from "./entities/player.js";
 
@@ -13,19 +13,13 @@ export default class Game {
   constructor() {
     this.gameState = {
       scene: null,
-      players: [],
+      players: {},
       entities: [],
     };
     this.config = null;
     this.playerSpawnPoint = null;
-  }
 
-  setState(state) {
-    this.gameState = state;
-  }
-
-  async createGame() {
-    await loadConfig();
+    loadConfig();
     this.config = getConfig();
     this.playerSpawnPoint = this.config.playerSpawnPoint;
 
@@ -36,10 +30,20 @@ export default class Game {
     this.gameState.scene.add(plane);
   }
 
-  createPlayer() {
-    const newPlayer = new Player();
+  setState(state) {
+    this.gameState = state;
+  }
+
+  createPlayer(command) {
+    const id = command.playerId;
+    const newPlayer = new Player(id);
     newPlayer.spawnPoint = this.playerSpawnPoint[newPlayer.playerNumber - 1];
-    this.gameState.players.push(newPlayer);
+    this.gameState.players.id = newPlayer;
+  }
+
+  removePlayer(command) {
+    const id = command.playerId;
+    this.gameState.players.id = null;
   }
 
   loadPlayers() {

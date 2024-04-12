@@ -25,9 +25,6 @@ export class Controller {
 
   /**
    * Makes 'target' act according to the provided inputs
-   *
-   * @param {KeyboardState} keyboard The keyboard assigned to the target
-   * @param {Gamepad} [gamepad=null] The gamepad assigned to the target
    */
-  control(keyboard, gamepad = null) {}
+  control(command = null) {}
 }
