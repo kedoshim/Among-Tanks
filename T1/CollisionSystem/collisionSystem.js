@@ -2,9 +2,9 @@
 
 
 export class CollisionSystem {
-    constructor(players, map) {
+    constructor(players, walls) {
         this.players = players;
-        this.map = map;
+        this.walls = walls;
     }
 
     checkCollisionBetwennCollisionShapes(collisionShape1, collisionShape2) {
@@ -13,14 +13,14 @@ export class CollisionSystem {
 }
 
 export class ProjectileCollisionSystem extends CollisionSystem {
-    constructor(players, map=null, minDistanceForDanger=5) {
-        super(players, map);
+    constructor(players, walls=null) {
+        super(players, walls);
+        this._projectiles = [];
     }
 
-    checkIfThereHasBeenCollisionWithTanks() {
+    #getAllProjectilesInScene() {
         let players = this.players;
         let player = null;
-        let hitTank = false;
         let projectiles = [];
 
         for (let playerIndex = 0; playerIndex < players.length; playerIndex++) {
@@ -29,6 +29,17 @@ export class ProjectileCollisionSystem extends CollisionSystem {
                 projectiles.push(player._tank.projectiles[projectileIndex]);
             }
         }
+        this._projectiles = [];
+        this._projectiles = projectiles;
+    }
+
+    checkIfThereHasBeenCollisionWithTanks() {
+        let players = this.players;
+        let player = null;
+        let hitTank = false;
+
+        this.#getAllProjectilesInScene();
+        let projectiles = this._projectiles;
         
         for (let playerIndex = 0; playerIndex < players.length; playerIndex++) {
             player = players[playerIndex];
@@ -43,10 +54,30 @@ export class ProjectileCollisionSystem extends CollisionSystem {
             }
         }
     }
+
+    checkCollisionWithWalls() {
+        let walls = this.walls;
+        let wall = null;
+
+        this.#getAllProjectilesInScene();
+        let projectiles = this._projectiles;
+
+        for (let projectileIndex = 0; projectileIndex < projectiles.length; projectileIndex++) {
+            for (let wallIndex = 0; wallIndex < walls.length; wallIndex++) {
+                wall = walls[wallIndex];
+                hitWall = this.checkCollisionBetwennCollisionShapes(wall.collisionShape, projectiles[projectileIndex].collisionShape);
+
+                if(hitWall) {
+                    projectiles[projectileIndex].reflection(wall.position);
+                    projectiles[projectileIndex].hitWall();
+                }
+            }
+        }
+    }
 }
 
 export class TankCollisionSystem extends CollisionSystem {
-    constructor(players, map) {
-        super(players, map);
+    constructor(players, walls) {
+        super(players, walls);
     }
 }

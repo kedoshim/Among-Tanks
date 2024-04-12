@@ -25,6 +25,10 @@ export class Projectile {
         this.hitAnyTank = true;
     }
 
+    hitWall() {
+        this.ricochetsLeft--;
+    }
+
     isAlreadyInScene() {
         return this.alreadyInScene;
     }
@@ -56,5 +60,27 @@ export class Projectile {
         this.projectile.position.add(step);
         this.collisionShape = null;
         this.collisionShape = new THREE.Box3().setFromObject(this.projectile);
+    }
+
+    reflection(wallPosition) {
+        let projectilePosition = this.projectile.position;
+
+        if(wallPosition.x > projectilePosition.x) {
+            this.#changeDirection(new THREE.Vector3(-1.0,  0.0,  0.0));
+        }
+        else {
+            this.#changeDirection(new THREE.Vector3( 1.0,  0.0,  0.0));
+        }
+
+        if(wallPosition.z > projectilePosition.z) {
+            this.#changeDirection(new THREE.Vector3( 0.0,  0.0, -1.0));
+        }
+        else {
+            this.#changeDirection(new THREE.Vector3( 0.0,  0.0,  1.0)); 
+        }
+    }
+
+    #changeDirection(vector) {
+        this.direction.reflect(vector).normalize();
     }
 }

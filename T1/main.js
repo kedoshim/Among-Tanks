@@ -164,7 +164,6 @@ async function main() {
           projectiles[index].moveStep();
         }
       }
-      //player._tank.projectiles = projectiles;
     })
   }
 
