@@ -65,14 +65,14 @@ export class Projectile {
     reflection(wallPosition) {
         let projectilePosition = this.projectile.position;
 
-        if(wallPosition.x > projectilePosition.x) {
+        if(wallPosition.x - projectilePosition.x > 0) {
             this.#changeDirection(new THREE.Vector3(-1.0,  0.0,  0.0));
         }
         else {
             this.#changeDirection(new THREE.Vector3( 1.0,  0.0,  0.0));
         }
 
-        if(wallPosition.z > projectilePosition.z) {
+        if(wallPosition.z - projectilePosition.z> 0) {
             this.#changeDirection(new THREE.Vector3( 0.0,  0.0, -1.0));
         }
         else {

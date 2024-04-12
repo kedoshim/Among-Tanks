@@ -80,4 +80,24 @@ export class TankCollisionSystem extends CollisionSystem {
     constructor(players, walls) {
         super(players, walls);
     }
+
+    checkCollisionWithWalls() {
+        let walls = this.walls;
+        let wall = null;
+        let player = null;
+        let players = this.players;
+
+        for (let playerIndex = 0; playerIndex < players.length; playerIndex++) {
+            player = players[playerIndex];
+
+            for (let wallIndex = 0; wallIndex < walls.length; wallIndex++) {
+                wall = walls[wallIndex];
+                hitWall = this.checkCollisionBetwennCollisionShapes(wall.collisionShape, player._tank.collisionShape);
+
+                if(hitWall) {
+                    //TODO: fazer o resto da colisão
+                }
+            }
+        }
+    }
 }

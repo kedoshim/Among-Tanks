@@ -156,7 +156,6 @@ async function main() {
           projectiles[index].setAlreadyInScene(true);
         }
         if (projectiles[index].hitAnyTank || projectiles[index].ricochetsLeft === 0) {
-          // TODO: remover projétil da cena
           scene.remove(projectiles[index].projectile);
           projectiles.splice(index, 1);
         }
