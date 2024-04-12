@@ -25,7 +25,7 @@ export class HealthBar {
     }
 
     updateHealthBar(actualLife) {
-        let percentageLife = actualLife*2 / 20
+        let percentageLife = actualLife / this.maxLife;
         let color = new THREE.Color();
         let width = this.originalWidth * percentageLife;
 
