@@ -25,19 +25,23 @@ export class HealthBar {
     }
 
     updateHealthBar(actualLife) {
-        let percentageLife = actualLife / this.maxLife;
+        let percentageLife = actualLife*2 / 20
         let color = new THREE.Color();
         let width = this.originalWidth * percentageLife;
 
-        if(percentageLife >= 0.75) {
-            color.setRGB(0, 1, 0);
+        let red, green;
+
+        if (percentageLife < 0.1) {
+          red = 0;
+          green = 0;
+        } else if (percentageLife < 0.5) {
+          red = 1;
+          green = (percentageLife - 0.1) * 2;
+        } else {
+          red = Math.log2(1 / percentageLife);
+          green = 1;
         }
-        else if(percentageLife >= 0.35) {
-            color.setRGB(1, 1, 0); // Amarelo
-        }
-        else {
-            color.setRGB(1, 0, 0);
-        }
+        color.setRGB( red, green, 0  )
 
         this.model.material.color.copy(color);
         this.model.scale.setX(width);
