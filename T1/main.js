@@ -172,11 +172,19 @@ async function main() {
     projectileCollisionSystem.checkIfThereHasBeenCollisionWithTanks();
   }
 
+  function updateHealthBars() {
+    players.forEach(player => {
+      player.healthBar.updateHealthBar(player.lifes);
+      player.healthBar.setHealthBarPosition(player._tank.model.position);
+    })
+  }
+
   function render() {
     keyboardUpdate();
     cameraUpdate();
     checkCollision();
     updateProjectiles();
+    updateHealthBars();
     requestAnimationFrame(render); // Show events
     renderer.render(scene, camera); // Render scene
   }

@@ -2,6 +2,7 @@ import { Scene } from "../../build/three.module.js";
 import KeyboardState from "../../libs/util/KeyboardState.js";
 import { Controller } from "./controllers/controller.js";
 import { Tank } from "./tanks/tank.js";
+import { HealthBar } from "./tanks/healthBar.js";
 
 /**
  * Represents players and enemies
@@ -22,6 +23,7 @@ export class Entity {
    * @param {Array.<number>} [spawnPoint=[0, 0]] [x,z] coordinates
    * @param {Tank} [tank=null] The tank assigned to the entity
    * @param {Controller} [controller=null] The controller assigned to the entity
+   * @param {int} [lifes=10] the maxLife of the entity
    */
   constructor(name = "", spawnPoint = [0, 0], tank = null, controller = null, lifes=10) {
     this._name = name || `Entity_${Entity.entityNumber}`;
@@ -29,6 +31,7 @@ export class Entity {
     this._tank = tank;
     this._controller = controller;
     this._lifes = lifes;
+    this._healthBar = new HealthBar(lifes);
 
     Entity.entityNumber++;
   }
@@ -67,10 +70,14 @@ export class Entity {
 
     this._tank._model.position.x = x;
     this._tank._model.position.z = z;
+
+    this._healthBar.createLifeBar();
+    this._healthBar.setHealthBarPosition(this._tank._model.position);
+
+    scene.add(this._healthBar.model);
   }
 
   loadProjectile(scene) {
-    // TODO: carregar os projéteis na cena
     let projectile = this._tank.projectiles[this._tank.projectiles.lenght - 1];
     scene.add(projectile);
   }
@@ -121,6 +128,10 @@ export class Entity {
    */
   get lifes() {
     return this._lifes;
+  }
+
+  get healthBar() {
+    return this._healthBar;
   }
 
   // Setters
