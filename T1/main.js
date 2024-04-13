@@ -16,6 +16,7 @@ import { ProjectileCollisionSystem } from "./CollisionSystem/collisionSystem.js"
 
 import { getConfig, loadConfig } from "./config.js";
 import {JsonDecoder} from "./level_builder_interpreter/JsonDecoder.js"
+import { Block, CollisionBlock } from "./Blocks/blocks.js";
 
 window.addEventListener("gamepadconnected", (e) => {
   const gamepad = e.gamepad;
@@ -40,6 +41,8 @@ async function main() {
 
   const config = getConfig();
   // console.log("Configuration loaded:", config);
+
+  const BLOCK_SIZE = 13;
 
   const NumberOfPlayers = config.numberOfPlayers;
 
@@ -66,33 +69,24 @@ async function main() {
     false
   );
 
-  function drawGround(data, offset) {
-    let {x, y} = offset
-    let BLOCK_SIZE = 13
+  function drawLevel(data, offset) {
     for(let i = 0; i < data.length; i++) {
       for(let j = 0; j < data[i].length; j++) {
         if(data[i][j].type === "GroundBlock") {
-          const geometry = new THREE.BoxGeometry( BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE ); 
-          geometry.translate(-(BLOCK_SIZE*(Math.abs(i - x))), -13, -(BLOCK_SIZE*(Math.abs(j - y))))
-          const material = new THREE.MeshBasicMaterial( {color: 0xB2BEB5	} ); 
-          const cube = new THREE.Mesh( geometry, material ); 
-          scene.add(cube);
+          const position = {x: i, y: -13, z: j}
+          const color = {color: 0xB2BEB5};
+          const groundBlock = new Block(position, BLOCK_SIZE);
+          groundBlock.createBlock(offset, color);
+          scene.add(groundBlock.model);
         }
-      }
-    }
-  }
+        else if(data[i][j].type === "WallBlock") {
+          const position = {x: i, y: 0, z:j};
+          const color = {color : 0x0000ff}
+          const wallBlock = new CollisionBlock(position, BLOCK_SIZE);
+          wallBlock.createBlock(offset, color);
+          // TODO: fazer os collisionShapes
 
-  function drawWalls(data, offset) {
-    let {x, y} = offset
-    let BLOCK_SIZE = 13
-    for(let i = 0; i < data.length; i++) {
-      for(let j = 0; j < data[i].length; j++) {
-        if(data[i][j].type === "WallBlock") {
-          const geometry = new THREE.BoxGeometry( BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE ); 
-          geometry.translate(-(BLOCK_SIZE*(Math.abs(i - x))), 0, -(BLOCK_SIZE*(Math.abs(j - y))))
-          const material = new THREE.MeshBasicMaterial( {color: 0x0000ff	} ); 
-          const cube = new THREE.Mesh( geometry, material ); 
-          scene.add(cube);
+          scene.add(wallBlock.model);
         }
       }
     }
@@ -215,8 +209,7 @@ async function main() {
     })
   }
 
-  drawGround(level_decoded.blocks, level_decoded.offset)
-  drawWalls(level_decoded.blocks, level_decoded.offset)
+  drawLevel(level_decoded.blocks, level_decoded.offset);
 
   function render() {
     keyboardUpdate();
