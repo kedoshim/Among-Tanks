@@ -1,6 +1,6 @@
 {
   "directionalMovementEnabled": false,
-  "numberOfPlayers" : 2,
+  "numberOfPlayers" : 1,
   "playerSpawnPoint" : [
     [-20, -20],
     [20, -20],
@@ -13,32 +13,32 @@
     "defaultPlayerTankColors": ["darkblue", "red", "goldenrod", "green"],
     "defaultPlayerControls": [
       {
-        "up": "W",
-        "down": "S",
-        "right": "D",
-        "left": "A",
-        "shoot": ["space", "Q", "shift"]
+        "up": "w",
+        "down": "s",
+        "right": "d",
+        "left": "a",
+        "shoot": [" ", "q", "Shift"]
       },
       {
-        "up": "up",
-        "down": "down",
-        "right": "right",
-        "left": "left",
+        "up": "ArrowUp",
+        "down": "ArrowDown",
+        "right": "ArrowRight",
+        "left": "ArrowLeft",
         "shoot": ["/", ","]
       },
       {
-        "up": "I",
-        "down": "K",
-        "right": "L",
-        "left": "J",
-        "shoot": ["H"]
+        "up": "i",
+        "down": "k",
+        "right": "l",
+        "left": "j",
+        "shoot": ["h"]
       },
       {
-        "up": "h",
-        "down": "e",
-        "right": "f",
-        "left": "d",
-        "shoot": ["enter"]
+        "up": "8",
+        "down": "4",
+        "right": "5",
+        "left": "6",
+        "shoot": ["Enter"]
       }
     ]
     

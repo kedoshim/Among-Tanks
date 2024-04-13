@@ -62,16 +62,17 @@ export default class Game {
     this.showInformation();
 
     // Listen window size changes
+    const cam = this.camera;
+    const rend = this.renderer;
     window.addEventListener(
       "resize",
       function () {
-        onWindowResize(this.camera, this.renderer);
+        onWindowResize(cam, rend);
       },
       false
     );
   }
 
-  
   createPlayers(players) {
     let playersObject = {};
     for (const playerId in players) {
@@ -81,18 +82,25 @@ export default class Game {
       let type = player.type;
 
       //tank
-      let x = player.tank.x;
-      let z = player.tank.z;
-      let rotation = player.tank.rotation;
-      let movement = player.tank.movement;
-      // let health = player.health;
+      let x = player.x;
+      let z = player.z;
+      let rotation = player.rotation;
+      let movement = player.movement;
+      // let health = player.health;w
 
-      let modelName = player.tank.modelName;
-      let amogColor = player.tank.amogColor;
-      let tankColor = player.tank.tankColor;
+      let modelName = player.modelName;
+      let amogColor = player.amogColor;
+      let tankColor = player.tankColor;
 
-      let newPlayer = new Player(name,[x,z],rotation,modelName,amogColor,tankColor)
-      
+      let newPlayer = new Player(
+        name,
+        [x, z],
+        rotation,
+        modelName,
+        amogColor,
+        tankColor
+      );
+
       playersObject[playerId] = newPlayer;
     }
     return playersObject;
@@ -120,23 +128,47 @@ export default class Game {
     }
   }
 
+  updatePlayers(players) {
+    
+    let uncreatedPlayers = {};
+    for (const playerId in players) {
+      const playerInfo = players[playerId];
+      let player = this.gameState.players[playerId];
+      if (!player) uncreatedPlayers[playerId] = player;
+      else {
+        player.tank.model.position.x = playerInfo.x;
+        player.tank.model.position.z = playerInfo.z;
+        console.log(playerInfo.rotation);
+        player.tank.model.rotation.y = playerInfo.rotation;
+        // player.tank.health = playerInfo.health;
+      }
+    }
+    if (Object.keys(uncreatedPlayers).length > 0) {
+      this.createPlayers(uncreatedPlayers);
+    }
+  }
+
+  updateGamestate(state) {
+    if (state.players) this.updatePlayers(state.players);
+  }
+
   updateCamera() {
     if (Object.keys(this.gameState.players).length > 0)
       this.cameraController.calculatePosition(this.gameState.players);
   }
 
   showInformation() {
-  // Use this to show information onscreen
-  var controls = new InfoBox();
-  controls.add("Geometric Transformation");
-  controls.addParagraph();
-  controls.add("Player - MOVE  SHOOT");
-  controls.add("Player 1: WASD LeftShift");
-  controls.add("Player 2: arrows [' , ', ' / ']");
-  controls.add("Player 3: IJKL    H");
-  controls.add("Player 4: 8456    Enter");
-  controls.show();
-}
+    // Use this to show information onscreen
+    var controls = new InfoBox();
+    controls.add("Geometric Transformation");
+    controls.addParagraph();
+    controls.add("Player - MOVE  SHOOT");
+    controls.add("Player 1: WASD LeftShift");
+    controls.add("Player 2: arrows [' , ', ' / ']");
+    controls.add("Player 3: IJKL    H");
+    controls.add("Player 4: 8456    Enter");
+    controls.show();
+  }
 
   render() {
     this.updateCamera();

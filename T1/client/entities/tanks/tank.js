@@ -31,37 +31,23 @@ export class Tank {
   }
 
   // Getters
-  /**
-   * Description placeholder
-   */
+  
   get tankColor() {
     return this._tankColor;
   }
 
-  /**
-   * Description placeholder
-   */
   get amogColor() {
     return this._amogColor;
   }
 
-  /**
-   * Description placeholder
-   */
   get moveSpeed() {
     return this._moveSpeed;
   }
 
-  /**
-   * Description placeholder
-   */
   get rotationSpeed() {
     return this._rotationSpeed;
   }
 
-  /**
-   * Description placeholder
-   */
   get model() {
     return this._model;
   }
@@ -221,6 +207,10 @@ export class Tank {
     // Move this.model
     this.model.position.x += this._moveSpeed * moveX;
     this.model.position.z += this._moveSpeed * moveZ;
+
+    this.x = this.model.position.x;
+    this.z = this.model.position.z;
+    this.rotation = this.model.rotation.y;
   }
 
   /**
@@ -242,6 +232,9 @@ export class Tank {
     this.model.rotateY(this._rotationSpeed * rotationDirection);
 
     this._lastValidTargetAngle = this._model.rotation.y;
+    this.x = this.model.position.x;
+    this.z = this.model.position.z;
+    this.rotation = this.model.rotation.y;
   }
 
   /**

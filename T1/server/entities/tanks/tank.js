@@ -197,7 +197,7 @@ export class Tank {
    * @param {number} moveZ The amount and direction of movement in the X axis [-1,1]
    */
   moveDirectional(moveX, moveZ) {
-    this.lastMovement({ x: moveX, z: moveZ });
+    this.lastMovement = { x: moveX, z: moveZ };
     // if (moveX !== 0 || moveZ !== 0) console.log("moving ["+moveX+","+moveZ+"]");
 
     // Calculate diagonal movement direction
@@ -238,6 +238,10 @@ export class Tank {
     // Move this.model
     this.model.position.x += this._moveSpeed * moveX;
     this.model.position.z += this._moveSpeed * moveZ;
+
+    this.x = this.model.position.x;
+    this.z = this.model.position.z;
+    this.rotation = this.model.rotation.y;
   }
 
   /**
@@ -247,7 +251,7 @@ export class Tank {
    * @param {number} rotationDirection Varies from -1 (left) to 1 (right)
    */
   moveRotating(forwardForce, rotationDirection) {
-    this.lastMovement({ x: rotationDirection, z: forwardForce });
+    this.lastMovement = { x: rotationDirection, z: forwardForce };
     if (Math.abs(forwardForce) > 1) {
       forwardForce = forwardForce >= 0 ? 1 : -1;
     }
@@ -260,6 +264,9 @@ export class Tank {
     this.model.rotateY(this._rotationSpeed * rotationDirection);
 
     this._lastValidTargetAngle = this._model.rotation.y;
+    this.x = this.model.position.x;
+    this.z = this.model.position.z;
+    this.rotation = this.model.rotation.y;    
   }
 
   /**

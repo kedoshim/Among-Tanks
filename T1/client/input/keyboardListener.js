@@ -58,38 +58,44 @@ export default class KeyboardListener {
     const playerConfigs = this.state.playerConfigs;
 
     const commands = [];
-    for (let i = 0; i < playerConfigs.length; i++) {
+    for (let i = 0; i < playerConfigs.length && pressedKeys.size > 0; i++) {
       const playerConfig = playerConfigs[i];
+      // console.log(pressedKeys);
       let moveX = 0;
       let moveZ = 0;
       let shoot = false;
 
       if (pressedKeys.has(playerConfig.up)) {
-        moveZ--;
-      }
-      if (pressedKeys.has(playerConfig.down)) {
         moveZ++;
       }
-      if (pressedKeys.has(playerConfig.left)) {
-        moveX--;
+      if (pressedKeys.has(playerConfig.down)) {
+        moveZ--;
       }
-      if (pressedKeys.has(playerConfig.right)) {
+      if (pressedKeys.has(playerConfig.left)) {
         moveX++;
       }
-      if (pressedKeys.has(playerConfig.shoot)) {
-        shoot = true;
+      if (pressedKeys.has(playerConfig.right)) {
+        moveX--;
       }
+      const shootKeys = playerConfig.shoot;
+      const pressedKeysArray = Array.from(pressedKeys);
 
-      commands.push({
-        type: "move",
-        playerId: i + 1,
-        moveX,
-        moveZ,
-        shoot,
-      });
+      shoot = shootKeys.some((key) => pressedKeysArray.includes(key));
+
+      if (moveX != 0 || moveZ != 0 || shoot === true) {
+        commands.push({
+          type: "move",
+          localPlayerId: i + 1,
+          moveX,
+          moveZ,
+          shoot,
+        });
+      }
     }
-
-    this.notifyAll(commands);
+    if (commands.length > 0) {
+      this.notifyAll(commands);
+      // console.log(commands);
+    }
   }
 
   destroy() {

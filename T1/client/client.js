@@ -33,12 +33,15 @@ let inputListener = new InputListener(document,config);
 
 socket.on("connect", () => {
   try {
-    for (let i; i < config.numberOfPlayers; i++) {
+    let command = {};
+    command.players = {}
+    for (let i = 1; i < config.numberOfPlayers+1; i++) {
       const playerId = socket.id + "." + i;
       console.log(`Player connected on Client with id: ${playerId}`);
+      command.players[playerId] = playerId;
     }
+    socket.emit("create-players", command);
 
-    // renderScreen(screen, game, requestAnimationFrame, playerId);
   } catch (error) {
     console.log(`Error on connect: ${error}`);
   }
@@ -57,9 +60,13 @@ socket.on("setup", (state) => {
 
   // inputListener.subscribe(game.movePlayer);
   inputListener.subscribe((command) => {
-    // socket.emit("move-player", command);
+    socket.emit("move-player", command);
   });
 });
+
+socket.on("update", (state) => {
+  game.updateGamestate(state);
+})
 
 socket.on("add-player", (command) => {
   console.log(`Receiving ${command.type} -> ${command.playerId}`);

@@ -15,13 +15,15 @@ export class PlayerController extends Controller {
    */
   constructor(target) {
     super(target);
+
+    this._directionalMovementEnabled = getConfig().directionalMovementEnabled
   }
 
   /**
    * Movement mode where the movement is based on the input direction
    * Called when "directionalMovement" is enabled in the config.json
    */
-  _directionalMovement(keyboard, gamepad) {
+  _directionalMovement(movement) {
     if (movement.shoot == true) {
       this._target.shoot();
     }

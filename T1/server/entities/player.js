@@ -44,7 +44,7 @@ export class Player extends Entity {
     
     this._controller = new PlayerController(this._tank);
     
-    console.info("creating player " + this._name);
+    // console.info("> Creating player " + this._name);
     Player.playerNumber++;
   }
 }

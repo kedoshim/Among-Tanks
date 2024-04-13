@@ -12,41 +12,60 @@ import { getConfig, loadConfig } from "./config.js";
 export default class Game {
   constructor() {
     this._gamestate = {
-      currentLevelMap : null,
+      currentLevelMap: null,
       players: {},
       // entities: {},
     };
 
-    
     this.config = null;
     this.playerSpawnPoint = null;
 
     loadConfig();
     this.config = getConfig();
     this.playerSpawnPoint = this.config.playerSpawnPoint;
+
+    this.observers = [];
+  }
+
+  start() {
+    this.updateDevices();
   }
 
   setState(state) {
     this._gamestate = state;
   }
 
-  createPlayer(command) {
-    let id = command.playerId;
-    const newPlayer = new Player(id);
-    newPlayer.spawnPoint = this.playerSpawnPoint[newPlayer.playerNumber - 1];
-    this._gamestate.players[id] = newPlayer;
+  createPlayers(players) {
+    for (const playerId in players) {
+      const newPlayer = new Player(playerId);
+      newPlayer.spawnPoint = this.playerSpawnPoint[newPlayer.playerNumber - 1];
+      this._gamestate.players[playerId] = newPlayer;
+    }
   }
 
-  removePlayer(command) {
+  removeDevice(command) {
     const id = command.playerId;
-    this._gamestate.players.id = null;
+    for (let i = 1; i < 5; i++) {
+      this._gamestate.players[id + "." + i] = null;
+    }
+    console.log(`> Removing players from device: ${id}`);
   }
 
   loadPlayers() {
     const { scene, players } = this._gamestate;
     players.forEach((player) => {
-      console.log("loading player " + player.name);
+      console.log("> Loading player " + player.name);
       player.load(scene);
+    });
+  }
+
+  movePlayers(commands) {
+    commands.forEach((command) => {
+      const id = commands.playerId + "." + command.localPlayerId;
+      const player = this._gamestate.players[id];
+
+      player.runController(command);
+      // console.log(`> Moving Player ${id} to [${player.tank.x},${player.tank.z}]`);
     });
   }
 
@@ -62,16 +81,15 @@ export default class Game {
         encodedPlayer.name = player.name;
         encodedPlayer.type = "player";
 
-        encodedPlayer.tank = {};
-        encodedPlayer.tank.x = player.tank.model.position.x;
-        encodedPlayer.tank.z = player.tank.model.position.z;
-        encodedPlayer.tank.rotation = player.tank.lastRotationAngle;
-        encodedPlayer.tank.movement = player.tank.lastMovement;
-        // encodedPlayer.tank.health = player.tank.health;
+        encodedPlayer.x = player.tank.model.position.x;
+        encodedPlayer.z = player.tank.model.position.z;
+        encodedPlayer.rotation = player.tank.lastValidTargetAngle;
+        encodedPlayer.movement = player.tank.lastMovement;
+        // encodedPlayer.health = player.tank.health;
 
-        encodedPlayer.tank.modelName = player.tank.modelName;
-        encodedPlayer.tank.amogColor = player.tank.amogColor;
-        encodedPlayer.tank.tankColor = player.tank.tankColor;
+        encodedPlayer.modelName = player.tank.modelName;
+        encodedPlayer.amogColor = player.tank.amogColor;
+        encodedPlayer.tankColor = player.tank.tankColor;
 
         // encodedPlayer.shots = null
 
@@ -84,12 +102,35 @@ export default class Game {
   get gameState() {
     let encodedGamestate = {
       currentLevelMap: this._gamestate.currentLevelMap,
-      players : this.players
-    }
+      players: this.players,
+    };
     return encodedGamestate;
   }
 
   set gameState(gameState) {
     this._gamestate = gameState;
+  }
+
+  subscribe(observerFunction) {
+    this.observers.push(observerFunction);
+  }
+
+  notifyAll(commands) {
+    for (const observerFunction of this.observers) {
+      observerFunction(commands);
+    }
+  }
+
+  get update() {
+    let update = {
+      players: this.players,
+    };
+    return update;
+  }
+
+  updateDevices() {
+    setInterval(() => {
+      this.notifyAll(this.update);
+    }, 5);
   }
 }

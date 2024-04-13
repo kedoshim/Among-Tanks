@@ -20,6 +20,7 @@ const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "./T1/client")));
 
 const game = new Game();
+game.start();
 
 // game.start();
 
@@ -30,15 +31,18 @@ const game = new Game();
 
 sockets.on("connection", (socket) => {
   const playerId = socket.id;
-  console.log(`> Player connected: ${playerId}`);
+  console.log(`> Device connected: ${playerId}`);
 
-  game.createPlayer({ playerId: playerId });
 
-  socket.emit("setup", game.gameState);
+  socket.on("create-players", (command) => {
+    console.log(`> Creating players of device ${playerId}`)
+    game.createPlayers(command.players);
 
+    socket.emit("setup", game.gameState);
+  });
 
   socket.on("disconnect", () => {
-    game.removePlayer({ playerId: playerId });
+    game.removeDevice({ playerId: playerId });
     console.log(`> Player disconnected: ${playerId}`);
   });
 
@@ -46,9 +50,14 @@ sockets.on("connection", (socket) => {
     command.playerId = playerId;
     command.type = "move-player";
 
-    // pla.movePlayer(command);
-    console.log(`Move Player ${playerId}`);
+    game.movePlayers(command);
   });
+  
+  game.subscribe((command) => {
+    socket.emit("update", command);
+  });
+
+
 });
 
 // Start the server

@@ -38,15 +38,8 @@ export class Entity {
    * @param {KeyboardState} keyboard
    * @param {Gamepad} gamepad
    */
-  runController(keyboard, gamepad) {
-    if (this._controller == null) {
-      console.warn(
-        `Tried to control Entity ${this._name} but their '_controller' attribute was 'null'`
-      );
-      return;
-    }
-
-    this._controller.control(keyboard, gamepad);
+  runController(command) {
+    this._controller.control(command);
   }
 
   /**
