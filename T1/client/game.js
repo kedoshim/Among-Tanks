@@ -74,6 +74,8 @@ export default class Game {
   }
 
   createPlayers(players) {
+    console.log("players");
+    console.log(players);
     let playersObject = {};
     for (const playerId in players) {
       const player = players[playerId];
@@ -134,12 +136,16 @@ export default class Game {
     for (const playerId in players) {
       const playerInfo = players[playerId];
       let player = this.gameState.players[playerId];
-      if (!player) uncreatedPlayers[playerId] = player;
+      if (!player) uncreatedPlayers[playerId] = playerInfo;
       else {
         player.tank.model.position.x = playerInfo.x;
         player.tank.model.position.z = playerInfo.z;
         console.log(playerInfo.rotation);
-        player.tank.model.rotation.y = playerInfo.rotation;
+        if (playerInfo.rotation) {
+          player.tank.model.rotation.x = playerInfo.rotation._x;
+          player.tank.model.rotation.y = playerInfo.rotation._y;
+          player.tank.model.rotation.z = playerInfo.rotation._z;
+        }
         // player.tank.health = playerInfo.health;
       }
     }

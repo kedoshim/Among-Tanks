@@ -241,7 +241,7 @@ export class Tank {
 
     this.x = this.model.position.x;
     this.z = this.model.position.z;
-    this.rotation = this.model.rotation.y;
+    this.rotation = this.model.rotation;
   }
 
   /**
@@ -266,7 +266,7 @@ export class Tank {
     this._lastValidTargetAngle = this._model.rotation.y;
     this.x = this.model.position.x;
     this.z = this.model.position.z;
-    this.rotation = this.model.rotation.y;    
+    this.rotation = this.model.rotation;    
   }
 
   /**

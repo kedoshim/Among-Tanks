@@ -35,7 +35,7 @@ export default class KeyboardListener {
     if (!this.state.keyInterval) {
       this.state.keyInterval = setInterval(() => {
         this.handlePressedKeys();
-      }, 100); // Adjust the interval duration as needed
+      }, 15); // Adjust the interval duration as needed
     }
   }
 

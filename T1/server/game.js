@@ -83,7 +83,7 @@ export default class Game {
 
         encodedPlayer.x = player.tank.model.position.x;
         encodedPlayer.z = player.tank.model.position.z;
-        encodedPlayer.rotation = player.tank.lastValidTargetAngle;
+        encodedPlayer.rotation = player.tank.rotation;
         encodedPlayer.movement = player.tank.lastMovement;
         // encodedPlayer.health = player.tank.health;
 
@@ -131,6 +131,6 @@ export default class Game {
   updateDevices() {
     setInterval(() => {
       this.notifyAll(this.update);
-    }, 5);
+    }, 10);
   }
 }
