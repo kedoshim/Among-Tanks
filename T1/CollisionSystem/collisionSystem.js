@@ -1,5 +1,4 @@
-
-
+import * as THREE from 'three';
 
 export class CollisionSystem {
     constructor(players, walls) {
@@ -13,7 +12,7 @@ export class CollisionSystem {
 }
 
 export class ProjectileCollisionSystem extends CollisionSystem {
-    constructor(players, walls=null) {
+    constructor(players, walls) {
         super(players, walls);
         this._projectiles = [];
     }
@@ -49,7 +48,6 @@ export class ProjectileCollisionSystem extends CollisionSystem {
                 if(hitTank) {
                     projectiles[projectileIndex].hitTank();
                     player.lifes -= projectiles[projectileIndex].damage;
-                    console.log(player);
                 }
             }
         }
@@ -58,6 +56,7 @@ export class ProjectileCollisionSystem extends CollisionSystem {
     checkCollisionWithWalls() {
         let walls = this.walls;
         let wall = null;
+        let hitWall;
 
         this.#getAllProjectilesInScene();
         let projectiles = this._projectiles;
@@ -68,11 +67,42 @@ export class ProjectileCollisionSystem extends CollisionSystem {
                 hitWall = this.checkCollisionBetwennCollisionShapes(wall.collisionShape, projectiles[projectileIndex].collisionShape);
 
                 if(hitWall) {
-                    projectiles[projectileIndex].reflection(wall.position);
+                    //projectiles[projectileIndex].reflection(wall.position);
+                    this.#calculateReflectionDirection(wall.model.position, projectiles[projectileIndex]);
                     projectiles[projectileIndex].hitWall();
+                    console.log("O projétil colidiu com o muro!");
                 }
             }
         }
+    }
+
+    #calculateReflectionDirection(wallPosition, projectile) {
+        // Poosiible directions for reflection
+        const directions = {
+            left: new THREE.Vector3(-1, 0, 0),
+            right: new THREE.Vector3(1, 0, 0),
+            up: new THREE.Vector3(0, 0, -1),
+            down: new THREE.Vector3(0, 0, 1)
+        };
+
+        // calculate the difference betwenn positions
+        const x_distance = wallPosition.x - projectile.projectile.position.x;
+        const z_distance = wallPosition.z - projectile.projectile.position.z;
+
+        // Impact directions based on distances
+        let sideOfImpactX = x_distance > 0 ? directions.left : directions.right;
+        let sideOfImpactZ = z_distance > 0 ? directions.up : directions.down;
+
+        // Define the reflection direction based on impact direction
+        let reflectionDirection;
+        if (Math.abs(x_distance) > Math.abs(z_distance)) {
+            reflectionDirection = sideOfImpactX;
+        } else {
+            reflectionDirection = sideOfImpactZ;
+        }
+
+        // Apply the reflection
+        projectile.reflection(reflectionDirection);
     }
 }
 

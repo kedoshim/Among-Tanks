@@ -42,7 +42,8 @@ async function main() {
   const config = getConfig();
   // console.log("Configuration loaded:", config);
 
-  const BLOCK_SIZE = 13;
+  const BLOCK_SIZE = 13; // Size of all blocks in scene
+  let walls = []; // wall Blocks list for collision system
 
   const NumberOfPlayers = config.numberOfPlayers;
 
@@ -75,6 +76,7 @@ async function main() {
         if(data[i][j].type === "GroundBlock") {
           const position = {x: i, y: -13, z: j}
           const color = {color: 0xB2BEB5};
+
           const groundBlock = new Block(position, BLOCK_SIZE);
           groundBlock.createBlock(offset, color);
           scene.add(groundBlock.model);
@@ -82,11 +84,13 @@ async function main() {
         else if(data[i][j].type === "WallBlock") {
           const position = {x: i, y: 0, z:j};
           const color = {color : 0x0000ff}
+
           const wallBlock = new CollisionBlock(position, BLOCK_SIZE);
           wallBlock.createBlock(offset, color);
-          // TODO: fazer os collisionShapes
-
+          wallBlock.createCollisionShape();
           scene.add(wallBlock.model);
+
+          walls.push(wallBlock);
         }
       }
     }
@@ -116,9 +120,10 @@ async function main() {
   var positionMessage = new SecondaryBox("");
   positionMessage.changeStyle("rgba(0,0,0,0)", "lightgray", "16px", "ubuntu");
 
-  let projectileCollisionSystem = new ProjectileCollisionSystem(players);
-
   loadPlayers();
+
+  drawLevel(level_decoded.blocks, level_decoded.offset);
+  let projectileCollisionSystem = new ProjectileCollisionSystem(players, walls);
 
   render();
 
@@ -187,7 +192,7 @@ async function main() {
           scene.add(projectiles[index].projectile);
           projectiles[index].setAlreadyInScene(true);
         }
-        if (projectiles[index].hitAnyTank || projectiles[index].ricochetsLeft === 0) {
+        if (projectiles[index].hitAnyTank || projectiles[index].ricochetsLeft < 0) {
           scene.remove(projectiles[index].projectile);
           projectiles.splice(index, 1);
         }
@@ -200,6 +205,7 @@ async function main() {
 
   function checkCollision() {
     projectileCollisionSystem.checkIfThereHasBeenCollisionWithTanks();
+    projectileCollisionSystem.checkCollisionWithWalls();
   }
 
   function updateHealthBars() {
@@ -208,8 +214,6 @@ async function main() {
       player.healthBar.setHealthBarPosition(player._tank.model.position);
     })
   }
-
-  drawLevel(level_decoded.blocks, level_decoded.offset);
 
   function render() {
     keyboardUpdate();

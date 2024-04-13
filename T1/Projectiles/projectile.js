@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { setDefaultMaterial } from "../../libs/util/util.js";
 
 export class Projectile {
-    constructor(position, direction, speed=0.5, damage=1, ricochetsAmount=2, color="white") {
+    constructor(position, direction, speed=1.0, damage=1, ricochetsAmount=2, color="white") {
         this.damage = damage;
         this.speed = speed;
         this.ricochetsAmount = ricochetsAmount;
@@ -12,7 +12,7 @@ export class Projectile {
         this.direction = direction.normalize();
 
         this.projectile = this.build_projectile(1, color);
-        this.projectile.position.set(position.x, position.y, position.z);
+        this.projectile.position.set(position.x, position.y - 3, position.z);
 
         this.collisionShape = new THREE.Box3().setFromObject(this.projectile);
     }
@@ -26,7 +26,7 @@ export class Projectile {
     }
 
     hitWall() {
-        this.ricochetsLeft--;
+        this.ricochetsLeft -= 1;
     }
 
     isAlreadyInScene() {
@@ -62,25 +62,7 @@ export class Projectile {
         this.collisionShape = new THREE.Box3().setFromObject(this.projectile);
     }
 
-    reflection(wallPosition) {
-        let projectilePosition = this.projectile.position;
-
-        if(wallPosition.x - projectilePosition.x > 0) {
-            this.#changeDirection(new THREE.Vector3(-1.0,  0.0,  0.0));
-        }
-        else {
-            this.#changeDirection(new THREE.Vector3( 1.0,  0.0,  0.0));
-        }
-
-        if(wallPosition.z - projectilePosition.z> 0) {
-            this.#changeDirection(new THREE.Vector3( 0.0,  0.0, -1.0));
-        }
-        else {
-            this.#changeDirection(new THREE.Vector3( 0.0,  0.0,  1.0)); 
-        }
-    }
-
-    #changeDirection(vector) {
+    reflection(vector) {
         this.direction.reflect(vector).normalize();
     }
 }
