@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import * as THREE from "../../public/three/build/three.module.js";
 // import { Object3D } from "../../../../build/three.module.js";
 
 /**
@@ -22,13 +22,8 @@ export class Tank {
     this._animationRotationSpeed = rotationSpeed;
 
     this._model = null;
-    this._modelName = "null";
 
     this._lastValidTargetAngle = 0;
-    this._lastMovement = {
-      x: null,
-      z: null,
-    };
 
     this.x = null;
     this.z = null;
@@ -36,41 +31,47 @@ export class Tank {
   }
 
   // Getters
-
+  /**
+   * Description placeholder
+   */
   get tankColor() {
     return this._tankColor;
   }
 
+  /**
+   * Description placeholder
+   */
   get amogColor() {
     return this._amogColor;
   }
 
+  /**
+   * Description placeholder
+   */
   get moveSpeed() {
     return this._moveSpeed;
   }
 
+  /**
+   * Description placeholder
+   */
   get rotationSpeed() {
     return this._rotationSpeed;
   }
 
+  /**
+   * Description placeholder
+   */
   get model() {
     return this._model;
   }
 
-  get modelName() {
-    return this._modelName;
-  }
-
   /**
-   * Gets the last movement direction angle selected by
+   * Sets the last movement direction angle selected by
    * the player
    */
   get lastValidTargetAngle() {
     return this._lastValidTargetAngle;
-  }
-
-  get lastMovement() {
-    return this._lastMovement;
   }
 
   /**
@@ -137,13 +138,6 @@ export class Tank {
   }
 
   /**
-   * @type {string}
-   */
-  set modelName(modelName) {
-    this._modelName = modelName;
-  }
-
-  /**
    * Sets the last movement direction angle selected by
    * the player
    *
@@ -151,16 +145,6 @@ export class Tank {
    */
   set lastValidTargetAngle(angle) {
     this._lastValidTargetAngle = angle;
-  }
-
-  /**
-   * Sets the last movement direction angle selected by
-   * the player
-   *
-   * @type {number}
-   */
-  set lastMovement(lastMovement) {
-    this._lastMovement = lastMovement;
   }
 
   /**
@@ -197,7 +181,6 @@ export class Tank {
    * @param {number} moveZ The amount and direction of movement in the X axis [-1,1]
    */
   moveDirectional(moveX, moveZ) {
-    this.lastMovement({ x: moveX, z: moveZ });
     // if (moveX !== 0 || moveZ !== 0) console.log("moving ["+moveX+","+moveZ+"]");
 
     // Calculate diagonal movement direction
@@ -247,7 +230,6 @@ export class Tank {
    * @param {number} rotationDirection Varies from -1 (left) to 1 (right)
    */
   moveRotating(forwardForce, rotationDirection) {
-    this.lastMovement({ x: rotationDirection, z: forwardForce });
     if (Math.abs(forwardForce) > 1) {
       forwardForce = forwardForce >= 0 ? 1 : -1;
     }

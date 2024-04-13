@@ -1,5 +1,6 @@
 import * as THREE from "./public/three/build/three.module.js";
 import { OrbitControls } from "./public/jsm/controls/OrbitControls.js";
+import { Entity } from "./entities/entity.js";
 import { getConfig } from "./config.js";
 
 /**
@@ -66,7 +67,8 @@ export class CameraControls {
       minZ: 0,
     };
 
-    players.forEach((player) => {
+    for (const playerId in players) {
+      const player = players[playerId];
       let positionX = player.tank.model.position.x;
 
       let positionZ = player.tank.model.position.z;
@@ -75,7 +77,7 @@ export class CameraControls {
       if (positionX < extremes.minX) extremes.minX = positionX;
       if (positionZ > extremes.maxZ) extremes.maxZ = positionZ;
       if (positionZ < extremes.minZ) extremes.minZ = positionZ;
-    });
+    };
     extremes.maxX += this._padding;
     extremes.maxZ += this._padding;
     extremes.minX -= this._padding;

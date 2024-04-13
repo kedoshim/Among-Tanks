@@ -34,7 +34,8 @@ sockets.on("connection", (socket) => {
 
   game.createPlayer({ playerId: playerId });
 
-  socket.emit("setup", game.state);
+  socket.emit("setup", game.gameState);
+
 
   socket.on("disconnect", () => {
     game.removePlayer({ playerId: playerId });

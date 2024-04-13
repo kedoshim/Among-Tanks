@@ -46,6 +46,7 @@ socket.on("connect", () => {
 });
 
 socket.on("setup", (state) => {
+  console.log(state);
   game.createGame(state);
   game.render()
 
@@ -54,9 +55,9 @@ socket.on("setup", (state) => {
     // keyboardListener.registerPlayerId(playerId);
   }
 
-  inputListener.subscribe(game.movePlayer);
+  // inputListener.subscribe(game.movePlayer);
   inputListener.subscribe((command) => {
-    socket.emit("move-player", command);
+    // socket.emit("move-player", command);
   });
 });
 

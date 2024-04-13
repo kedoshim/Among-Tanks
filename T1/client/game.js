@@ -11,6 +11,8 @@ import {
 
 import { CameraControls } from "./camera.js";
 
+import { Player } from "./entities/player.js";
+
 import { getConfig, loadConfig } from "./config.js";
 
 export default class Game {
@@ -28,6 +30,15 @@ export default class Game {
 
     const plane = createGroundPlaneXZ(1000, 1000);
     this.gameState.scene.add(plane);
+
+    // Bind methods
+    this.createGame = this.createGame.bind(this);
+    this.setState = this.setState.bind(this);
+    this.removePlayer = this.removePlayer.bind(this);
+    this.loadPlayers = this.loadPlayers.bind(this);
+    this.updateCamera = this.updateCamera.bind(this);
+    this.showInformation = this.showInformation.bind(this);
+    this.render = this.render.bind(this);
   }
 
   async createGame(state) {
@@ -54,16 +65,45 @@ export default class Game {
     window.addEventListener(
       "resize",
       function () {
-        onWindowResize(camera, renderer);
+        onWindowResize(this.camera, this.renderer);
       },
       false
     );
   }
 
+  
+  createPlayers(players) {
+    let playersObject = {};
+    for (const playerId in players) {
+      const player = players[playerId];
+
+      let name = player.name;
+      let type = player.type;
+
+      //tank
+      let x = player.tank.x;
+      let z = player.tank.z;
+      let rotation = player.tank.rotation;
+      let movement = player.tank.movement;
+      // let health = player.health;
+
+      let modelName = player.tank.modelName;
+      let amogColor = player.tank.amogColor;
+      let tankColor = player.tank.tankColor;
+
+      let newPlayer = new Player(name,[x,z],rotation,modelName,amogColor,tankColor)
+      
+      playersObject[playerId] = newPlayer;
+    }
+    return playersObject;
+  }
+
   setState(state) {
-    if(state)
-      this.gameState = state;
-    console.log(state)
+    if (state) {
+      this.gameState.currentLevelMap = state.currentLevelMap;
+      this.gameState.players = this.createPlayers(state.players);
+    }
+    this.loadPlayers();
   }
 
   removePlayer(command) {
@@ -72,11 +112,12 @@ export default class Game {
   }
 
   loadPlayers() {
-    const { scene, players } = this.gameState;
-    players.forEach((player) => {
+    const players = this.gameState.players;
+    for (const playerId in players) {
+      let player = players[playerId];
       console.log("loading player " + player.name);
-      player.load(scene);
-    });
+      player.load(this.gameState.scene);
+    }
   }
 
   updateCamera() {

@@ -11,9 +11,8 @@ export class CommonTank extends Tank {
     super(tankColor, amogColor, moveSpeed, rotationSpeed);
 
     this.model = createCommonTank(this.tankColor, this.amogColor);
-    this.modelName = "common";
-    // this.x = this.model.position.x;
-    // this.z = this.model.position.z;
-    // this.rotation = this.model.rotation;
+    this.x = this.model.position.x;
+    this.z = this.model.position.z;
+    this.rotation = this.model.rotation;
   }
 }
