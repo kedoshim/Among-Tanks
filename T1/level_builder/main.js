@@ -105,8 +105,6 @@ class LevelBuilder extends Phaser.Scene {
                     this.blocksArray[i][j] = this.selectedBlock
                     tile.setFillStyle(this.selectedColor)
                 });
-
-                
             }
         }
     }

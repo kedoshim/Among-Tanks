@@ -28,6 +28,8 @@ async function main() {
   await manager.initialize();
   manager.load()
   manager.loadPlayers()
+  manager.drawGround(manager.levelDecoded.blocks, manager.levelDecoded.offset)
+  manager.drawWalls(manager.levelDecoded.blocks, manager.levelDecoded.offset)
   
   function render() {
     manager.frame()

@@ -70,6 +70,7 @@ export class GameManager {
         this.scene.add(this.axisHelper)
         this.connectedGamepads = [null, null, null, null]
         this.playerSpawnPoint = this.config.playerSpawnPoint;
+        console.log(this.playerSpawnPoint)
         this.players = []
         this.entities = []
         for (let i = 0; i < 2; i++) {
@@ -123,7 +124,7 @@ export class GameManager {
               geometry.translate(-(BLOCK_SIZE*(Math.abs(i - x))), -13, -(BLOCK_SIZE*(Math.abs(j - y))))
               const material = new THREE.MeshBasicMaterial( {color: 0xB2BEB5	} ); 
               const cube = new THREE.Mesh( geometry, material ); 
-              scene.add(cube);
+              this.scene.add(cube);
             }
           }
         }
@@ -139,7 +140,7 @@ export class GameManager {
               geometry.translate(-(BLOCK_SIZE*(Math.abs(i - x))), 0, -(BLOCK_SIZE*(Math.abs(j - y))))
               const material = new THREE.MeshBasicMaterial( {color: 0x0000ff	} ); 
               const cube = new THREE.Mesh( geometry, material ); 
-              scene.add(cube);
+              this.scene.add(cube);
             }
           }
         }

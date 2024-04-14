@@ -17,4 +17,13 @@ export class JsonDecoder {
             }
         }
     }
+
+    static getSpawnPoints() {
+        let spawnPoints = []
+        for(let i = 0; i < blocksArray.length; i++) {
+            for(let j = 0; j < blocksArray[i].length; j++) {
+                if(blocksArray[i][j].type === "Spawn") spawnPoints.push([i, j])
+            }
+        }
+    }
 }
