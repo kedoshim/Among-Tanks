@@ -66,8 +66,8 @@ export class Player extends Entity {
    * @param {string} [amogColor=""]
    * @param {string} [tankColor=""]
    */
-  constructor(name = "", spawnPoint = [0, 0], amogColor = "", tankColor = "") {
-    let playerConfig = getConfig().playerConfig;
+  constructor(name = "", spawnPoint = [0, 0], amogColor = "", tankColor = "", config = null) {
+    let playerConfig = config ? config.playerConfig : getConfig().playerConfig;
 
     if (name === "") {
       name = `Player_${Player.playerNumber}`;
@@ -84,7 +84,7 @@ export class Player extends Entity {
     this._tank = new CommonTank(tankColor, amogColor);
     
     let controllerKeys = playerConfig.defaultPlayerControls[Player.playerNumber];
-    this._controller = new PlayerController(this._tank, controllerKeys);
+    this._controller = new PlayerController(this._tank, controllerKeys, "", config);
     
     console.info("creating player " + this._name);
     Player.playerNumber++;

@@ -16,8 +16,7 @@ export class PlayerController extends Controller {
    * @param {*} keyboardKeys
    * @param {{ up: number; down: number; left: number; right: number; shoot: number; }} [gamepadButtons=""]
    */
-  constructor(target, keyboardKeys, gamepadButtons = "") {
-    const config = getConfig();
+  constructor(target, keyboardKeys, gamepadButtons = "", config = {}) {
     const gamepadConfig = config.gamepadConfig;
 
     super(target);

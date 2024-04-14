@@ -13,8 +13,8 @@ export class CameraControls {
    * @constructor
    * @param {THREE.WebGLRenderer} renderer
    */
-  constructor(renderer) {
-    const cameraConfig = getConfig().cameraConfig;
+  constructor(renderer, config = null) {
+    const cameraConfig = config ? config.cameraConfig : getConfig().cameraConfig;
 
     this._camera = new THREE.PerspectiveCamera(
       cameraConfig.FOV,

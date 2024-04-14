@@ -16,221 +16,37 @@ import { ProjectileCollisionSystem } from "./CollisionSystem/collisionSystem.js"
 
 import { getConfig, loadConfig } from "./config.js";
 import {JsonDecoder} from "./level_builder_interpreter/JsonDecoder.js"
-
-window.addEventListener("gamepadconnected", (e) => {
-  const gamepad = e.gamepad;
-  connectedGamepads[gamepad.index] = gamepad.index;
-  console.log("gamepad " + gamepad.index + " connected");
-  // console.log(gamepad);
-});
-
-window.addEventListener("gamepaddisconnected", (e) => {
-  const gamepad = e.gamepad;
-  connectedGamepads[gamepad.index] = null;
-  console.log("gamepad " + gamepad.index + " disconnected");
-});
+import { GameManager } from "./GameManager.js";
 
 
-async function main() {
-  const loaded_level = await fetch("http://127.0.0.1:5500/T1/level_builder_interpreter/level.json")
-  const level_cast = await loaded_level.json()
-  const level_decoded = JsonDecoder.decode(level_cast)
-  console.log(level_decoded)
-  await loadConfig();
+function frame() {
 
-  const config = getConfig();
-  // console.log("Configuration loaded:", config);
-
-  const NumberOfPlayers = config.numberOfPlayers;
-
-  let entities = [];
-  let players = [];
-  let connectedGamepads = [null, null, null, null];
-
-  const playerSpawnPoint = config.playerSpawnPoint;
-
-  let scene, renderer, material, light, orbit, cameraController, camera; // Initial variables
-  scene = new THREE.Scene(); // Create main scene
-  renderer = initRenderer(); // Init a basic renderer
-  material = setDefaultMaterial(); // create a basic material
-  light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
-  cameraController = new CameraControls(renderer);
-  camera = cameraController.camera;
-
-  // Listen window size changes
-  window.addEventListener(
-    "resize",
-    function () {
-      onWindowResize(camera, renderer);
-    },
-    false
-  );
-
-  function drawGround(data, offset) {
-    let {x, y} = offset
-    let BLOCK_SIZE = 13
-    for(let i = 0; i < data.length; i++) {
-      for(let j = 0; j < data[i].length; j++) {
-        if(data[i][j].type === "GroundBlock") {
-          const geometry = new THREE.BoxGeometry( BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE ); 
-          geometry.translate(-(BLOCK_SIZE*(Math.abs(i - x))), -13, -(BLOCK_SIZE*(Math.abs(j - y))))
-          const material = new THREE.MeshBasicMaterial( {color: 0xB2BEB5	} ); 
-          const cube = new THREE.Mesh( geometry, material ); 
-          scene.add(cube);
-        }
-      }
-    }
-  }
-
-  function drawWalls(data, offset) {
-    let {x, y} = offset
-    let BLOCK_SIZE = 13
-    for(let i = 0; i < data.length; i++) {
-      for(let j = 0; j < data[i].length; j++) {
-        if(data[i][j].type === "WallBlock") {
-          const geometry = new THREE.BoxGeometry( BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE ); 
-          geometry.translate(-(BLOCK_SIZE*(Math.abs(i - x))), 0, -(BLOCK_SIZE*(Math.abs(j - y))))
-          const material = new THREE.MeshBasicMaterial( {color: 0x0000ff	} ); 
-          const cube = new THREE.Mesh( geometry, material ); 
-          scene.add(cube);
-        }
-      }
-    }
-  }
-
-  // Use to scale the amog
-  var scale = 1.0;
-
-  // Show text information onscreen
-  showInformation();
-
-  // To use the keyboard
-  var keyboard = new KeyboardState();
-
-  // Show axes (parameter is size of each axis)
-  var axesHelper = new THREE.AxesHelper(12);
-  scene.add(axesHelper);
-
-  // create the ground plane
-  //let plane = createGroundPlaneXZ(1000, 1000);
-  //scene.add(plane);
-
-  for (let i = 0; i < NumberOfPlayers; i++) {
-    createPlayer();
-  }
-
-  var positionMessage = new SecondaryBox("");
-  positionMessage.changeStyle("rgba(0,0,0,0)", "lightgray", "16px", "ubuntu");
-
-  let projectileCollisionSystem = new ProjectileCollisionSystem(players);
-
-  loadPlayers();
-
-  render();
-
-  function createPlayer() {
-    let new_player = new Player();
-
-    new_player.spawnPoint = playerSpawnPoint[Player.playerNumber - 1];
-
-    players.push(new_player);
-  }
-
-  function loadPlayers() {
-    players.forEach((entity) => {
-      console.log("loading player " + entity.name);
-      entity.load(scene);
-    });
-  }
-
-  function manageOrbitControls() {
-    if (keyboard.down("O")) {
-      cameraController.changeCameraMode();
-    }
-  }
-
-  function keyboardUpdate() {
-    keyboard.update();
-    manageOrbitControls();
-
-    players.every((player, index) => {
-      let playerGamepad = null;
-      if (connectedGamepads[index] != null) {
-        playerGamepad = navigator.getGamepads()[index];
-        // console.log("controller " + (index+1));
-      }
-      player.runController(keyboard, playerGamepad);
-      return true;
-    });
-
-    entities.forEach((entity) => {
-      entity.runController();
-    });
-  }
-
-  function showInformation() {
-    // Use this to show information onscreen
-    var controls = new InfoBox();
-    controls.add("Geometric Transformation");
-    controls.addParagraph();
-    controls.add("Player - MOVE  SHOOT");
-    controls.add("Player 1: WASD LeftShift");
-    controls.add("Player 2: arrows [' , ', ' / ']");
-    controls.add("Player 3: IJKL    H");
-    controls.add("Player 4: 8456    Enter");
-    controls.show();
-  }
-
-  function cameraUpdate() {
-    cameraController.calculatePosition(players);
-  }
-
-  function updateProjectiles() {
-    players.forEach(player => {
-      let projectiles = player._tank.projectiles;
-      for (let index = projectiles.length - 1; index >= 0; index--) {
-        if (!projectiles[index].isAlreadyInScene()) {
-          scene.add(projectiles[index].projectile);
-          projectiles[index].setAlreadyInScene(true);
-        }
-        if (projectiles[index].hitAnyTank || projectiles[index].ricochetsLeft === 0) {
-          // TODO: remover projétil da cena
-          scene.remove(projectiles[index].projectile);
-          projectiles.splice(index, 1);
-        }
-        else {
-          projectiles[index].moveStep();
-        }
-      }
-    })
-  }
-
-  function checkCollision() {
-    projectileCollisionSystem.checkIfThereHasBeenCollisionWithTanks();
-  }
-
-  function updateHealthBars() {
-    players.forEach(player => {
-      player.healthBar.updateHealthBar(player.lifes);
-      player.healthBar.setHealthBarPosition(player._tank.model.position);
-    })
-  }
-
-  drawGround(level_decoded.blocks, level_decoded.offset)
-  drawWalls(level_decoded.blocks, level_decoded.offset)
-
-  function render() {
-    keyboardUpdate();
-    cameraUpdate();
-    
-    checkCollision();
-    updateProjectiles();
-    updateHealthBars();
-    requestAnimationFrame(render); // Show events
-    renderer.render(scene, camera); // Render scene
-  }
 }
 
-main().catch((error) => {
-  console.error("Error initializing:", error);
-});
+async function main() {
+  const manager = new GameManager()
+  await manager.initialize();
+  manager.load()
+  manager.loadPlayers()
+  
+  function render() {
+    manager.frame()
+    requestAnimationFrame(render)
+    manager.render()
+  }
+
+  render()
+}
+
+main()
+// function render(manager) {
+//   manager.frame();
+//   requestAnimationFrame(render)
+//   manager.render();
+// }
+
+// window.addEventListener('DOMContentLoaded', () => {
+//   render(gameManager); // Agora o this dentro de frame() se refere a gameManager
+// });
+
+
