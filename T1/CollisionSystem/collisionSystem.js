@@ -57,50 +57,43 @@ export class ProjectileCollisionSystem extends CollisionSystem {
         let walls = this.walls;
         let wall = null;
         let hitWall;
-
+    
         this.#getAllProjectilesInScene();
         let projectiles = this._projectiles;
-
+    
         for (let projectileIndex = 0; projectileIndex < projectiles.length; projectileIndex++) {
+            let projectile = projectiles[projectileIndex];
+            let hasHitWall = false; // Variável para controlar se o projétil colidiu com um muro
+    
             for (let wallIndex = 0; wallIndex < walls.length; wallIndex++) {
                 wall = walls[wallIndex];
-                hitWall = this.checkCollisionBetwennCollisionShapes(wall.collisionShape, projectiles[projectileIndex].collisionShape);
-
+                hitWall = this.checkCollisionBetwennCollisionShapes(wall.collisionShape, projectile.collisionShape);
+    
                 if(hitWall) {
-                    //projectiles[projectileIndex].reflection(wall.position);
-                    this.#calculateReflectionDirection(wall.model.position, projectiles[projectileIndex]);
-                    projectiles[projectileIndex].hitWall();
-                    console.log("O projétil colidiu com o muro!");
+                    if (!hasHitWall) { // Verifica se o projétil já colidiu com um muro
+                        this.#calculateReflectionDirection(wall.model.position, projectile);
+                        projectile.hitWall();
+                        hasHitWall = true; // Define que o projétil colidiu com um muro
+                    }
                 }
             }
         }
     }
 
-    #calculateReflectionDirection(wallPosition, projectile) {
-        // Poosiible directions for reflection
-        const directions = {
-            left: new THREE.Vector3(-1, 0, 0),
-            right: new THREE.Vector3(1, 0, 0),
-            up: new THREE.Vector3(0, 0, -1),
-            down: new THREE.Vector3(0, 0, 1)
-        };
+    #calculateReflectionDirection(wallPosition, projectile) {    
 
         // calculate the difference betwenn positions
         const x_distance = wallPosition.x - projectile.projectile.position.x;
         const z_distance = wallPosition.z - projectile.projectile.position.z;
-
-        // Impact directions based on distances
-        let sideOfImpactX = x_distance > 0 ? directions.left : directions.right;
-        let sideOfImpactZ = z_distance > 0 ? directions.up : directions.down;
-
-        // Define the reflection direction based on impact direction
-        let reflectionDirection;
+        let reflectionDirection = null;
+        
+    
         if (Math.abs(x_distance) > Math.abs(z_distance)) {
-            reflectionDirection = sideOfImpactX;
+            reflectionDirection = new THREE.Vector3(x_distance > 0 ? -1 : 1, 0, 0);
         } else {
-            reflectionDirection = sideOfImpactZ;
+            reflectionDirection = new THREE.Vector3(0, 0, z_distance > 0 ? 1 : -1);
         }
-
+    
         // Apply the reflection
         projectile.reflection(reflectionDirection);
     }

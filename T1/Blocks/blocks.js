@@ -20,13 +20,17 @@ export class Block {
         const i = this.position_x;
         const j = this.position_z;
         const k = this.position_y;
-
-        const geometry = new THREE.BoxGeometry( BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE ); 
-        geometry.translate(-(BLOCK_SIZE*(Math.abs(i - x))), k, -(BLOCK_SIZE*(Math.abs(j - y))))
+    
+        const geometry = new THREE.BoxGeometry(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE); 
         const material = new THREE.MeshBasicMaterial(color); 
-
-        let cube = new THREE.Mesh( geometry, material );
-
+    
+        let cube = new THREE.Mesh(geometry, material);
+    
+        // Defina as coordenadas x, y e z da posição do cubo
+        cube.position.x = -(BLOCK_SIZE * (Math.abs(i - x)));
+        cube.position.y = k;
+        cube.position.z = -(BLOCK_SIZE * (Math.abs(j - y)));
+    
         this._model = cube;
     }
 
