@@ -31,18 +31,15 @@ export class Player extends Entity {
     if (name === "") {
       name = `Player_${Player.playerNumber}`;
     }
-    if (amogColor === "") {
-      amogColor = playerConfig.defaultPlayerAmogusColors[Player.playerNumber];
-    }
-    if (tankColor === "") {
-      tankColor = playerConfig.defaultPlayerTankColors[Player.playerNumber];
-    }
 
     super(name, spawnPoint, null, null);
 
     this._tank = new tankTypes[modelName](tankColor, amogColor);
-    if (rotation)
-      this._tank.model.rotation = rotation;
+    if (rotation) {
+      this._tank.model.rotation.x = rotation._x;
+      this._tank.model.rotation.y = rotation._y;
+      this._tank.model.rotation.z = rotation._z;
+    }
     
     this._controller = new PlayerController(this._tank);
     

@@ -25,6 +25,7 @@ export default class Game {
     this.playerSpawnPoint = this.config.playerSpawnPoint;
 
     this.observers = [];
+    this.lastMovementTime = {}; // Map to store the timestamp of the last movement command for each player
   }
 
   start() {
@@ -44,10 +45,14 @@ export default class Game {
   }
 
   removeDevice(command) {
+    let removePlayersCommand = {};
     const id = command.playerId;
     for (let i = 1; i < 5; i++) {
+      removePlayersCommand[id + "." + i] = this._gamestate.players[id + "." + i];
       this._gamestate.players[id + "." + i] = null;
     }
+    removePlayersCommand.type = "remove-players";
+    this.notifyAll(removePlayersCommand);
     console.log(`> Removing players from device: ${id}`);
   }
 
@@ -64,8 +69,14 @@ export default class Game {
       const id = commands.playerId + "." + command.localPlayerId;
       const player = this._gamestate.players[id];
 
-      player.runController(command);
-      // console.log(`> Moving Player ${id} to [${player.tank.x},${player.tank.z}]`);
+      // Calculate delta time
+      const currentTime = Date.now();
+      const deltaTime =
+        (currentTime - (this.lastMovementTime[id] || currentTime)) / 1000; // Convert to seconds
+      this.lastMovementTime[id] = currentTime;
+
+      if(player)
+        player.runController(command, deltaTime);
     });
   }
 
@@ -91,6 +102,7 @@ export default class Game {
         encodedPlayer.amogColor = player.tank.amogColor;
         encodedPlayer.tankColor = player.tank.tankColor;
 
+        
         // encodedPlayer.shots = null
 
         encodedPlayers[playerId] = encodedPlayer;
@@ -123,6 +135,7 @@ export default class Game {
 
   get update() {
     let update = {
+      type: "regular-update",
       players: this.players,
     };
     return update;

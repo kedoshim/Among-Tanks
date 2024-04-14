@@ -6,8 +6,8 @@ import { createCommonTank } from "./models/common_tank_model.js";
 */
 export class CommonTank extends Tank {
   constructor(tankColor, amogColor) {
-    let moveSpeed = 1;
-    let rotationSpeed = 0.15;
+    let moveSpeed = 66;
+    let rotationSpeed = 10;
     super(tankColor, amogColor, moveSpeed, rotationSpeed);
 
     this.model = createCommonTank(this.tankColor, this.amogColor);

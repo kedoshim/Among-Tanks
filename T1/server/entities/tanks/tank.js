@@ -14,7 +14,7 @@ export class Tank {
    * @param {number} [moveSpeed=1]
    * @param {number} [rotationSpeed=0.15]
    */
-  constructor(tankColor, amogColor, moveSpeed = 1, rotationSpeed = 0.15) {
+  constructor(tankColor, amogColor, moveSpeed = 60, rotationSpeed = 10) {
     this._tankColor = tankColor;
     this._amogColor = amogColor;
     this._moveSpeed = moveSpeed;
@@ -195,49 +195,41 @@ export class Tank {
    *
    * @param {number} moveX The amount and direction of movement in the X axis [-1,1]
    * @param {number} moveZ The amount and direction of movement in the X axis [-1,1]
+   * @param {number} deltaTime The time elapsed since the last frame
    */
-  moveDirectional(moveX, moveZ) {
+  moveDirectional(moveX, moveZ, deltaTime) {
     this.lastMovement = { x: moveX, z: moveZ };
-    // if (moveX !== 0 || moveZ !== 0) console.log("moving ["+moveX+","+moveZ+"]");
 
-    // Calculate diagonal movement direction
     let moveMagnitude = Math.sqrt(moveX * moveX + moveZ * moveZ);
     if (moveMagnitude > 0) {
       moveX /= moveMagnitude;
       moveZ /= moveMagnitude;
     }
 
-    // If there's movement input, calculate the target angle
     let targetAngle = null;
     if (moveX !== 0 || moveZ !== 0) {
       targetAngle = Math.atan2(moveZ, moveX);
-      targetAngle += Math.PI / 2; // Adjust rotation since lookAt is rotated 90 degrees
+      targetAngle += Math.PI / 2;
     }
 
-    // If there's no movement input, use the last valid target angle
-    // Makes it so the rotation animation only stops at the last inputed direction
     if (targetAngle === null) {
       targetAngle = this.lastValidTargetAngle;
     } else {
-      // Update last valid target angle
       this.lastValidTargetAngle = targetAngle;
     }
 
-    // Calculate the difference between current rotation and target angle
     let rotationDifference = targetAngle - this.model.rotation.y;
-    // Wrap the difference into range [-π, π]
     rotationDifference =
       THREE.MathUtils.euclideanModulo(
         rotationDifference + Math.PI,
         2 * Math.PI
       ) - Math.PI;
 
-    // Smoothly rotate this.model towards the target angle
-    this.model.rotation.y += rotationDifference * this._animationRotationSpeed;
+    this.model.rotation.y +=
+      rotationDifference * this._animationRotationSpeed * deltaTime;
 
-    // Move this.model
-    this.model.position.x += this._moveSpeed * moveX;
-    this.model.position.z += this._moveSpeed * moveZ;
+    this.model.position.x += this._moveSpeed * moveX * deltaTime;
+    this.model.position.z += this._moveSpeed * moveZ * deltaTime;
 
     this.x = this.model.position.x;
     this.z = this.model.position.z;
@@ -249,9 +241,11 @@ export class Tank {
    *
    * @param {number} forwardForce Varies from -1 (moves backwards) to 1 (moves frontwards)
    * @param {number} rotationDirection Varies from -1 (left) to 1 (right)
+   * @param {number} deltaTime The time elapsed since the last frame
    */
-  moveRotating(forwardForce, rotationDirection) {
+  moveRotating(forwardForce, rotationDirection, deltaTime) {
     this.lastMovement = { x: rotationDirection, z: forwardForce };
+
     if (Math.abs(forwardForce) > 1) {
       forwardForce = forwardForce >= 0 ? 1 : -1;
     }
@@ -259,14 +253,13 @@ export class Tank {
       rotationDirection = rotationDirection >= 0 ? 1 : -1;
     }
 
-    this.model.translateZ(forwardForce * this._moveSpeed);
-
-    this.model.rotateY(this._rotationSpeed * rotationDirection);
+    this.model.translateZ(forwardForce * this._moveSpeed * deltaTime);
+    this.model.rotateY(this._rotationSpeed * rotationDirection * deltaTime);
 
     this._lastValidTargetAngle = this._model.rotation.y;
     this.x = this.model.position.x;
     this.z = this.model.position.z;
-    this.rotation = this.model.rotation;    
+    this.rotation = this.model.rotation;
   }
 
   /**

@@ -1,49 +1,38 @@
 {
   "directionalMovementEnabled": false,
-  "numberOfPlayers" : 2,
-  "playerSpawnPoint" : [
-    [-20, -20],
-    [20, -20],
-    [-20, 20],
-    [20, 20]
-  ],
+  "numberOfPlayers": 1,
 
-  "playerConfig": {
-    "defaultPlayerAmogusColors": ["darkorange", "antiquewhite", "purple", "pink"],
-    "defaultPlayerTankColors": ["darkblue", "red", "goldenrod", "green"],
-    "defaultPlayerControls": [
-      {
-        "up": "w",
-        "down": "s",
-        "right": "d",
-        "left": "a",
-        "shoot": [" ", "q", "Shift"]
-      },
-      {
-        "up": "ArrowUp",
-        "down": "ArrowDown",
-        "right": "ArrowRight",
-        "left": "ArrowLeft",
-        "shoot": ["/", ","]
-      },
-      {
-        "up": "i",
-        "down": "k",
-        "right": "l",
-        "left": "j",
-        "shoot": ["h"]
-      },
-      {
-        "up": "8",
-        "down": "4",
-        "right": "5",
-        "left": "6",
-        "shoot": ["Enter"]
-      }
-    ]
-    
-  },
-  "gamepadConfig":{
+  "keyboardConfig": [
+    {
+      "up": "w",
+      "down": "s",
+      "right": "d",
+      "left": "a",
+      "shoot": [" ", "q", "Shift"]
+    },
+    {
+      "up": "ArrowUp",
+      "down": "ArrowDown",
+      "right": "ArrowRight",
+      "left": "ArrowLeft",
+      "shoot": ["/", ","]
+    },
+    {
+      "up": "i",
+      "down": "k",
+      "right": "l",
+      "left": "j",
+      "shoot": ["h"]
+    },
+    {
+      "up": "8",
+      "down": "4",
+      "right": "5",
+      "left": "6",
+      "shoot": ["Enter"]
+    }
+  ],
+  "gamepadConfig": {
     "defaultGamepadButtons": {
       "up": 12,
       "down": 13,
@@ -51,13 +40,13 @@
       "right": 15,
       "shoot": 7
     },
-    "deadzone":0.1,
-    "stickMultiplier":1
+    "deadzone": 0.1,
+    "stickMultiplier": 1
   },
 
-  "cameraConfig":{
-    "FOV" : 45,
-    "near":0.1,
+  "cameraConfig": {
+    "FOV": 45,
+    "near": 0.1,
     "far": 2000
   }
 }

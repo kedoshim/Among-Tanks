@@ -3,7 +3,7 @@ export default class KeyboardListener {
   constructor(document, config) {
     this.state = {
       observers: [],
-      playerConfigs: config.playerConfig.defaultPlayerControls,
+      playerConfigs: config.keyboardConfig,
       pressedKeys: new Set(),
       keyInterval: null,
     };

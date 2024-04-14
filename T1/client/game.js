@@ -34,8 +34,7 @@ export default class Game {
     // Bind methods
     this.createGame = this.createGame.bind(this);
     this.setState = this.setState.bind(this);
-    this.removePlayer = this.removePlayer.bind(this);
-    this.loadPlayers = this.loadPlayers.bind(this);
+    this.removePlayers = this.removePlayers.bind(this);
     this.updateCamera = this.updateCamera.bind(this);
     this.showInformation = this.showInformation.bind(this);
     this.render = this.render.bind(this);
@@ -74,10 +73,11 @@ export default class Game {
   }
 
   createPlayers(players) {
-    console.log("players");
-    console.log(players);
-    let playersObject = {};
+    
+    
     for (const playerId in players) {
+      if (this.gameState.players[playerId])
+        continue;
       const player = players[playerId];
 
       let name = player.name;
@@ -94,6 +94,8 @@ export default class Game {
       let amogColor = player.amogColor;
       let tankColor = player.tankColor;
 
+      console.log(player)
+
       let newPlayer = new Player(
         name,
         [x, z],
@@ -103,36 +105,33 @@ export default class Game {
         tankColor
       );
 
-      playersObject[playerId] = newPlayer;
+      this.gameState.players[playerId] = newPlayer;
+      newPlayer.load(this.gameState.scene);
     }
-    return playersObject;
+
+    console.log(this.gameState.players);
   }
 
   setState(state) {
     if (state) {
       this.gameState.currentLevelMap = state.currentLevelMap;
-      this.gameState.players = this.createPlayers(state.players);
+      this.createPlayers(state.players);
     }
-    this.loadPlayers();
   }
 
-  removePlayer(command) {
-    const id = command.playerId;
-    this.gameState.players.id = null;
-  }
-
-  loadPlayers() {
-    const players = this.gameState.players;
+  removePlayers(players) {
     for (const playerId in players) {
-      let player = players[playerId];
-      console.log("loading player " + player.name);
-      player.load(this.gameState.scene);
+      let player = this.gameState.players[playerId];
+      this.gameState.scene.remove(player.tank.model)
+      this.gameState.players[playerId] = null;
     }
   }
 
   updatePlayers(players) {
     
     let uncreatedPlayers = {};
+    const playersToRemove = {};
+
     for (const playerId in players) {
       const playerInfo = players[playerId];
       let player = this.gameState.players[playerId];
@@ -140,7 +139,6 @@ export default class Game {
       else {
         player.tank.model.position.x = playerInfo.x;
         player.tank.model.position.z = playerInfo.z;
-        console.log(playerInfo.rotation);
         if (playerInfo.rotation) {
           player.tank.model.rotation.x = playerInfo.rotation._x;
           player.tank.model.rotation.y = playerInfo.rotation._y;
@@ -151,11 +149,25 @@ export default class Game {
     }
     if (Object.keys(uncreatedPlayers).length > 0) {
       this.createPlayers(uncreatedPlayers);
+      uncreatedPlayers = {};
+    }
+    for (const playerId in this.gameState.players) {
+      // Check if the player exists in the updated players list
+      if (!players[playerId]) {
+        // If the player doesn't exist in the updated players list, add it to playersToRemove
+        playersToRemove[playerId] = this.gameState.players[playerId];
+      }
     }
   }
 
   updateGamestate(state) {
-    if (state.players) this.updatePlayers(state.players);
+    if (state.type == "regular-update") {
+      if (state.players) this.updatePlayers(state.players);
+    }
+    if (state.type == "remove-player") {
+      console.log(state);
+      if (state.players) this.removePlayers(state.players);
+    }
   }
 
   updateCamera() {

@@ -3,7 +3,7 @@ export default class GamepadListener {
   constructor(config) {
     this.state = {
       observers: [],
-      playerConfigs: config.playerConfig.defaultPlayerControls,
+      playerConfigs: config.gamepadConfig.defaultGamepadButtons,
     };
 
     this.gamepadConnected = false;
