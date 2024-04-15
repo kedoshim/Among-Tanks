@@ -16,39 +16,38 @@ export class PlayerController extends Controller {
   constructor(target) {
     super(target);
 
-    this._directionalMovementEnabled = getConfig().directionalMovementEnabled
+    this._directionalMovementEnabled = getConfig().directionalMovementEnabled;
   }
 
   /**
    * Movement mode where the movement is based on the input direction
    * Called when "directionalMovement" is enabled in the config.json
    */
-  _directionalMovement(movement,deltaTime) {
+  _directionalMovement(movement) {
     if (movement.shoot == true) {
       this._target.shoot();
     }
-    this._target.moveRotating(movement.moveZ, movement.moveX,deltaTime);
+    this._target.moveRotating(movement.moveZ, movement.moveX);
   }
 
   /**
    * Movement mode where the left and right inputs make the player rotate
    * Called when "directionalMovement" is disabled in the config.json
    */
-  _rotatingMovement(movement,deltaTime) {
+  _rotatingMovement(movement) {
     if (movement.shoot == true) {
       this._target.shoot();
     }
-    this._target.moveRotating(movement.moveZ, movement.moveX,deltaTime);
+    this._target.moveRotating(movement.moveZ, movement.moveX);
   }
 
   /**
    */
-  control(movement, deltaTime) {
-    // console.log(deltaTime)
+  control(movement) {
     if (this._directionalMovementEnabled) {
-      this._directionalMovement(movement,deltaTime);
+      this._directionalMovement(movement);
     } else {
-      this._rotatingMovement(movement,deltaTime);
+      this._rotatingMovement(movement);
     }
   }
 }

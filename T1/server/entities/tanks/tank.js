@@ -14,7 +14,7 @@ export class Tank {
    * @param {number} [moveSpeed=1]
    * @param {number} [rotationSpeed=0.15]
    */
-  constructor(tankColor, amogColor, moveSpeed = 100, rotationSpeed = 30) {
+  constructor(tankColor, amogColor, moveSpeed = 1, rotationSpeed = 0.15) {
     this._tankColor = tankColor;
     this._amogColor = amogColor;
     this._moveSpeed = moveSpeed;
@@ -195,9 +195,8 @@ export class Tank {
    *
    * @param {number} moveX The amount and direction of movement in the X axis [-1,1]
    * @param {number} moveZ The amount and direction of movement in the X axis [-1,1]
-   * @param {number} deltaTime The time elapsed since the last frame
    */
-  moveDirectional(moveX, moveZ, deltaTime) {
+  moveDirectional(moveX, moveZ) {
     this.lastMovement = { x: moveX, z: moveZ };
 
     let moveMagnitude = Math.sqrt(moveX * moveX + moveZ * moveZ);
@@ -225,11 +224,10 @@ export class Tank {
         2 * Math.PI
       ) - Math.PI;
 
-    this.model.rotation.y +=
-      rotationDifference * this._animationRotationSpeed * deltaTime;
+    this.model.rotation.y += rotationDifference * this._animationRotationSpeed;
 
-    this.model.position.x += this._moveSpeed * moveX * deltaTime;
-    this.model.position.z += this._moveSpeed * moveZ * deltaTime;
+    this.model.position.x += this._moveSpeed * moveX;
+    this.model.position.z += this._moveSpeed * moveZ;
 
     this.x = this.model.position.x;
     this.z = this.model.position.z;
@@ -241,9 +239,8 @@ export class Tank {
    *
    * @param {number} forwardForce Varies from -1 (moves backwards) to 1 (moves frontwards)
    * @param {number} rotationDirection Varies from -1 (left) to 1 (right)
-   * @param {number} deltaTime The time elapsed since the last frame
    */
-  moveRotating(forwardForce, rotationDirection, deltaTime) {
+  moveRotating(forwardForce, rotationDirection) {
     this.lastMovement = { x: rotationDirection, z: forwardForce };
 
     if (Math.abs(forwardForce) > 1) {
@@ -253,8 +250,8 @@ export class Tank {
       rotationDirection = rotationDirection >= 0 ? 1 : -1;
     }
 
-    this.model.translateZ(forwardForce * this._moveSpeed * deltaTime);
-    this.model.rotateY(this._rotationSpeed * rotationDirection * deltaTime);
+    this.model.translateZ(forwardForce * this._moveSpeed);
+    this.model.rotateY(this._rotationSpeed * rotationDirection);
 
     this._lastValidTargetAngle = this._model.rotation.y;
     this.x = this.model.position.x;

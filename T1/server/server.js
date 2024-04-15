@@ -56,7 +56,7 @@ sockets.on("connection", (socket) => {
     command.playerId = playerId;
     command.type = "move-player";
 
-    game.movePlayers(command,ping);
+    game.insertMovement(command);
   });
   
   game.subscribe((command) => {

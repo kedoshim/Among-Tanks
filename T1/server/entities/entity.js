@@ -38,8 +38,8 @@ export class Entity {
    * @param {KeyboardState} keyboard
    * @param {Gamepad} gamepad
    */
-  runController(command,deltaTime) {
-    this._controller.control(command,deltaTime);
+  runController(command) {
+    this._controller.control(command);
   }
 
   /**

@@ -6,7 +6,6 @@ window.addEventListener("gamepadconnected", (e) => {
   const gamepad = e.gamepad;
   connectedGamepads[gamepad.index] = gamepad.index;
   console.log("gamepad " + gamepad.index + " connected");
-  // console.log(gamepad);
 });
 
 window.addEventListener("gamepaddisconnected", (e) => {
@@ -47,18 +46,17 @@ socket.on("connect", () => {
 
   setInterval(() => {
     const start = Date.now();
-    socket.emit("ping", start); // Sending the timestamp to the server
-  }, 1000); // Send ping every second
+    socket.emit("ping", start);
+  }, 1000);
 
   socket.on("pong", ({ ping }) => {
     const end = Date.now();
-    const clientPing = end - ping;
-    console.log(`Client Ping: ${clientPing}ms`);
+    // console.log(`Client Ping: ${ping}ms`);
   });
 });
 
 socket.on("setup", (state) => {
-  console.log(state);
+  // console.log(state);
   game.createGame(state);
   game.render()
 

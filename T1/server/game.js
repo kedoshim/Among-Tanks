@@ -26,10 +26,12 @@ export default class Game {
 
     this.observers = [];
     this.lastMovementTime = {}; // Map to store the timestamp of the last movement command for each player
+    this.bufferedMovement = [];
   }
 
   start() {
     this.updateDevices();
+    this.updateMovements();
   }
 
   setState(state) {
@@ -65,21 +67,21 @@ export default class Game {
     });
   }
 
-  movePlayers(commands, ping) {
+  insertMovement(commands) {
     commands.forEach((command) => {
       const id = commands.playerId + "." + command.localPlayerId;
-      const player = this._gamestate.players[id];
 
-      // Calculate delta time based on ping time
-      let deltaTime = ping / 1000; // Convert ping to seconds
-
-      // Clamp delta time to a maximum value to avoid large spikes in movement
-      deltaTime = Math.min(deltaTime, 0.2);
-
-      if (player) {
-        player.runController(command, deltaTime);
-      }
+      this.bufferedMovement.push({ id, movement: command });
     });
+  }
+
+  movePlayer(command) {
+    const id = command.id;
+    const player = this._gamestate.players[id];
+
+    if (player) {
+      player.runController(command.movement);
+    }
   }
 
   get players() {
@@ -146,5 +148,25 @@ export default class Game {
     setInterval(() => {
       this.notifyAll(this.update);
     }, 10);
+  }
+
+  updateMovements() {
+    let isProcessing = false;
+
+    const processMovements = () => {
+      if (!isProcessing && this.bufferedMovement.length > 0) {
+        isProcessing = true;
+        const commandsToProcess = this.bufferedMovement.splice(
+          0,
+          this.bufferedMovement.length
+        );
+        commandsToProcess.forEach((command) => {
+          this.movePlayer(command);
+        });
+        isProcessing = false;
+      }
+    };
+
+    setInterval(processMovements, 10);
   }
 }

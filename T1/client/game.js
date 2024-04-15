@@ -94,8 +94,6 @@ export default class Game {
       let amogColor = player.amogColor;
       let tankColor = player.tankColor;
 
-      console.log(player)
-
       let newPlayer = new Player(
         name,
         [x, z],
@@ -108,8 +106,6 @@ export default class Game {
       this.gameState.players[playerId] = newPlayer;
       newPlayer.load(this.gameState.scene);
     }
-
-    console.log(this.gameState.players);
   }
 
   setState(state) {
