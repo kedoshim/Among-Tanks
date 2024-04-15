@@ -32,7 +32,13 @@ game.start();
 sockets.on("connection", (socket) => {
   const playerId = socket.id;
   console.log(`> Device connected: ${playerId}`);
+  let ping = 0;
 
+  socket.on("ping", (timestamp) => {
+    const pongTimestamp = Date.now();
+    ping = pongTimestamp - timestamp;
+    socket.emit("pong", { ping });
+  });
 
   socket.on("create-players", (command) => {
     console.log(`> Creating players of device ${playerId}`)
@@ -50,7 +56,7 @@ sockets.on("connection", (socket) => {
     command.playerId = playerId;
     command.type = "move-player";
 
-    game.movePlayers(command);
+    game.movePlayers(command,ping);
   });
   
   game.subscribe((command) => {

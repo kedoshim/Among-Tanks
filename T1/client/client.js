@@ -34,18 +34,27 @@ let inputListener = new InputListener(document,config);
 socket.on("connect", () => {
   try {
     let command = {};
-    command.players = {}
-    for (let i = 1; i < config.numberOfPlayers+1; i++) {
+    command.players = {};
+    for (let i = 1; i < config.numberOfPlayers + 1; i++) {
       const playerId = socket.id + "." + i;
       console.log(`Player connected on Client with id: ${playerId}`);
       command.players[playerId] = playerId;
     }
     socket.emit("create-players", command);
-
   } catch (error) {
     console.log(`Error on connect: ${error}`);
   }
 
+  setInterval(() => {
+    const start = Date.now();
+    socket.emit("ping", start); // Sending the timestamp to the server
+  }, 1000); // Send ping every second
+
+  socket.on("pong", ({ ping }) => {
+    const end = Date.now();
+    const clientPing = end - ping;
+    console.log(`Client Ping: ${clientPing}ms`);
+  });
 });
 
 socket.on("setup", (state) => {

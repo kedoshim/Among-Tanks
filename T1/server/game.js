@@ -48,7 +48,8 @@ export default class Game {
     let removePlayersCommand = {};
     const id = command.playerId;
     for (let i = 1; i < 5; i++) {
-      removePlayersCommand[id + "." + i] = this._gamestate.players[id + "." + i];
+      removePlayersCommand[id + "." + i] =
+        this._gamestate.players[id + "." + i];
       this._gamestate.players[id + "." + i] = null;
     }
     removePlayersCommand.type = "remove-players";
@@ -64,19 +65,20 @@ export default class Game {
     });
   }
 
-  movePlayers(commands) {
+  movePlayers(commands, ping) {
     commands.forEach((command) => {
       const id = commands.playerId + "." + command.localPlayerId;
       const player = this._gamestate.players[id];
 
-      // Calculate delta time
-      const currentTime = Date.now();
-      const deltaTime =
-        (currentTime - (this.lastMovementTime[id] || currentTime)) / 1000; // Convert to seconds
-      this.lastMovementTime[id] = currentTime;
+      // Calculate delta time based on ping time
+      let deltaTime = ping / 1000; // Convert ping to seconds
 
-      if(player)
+      // Clamp delta time to a maximum value to avoid large spikes in movement
+      deltaTime = Math.min(deltaTime, 0.2);
+
+      if (player) {
         player.runController(command, deltaTime);
+      }
     });
   }
 
@@ -102,7 +104,6 @@ export default class Game {
         encodedPlayer.amogColor = player.tank.amogColor;
         encodedPlayer.tankColor = player.tank.tankColor;
 
-        
         // encodedPlayer.shots = null
 
         encodedPlayers[playerId] = encodedPlayer;

@@ -14,7 +14,7 @@ export class Tank {
    * @param {number} [moveSpeed=1]
    * @param {number} [rotationSpeed=0.15]
    */
-  constructor(tankColor, amogColor, moveSpeed = 60, rotationSpeed = 10) {
+  constructor(tankColor, amogColor, moveSpeed = 100, rotationSpeed = 30) {
     this._tankColor = tankColor;
     this._amogColor = amogColor;
     this._moveSpeed = moveSpeed;
