@@ -39,6 +39,9 @@ export class Tank {
     this.collisionShape = null;
 
     this._lastValidTargetAngle = 0;
+
+    this._shootCooldown = 250; // Cooldown time in milliseconds
+    this._lastShootTime = 0; // Last time the shoot function was called
   }
 
   // Getters
@@ -235,6 +238,15 @@ export class Tank {
    * Makes the tank shoot
    */
   shoot() {
+    const currentTime = Date.now();
+
+    if (currentTime - this._lastShootTime < this._shootCooldown) {
+      return;
+    }
+
+    this._lastShootTime = currentTime;
+    
+
     const length = 16; // Posição de disparo do projétil em relação ao tanque
     const projectilePosition = this.model.position.clone(); // Posição inicial do projétil é a mesma do tanque
 
