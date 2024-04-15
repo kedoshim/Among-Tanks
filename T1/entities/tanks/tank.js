@@ -211,7 +211,10 @@ export class Tank {
 
     this.model.translateZ(forwardForce * this._moveSpeed);
 
-    this.model.rotateY(this._rotationSpeed * rotationDirection);
+    if(forwardForce == 0)
+      this.model.rotateY(this._rotationSpeed * 0.5 * rotationDirection);
+    else
+      this.model.rotateY(this._rotationSpeed * rotationDirection);
 
     this._lastValidTargetAngle = this._model.rotation.y;
 
@@ -245,7 +248,7 @@ export class Tank {
     }
 
     this._lastShootTime = currentTime;
-    
+
 
     const length = 16; // Posição de disparo do projétil em relação ao tanque
     const projectilePosition = this.model.position.clone(); // Posição inicial do projétil é a mesma do tanque
