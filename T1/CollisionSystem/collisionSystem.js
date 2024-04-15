@@ -102,6 +102,8 @@ export class ProjectileCollisionSystem extends CollisionSystem {
 export class TankCollisionSystem extends CollisionSystem {
     constructor(players, walls) {
         super(players, walls);
+        this.previousCollision = {collided: false, horizontal: false};
+        this.previousBlockThatCollided = null;
     }
 
     checkCollisionWithWalls() {
@@ -169,5 +171,18 @@ export class TankCollisionSystem extends CollisionSystem {
         let t = new THREE.Vector3(wallPosition.x - tankPosition.x, wallPosition.y - tankPosition.y, wallPosition.z - tankPosition.z);
 
         return tankDirection.dot(t);
+    }
+
+    #checkIfTheCollisionIsVallid(wallposition) {
+        // {horizontal: bool, coord: int} atributo de classe
+        if(this.previousBlockThatCollided === null) {
+            return true;
+        }
+
+        if(this.previousBlockThatCollided.model.position.distanceTo(wallposition) <= this.previousBlockThatCollided.BLOCK_SiZE) {
+            return false;
+        }
+
+        return true;
     }
 }
