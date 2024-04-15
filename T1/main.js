@@ -12,7 +12,7 @@ import {
 
 import { CameraControls } from "./camera.js";
 import { Player } from "./entities/player.js";
-import { ProjectileCollisionSystem } from "./CollisionSystem/collisionSystem.js"
+import { ProjectileCollisionSystem, TankCollisionSystem } from "./CollisionSystem/collisionSystem.js"
 
 import { getConfig, loadConfig } from "./config.js";
 import {JsonDecoder} from "./level_builder_interpreter/JsonDecoder.js"
@@ -33,7 +33,7 @@ window.addEventListener("gamepaddisconnected", (e) => {
 
 
 async function main() {
-  const loaded_level = await fetch("http://127.0.0.1:5500/T1/level_builder_interpreter/level.json")
+  const loaded_level = await fetch("http://127.0.0.1:5500/T1/level_builder_interpreter/arena.json")
   const level_cast = await loaded_level.json()
   const level_decoded = JsonDecoder.decode(level_cast)
   console.log(level_decoded)
@@ -124,6 +124,7 @@ async function main() {
 
   drawLevel(level_decoded.blocks, level_decoded.offset);
   let projectileCollisionSystem = new ProjectileCollisionSystem(players, walls);
+  let tankCollisionSystem = new TankCollisionSystem(players, walls);
 
   render();
 
@@ -206,6 +207,7 @@ async function main() {
   function checkCollision() {
     projectileCollisionSystem.checkIfThereHasBeenCollisionWithTanks();
     projectileCollisionSystem.checkCollisionWithWalls();
+    tankCollisionSystem.checkCollisionWithWalls();
   }
 
   function updateHealthBars() {

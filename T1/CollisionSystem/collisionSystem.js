@@ -105,14 +105,15 @@ export class TankCollisionSystem extends CollisionSystem {
     }
 
     checkCollisionWithWalls() {
-        let walls = this.walls;
-        let players = this.players;
-        let wall;
+        let walls = this.walls; // lista de todos os muros
+        let players = this.players; // lista de todos os jogadores
+        let wall, wallHorizontalIndexAux=0, wallVerticalIndexAux=0; // variáveis auxiliares
         let player;
         let hitWall;
         let theImpactWasInThehorizontal;
         let horizontal, vertical;
         let slideVector;
+        let dotProduct;
 
         for (let playerIndex = 0; playerIndex < players.length; playerIndex++) {
             player = players[playerIndex];
@@ -128,8 +129,9 @@ export class TankCollisionSystem extends CollisionSystem {
             for (let wallIndex = 0; wallIndex < walls.length; wallIndex++) {
                 wall = walls[wallIndex];
                 hitWall = this.checkCollisionBetwennCollisionShapes(wall.collisionShape, player._tank.collisionShape);
+                dotProduct = this.#dotProductBetweenTankDirectionAndVectorPosition(slideVector, wall.model.position, player._tank.model.position);
 
-                if(hitWall && this.#dotProductBetweenTankDirectionAndVectorPosition(slideVector, wall.model.position, player._tank.model.position) > 0) {
+                if(hitWall && dotProduct > 0) {
                     theImpactWasInThehorizontal = this.#theCollisionWasInTheHorizontal(wall.model.position, player._tank.model.position);
 
                     if(theImpactWasInThehorizontal && !horizontal) {
