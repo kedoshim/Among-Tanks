@@ -135,20 +135,25 @@ export class TankCollisionSystem extends CollisionSystem {
 
                 if(hitWall && dotProduct > 0) {
                     theImpactWasInThehorizontal = this.#theCollisionWasInTheHorizontal(wall.model.position, player._tank.model.position);
-
-                    if(theImpactWasInThehorizontal && !horizontal) {
-                        horizontal = true;
-                        slideVector.x = 0;
-                    }
-                    else if(!theImpactWasInThehorizontal && !vertical) {
-                        vertical = true;
-                        slideVector.z = 0;
+                    let collisionIsValid = this.#checkIfTheCollisionIsVallid(wall.model.position, theImpactWasInThehorizontal);
+                    
+                    if(collisionIsValid) {
+                        if(theImpactWasInThehorizontal && !horizontal) {
+                            horizontal = true;
+                            this.previousBlockThatCollided = wall;
+                            slideVector.x = 0;
+                        }
+                        else if(!theImpactWasInThehorizontal && !vertical) {
+                            vertical = true;
+                            this.previousBlockThatCollided = wall;
+                            slideVector.z = 0;
+                        }
                     }
 
                     player._tank.collidedWithWalls = true;
                 }
             }
-            player._tank.slideVector = slideVector.normalize();
+            player._tank.slideVector = slideVector;
         }
     }
 
@@ -174,7 +179,6 @@ export class TankCollisionSystem extends CollisionSystem {
     }
 
     #checkIfTheCollisionIsVallid(wallposition, horizontal) {
-        // {horizontal: bool, coord: int} atributo de classe
         if(this.previousBlockThatCollided === null) {
             return true;
         }
