@@ -173,14 +173,15 @@ export class TankCollisionSystem extends CollisionSystem {
         return tankDirection.dot(t);
     }
 
-    #checkIfTheCollisionIsVallid(wallposition) {
+    #checkIfTheCollisionIsVallid(wallposition, horizontal) {
         // {horizontal: bool, coord: int} atributo de classe
         if(this.previousBlockThatCollided === null) {
             return true;
         }
 
         if(this.previousBlockThatCollided.model.position.distanceTo(wallposition) <= this.previousBlockThatCollided.BLOCK_SiZE) {
-            return false;
+            if(this.previousCollision.horizontal !== horizontal)
+                return false;
         }
 
         return true;
