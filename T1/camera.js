@@ -36,6 +36,8 @@ export class CameraControls {
 
   enableOrbitControls() {
     this._lastPosition = this._camera.position;
+    this._orbit.target.x = this._mediumPoint[0];
+    this._orbit.target.z = this._mediumPoint[1];
     this._orbit.enabled = true;
   }
 
