@@ -125,7 +125,7 @@ export class GameManager {
     // console.log(offset);
     let BLOCK_SIZE = 13;
 
-    const translateGeometry = (i, j, yTranslation) => {
+    const getTranslation = (i, j, yTranslation) => {
       return {
         x: BLOCK_SIZE * Math.abs(i + 1 - x),
         y: yTranslation,
@@ -139,10 +139,12 @@ export class GameManager {
         BLOCK_SIZE,
         BLOCK_SIZE
       );
-      const translation = translateGeometry(i, j, yTranslation);
-      geometry.translate(translation.x, translation.y, translation.z);
       const material = new THREE.MeshBasicMaterial({ color });
-      const cube = new THREE.Mesh(geometry, material);
+      const cube = new THREE.Mesh(geometry, material); 
+      const translation = getTranslation(i, j, yTranslation);
+      cube.translateX(translation.x);
+      cube.translateY(translation.y);
+      cube.translateZ(translation.z);
       this.scene.add(cube);
     };
 
@@ -166,7 +168,7 @@ export class GameManager {
             break;
           case "Spawn":
             createBlock(i, j, 0xff0000, -BLOCK_SIZE / 2);
-            const translation = translateGeometry(i, j, -13);
+            const translation = getTranslation(i, j, -13);
             const spawn = [translation.x, translation.z];
             this.playerSpawnPoint.push(spawn);
             break;
