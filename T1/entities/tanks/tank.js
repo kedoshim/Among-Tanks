@@ -21,6 +21,8 @@ export class Tank {
     amogColor,
     moveSpeed = 1,
     rotationSpeed = 0.15,
+    damage,
+    bulletSpeed = 3,
     maxHealth = 10
   ) {
     this._tankColor = tankColor;
@@ -28,6 +30,8 @@ export class Tank {
     this._moveSpeed = moveSpeed;
     this._rotationSpeed = rotationSpeed / 2;
     this._animationRotationSpeed = rotationSpeed;
+    this._damage = damage;
+    this._bulletSpeed = bulletSpeed;
 
     this._maxHealth = maxHealth;
     this._health = this._maxHealth;
@@ -263,7 +267,7 @@ export class Tank {
     projectilePosition.addScaledVector(direction, length);
 
     // Criar o projétil na posição calculada e com a direção correta
-    let projectile = new Projectile(projectilePosition, direction);
+    let projectile = new Projectile(projectilePosition, direction,this._bulletSpeed,this._damage);
     this._projectiles.push(projectile);
 
     var audio = new Audio("audio/shot.mp3");
