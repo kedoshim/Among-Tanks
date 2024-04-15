@@ -141,12 +141,20 @@ export class TankCollisionSystem extends CollisionSystem {
                         if(theImpactWasInThehorizontal && !horizontal) {
                             horizontal = true;
                             this.previousBlockThatCollided = wall;
+                            this.previousCollision.collided = true;
+                            this.previousCollision.horizontal = theImpactWasInThehorizontal;
                             slideVector.x = 0;
+
+                            console.log("Colidiu na horizontal!")
                         }
                         else if(!theImpactWasInThehorizontal && !vertical) {
                             vertical = true;
                             this.previousBlockThatCollided = wall;
+                            this.previousCollision.collided = true;
+                            this.previousCollision.horizontal = theImpactWasInThehorizontal;
                             slideVector.z = 0;
+
+                            console.log("Colidiu na vertical!")
                         }
                     }
 
@@ -154,6 +162,8 @@ export class TankCollisionSystem extends CollisionSystem {
                 }
             }
             player._tank.slideVector = slideVector;
+            this.previousBlockThatCollided = null;
+            this.previousCollision = {collided: false, horizontal: false};
         }
     }
 
@@ -183,7 +193,7 @@ export class TankCollisionSystem extends CollisionSystem {
             return true;
         }
 
-        if(this.previousBlockThatCollided.model.position.distanceTo(wallposition) <= this.previousBlockThatCollided.BLOCK_SiZE) {
+        if(this.previousBlockThatCollided.model.position.distanceTo(wallposition) >= this.previousBlockThatCollided.BLOCK_SiZE) {
             if(this.previousCollision.horizontal !== horizontal)
                 return false;
         }
