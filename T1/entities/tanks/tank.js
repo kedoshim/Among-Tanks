@@ -1,10 +1,11 @@
 import * as THREE from "three";
 import { Projectile } from "../../Projectiles/projectile.js";
 import { Box3, Object3D } from "../../../build/three.module.js";
+import { HealthBar } from "./healthBar.js";
 
 /**
-* General class that represents any tank model
-*/
+ * General class that represents any tank model
+ */
 export class Tank {
   /**
    * Creates an instance of Tank.
@@ -15,12 +16,22 @@ export class Tank {
    * @param {number} [moveSpeed=1]
    * @param {number} [rotationSpeed=0.15]
    */
-  constructor(tankColor, amogColor, moveSpeed = 1, rotationSpeed = 0.15) {
+  constructor(
+    tankColor,
+    amogColor,
+    moveSpeed = 1,
+    rotationSpeed = 0.15,
+    maxHealth = 10
+  ) {
     this._tankColor = tankColor;
     this._amogColor = amogColor;
     this._moveSpeed = moveSpeed;
     this._rotationSpeed = rotationSpeed / 2;
     this._animationRotationSpeed = rotationSpeed;
+
+    this._maxHealth = maxHealth;
+    this._health = this._maxHealth;
+    this._healthBar = new HealthBar(this._maxHealth);
 
     this._model = null;
 
@@ -31,39 +42,33 @@ export class Tank {
   }
 
   // Getters
-  /**
-   * Description placeholder
-   */
+
   get tankColor() {
     return this._tankColor;
   }
 
-  /**
-   * Description placeholder
-   */
   get amogColor() {
     return this._amogColor;
   }
 
-  /**
-   * Description placeholder
-   */
   get moveSpeed() {
     return this._moveSpeed;
   }
 
-  /**
-   * Description placeholder
-   */
   get rotationSpeed() {
     return this._rotationSpeed;
   }
 
-  /**
-   * Description placeholder
-   */
   get model() {
     return this._model;
+  }
+  
+  get health() {
+    return this._health;
+    
+  }
+  get healthBar() {
+    return this._healthBar;
   }
 
   /**
@@ -113,6 +118,13 @@ export class Tank {
   set model(model) {
     this._model = model;
     this.collisionShape = new THREE.Box3().setFromObject(model);
+  }
+
+  set health(health) {
+    this._health = health;
+  }
+  set healthBar(healthBar) {
+    this._healthBar = healthBar;
   }
 
   /**
@@ -220,5 +232,5 @@ export class Tank {
     // Criar o projétil na posição calculada e com a direção correta
     let projectile = new Projectile(projectilePosition, direction);
     this._projectiles.push(projectile);
-}
+  }
 }

@@ -1,13 +1,13 @@
 import * as THREE from "three";
 
 export class HealthBar {
-    constructor(maxLife) {
+  constructor(maxLife) {
         this.maxLife = maxLife;
         this.model = null;
     }
 
     createLifeBar(width=5, height=2) {
-        let geometry = new THREE.BoxGeometry(width, height, 1);
+        let geometry = new THREE.BoxGeometry(width, height, 2);
         let materialBar = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
         let healthBar = new THREE.Mesh(geometry, materialBar);
 
@@ -20,8 +20,9 @@ export class HealthBar {
         return this.model;
     }
 
-    setHealthBarPosition(tankPosition) {
-        this.model.position.set(tankPosition.x, tankPosition.y-9, tankPosition.z + 10);
+  setHealthBarPosition(tankPosition) {
+    this.model.position.set(tankPosition.x, tankPosition.y - 9, tankPosition.z + 10);
+    // console.log(this.model.position)
     }
 
     updateHealthBar(actualLife) {

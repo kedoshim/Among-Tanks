@@ -160,7 +160,7 @@ export class GameManager {
       for (let j = 0; j < data[i].length; j++) {
         switch (data[i][j].type) {
           case "GroundBlock":
-            createBlock(i, j, 0xb2beb5, -BLOCK_SIZE/2);
+            createBlock(i, j, 0xb2beb5, -BLOCK_SIZE / 2);
             break;
           case "WallBlock":
             createBlock(i, j, 0x0000ff, BLOCK_SIZE / 2);
@@ -253,8 +253,8 @@ export class GameManager {
 
   updateHealthBars() {
     this.players.forEach((player) => {
-      player.healthBar.updateHealthBar(player.lifes);
-      player.healthBar.setHealthBarPosition(player._tank.model.position);
+      player.tank.healthBar.updateHealthBar(player.health);
+      player.tank.healthBar.setHealthBarPosition(player.tank.model.position);
     });
   }
 
