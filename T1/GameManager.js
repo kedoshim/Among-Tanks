@@ -151,13 +151,13 @@ export class GameManager {
       for (let j = 0; j < data[i].length; j++) {
         switch (data[i][j].type) {
           case "GroundBlock":
-            createBlock(i, j, 0xb2beb5, -13);
+            createBlock(i, j, 0xb2beb5, -BLOCK_SIZE/2);
             break;
           case "WallBlock":
-            createBlock(i, j, 0x0000ff, 0);
+            createBlock(i, j, 0x0000ff, BLOCK_SIZE / 2);
             break;
           case "Spawn":
-            createBlock(i, j, 0xff0000, -13);
+            createBlock(i, j, 0xff0000, -BLOCK_SIZE / 2);
             const translation = translateGeometry(i, j, -13);
             const spawn = [translation.x, translation.z];
             this.playerSpawnPoint.push(spawn);
