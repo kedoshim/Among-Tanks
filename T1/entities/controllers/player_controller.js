@@ -187,9 +187,13 @@ export class PlayerController extends Controller {
     // Check rotation direction based on pressed keys
     if (keyboard.pressed(this._keys.up)) {
       movement++;
+      this._target._inMovement = true;
+      this._target._positiveMovement = true;
     }
     if (keyboard.pressed(this._keys.down)) {
       movement--;
+      this._target._inMovement = true;
+      this._target._positiveMovement = false;
     }
     if (keyboard.pressed(this._keys.left)) {
       rotation++;

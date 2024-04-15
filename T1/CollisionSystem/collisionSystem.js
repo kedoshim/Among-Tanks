@@ -106,21 +106,66 @@ export class TankCollisionSystem extends CollisionSystem {
 
     checkCollisionWithWalls() {
         let walls = this.walls;
-        let wall = null;
-        let player = null;
         let players = this.players;
+        let wall;
+        let player;
+        let hitWall;
+        let theImpactWasInThehorizontal;
+        let horizontal, vertical;
+        let slideVector;
 
         for (let playerIndex = 0; playerIndex < players.length; playerIndex++) {
             player = players[playerIndex];
+            horizontal = false;
+            vertical = false;
+            slideVector = new THREE.Vector3(0, 0, 1);
+            slideVector.applyQuaternion(player._tank.model.quaternion);
+            player._tank.collidedWithWalls = false;
+            if(!player._tank._positiveMovement) {
+                slideVector.multiplyScalar(-1);
+            }
 
             for (let wallIndex = 0; wallIndex < walls.length; wallIndex++) {
                 wall = walls[wallIndex];
                 hitWall = this.checkCollisionBetwennCollisionShapes(wall.collisionShape, player._tank.collisionShape);
 
-                if(hitWall) {
-                    //TODO: fazer o resto da colisão
+                if(hitWall && this.#dotProductBetweenTankDirectionAndVectorPosition(slideVector, wall.model.position, player._tank.model.position) > 0) {
+                    theImpactWasInThehorizontal = this.#theCollisionWasInTheHorizontal(wall.model.position, player._tank.model.position);
+
+                    if(theImpactWasInThehorizontal && !horizontal) {
+                        horizontal = true;
+                        slideVector.x = 0;
+                    }
+                    else if(!theImpactWasInThehorizontal && !vertical) {
+                        vertical = true;
+                        slideVector.z = 0;
+                    }
+
+                    player._tank.collidedWithWalls = true;
                 }
             }
+            player._tank.slideVector = slideVector.normalize();
         }
+    }
+
+    #theCollisionWasInTheHorizontal(wallPosition, tankPosition) {
+        const x_distance = wallPosition.x - tankPosition.x;
+        const z_distance = wallPosition.z - tankPosition.z;
+        let direction; // true: Horizontal Orientation, false: Vertical Orientation
+
+        if (Math.abs(x_distance) > Math.abs(z_distance)) {
+            direction = true;
+        } else {
+            direction = false;
+        }
+
+        return direction;
+    }
+
+    // t = w - t
+    #dotProductBetweenTankDirectionAndVectorPosition(tankDirection, wallPosition, tankPosition) {
+        let t = new THREE.Vector3(wallPosition.x - tankPosition.x, wallPosition.y - tankPosition.y, wallPosition.z - tankPosition.z);
+
+        return tankDirection.dot(t);
     }
 }

@@ -21,11 +21,15 @@ export class Tank {
     this._moveSpeed = moveSpeed;
     this._rotationSpeed = rotationSpeed / 2;
     this._animationRotationSpeed = rotationSpeed;
+    this._inMovement = false;
+    this._positiveMovement = true;
 
     this._model = null;
 
     this._projectiles = [];
     this.collisionShape = null;
+    this._collidedWithWalls = false;
+    this.slideVector = new THREE.Vector3(0,0,0);
 
     this._lastValidTargetAngle = 0;
   }
@@ -59,6 +63,10 @@ export class Tank {
     return this._rotationSpeed;
   }
 
+  get inMovement() {
+    return this._inMovement;
+  }
+
   /**
    * Description placeholder
    */
@@ -76,6 +84,10 @@ export class Tank {
 
   get projectiles() {
     return this._projectiles;
+  }
+
+  get collidedWithWalls() {
+    return this._collidedWithWalls;
   }
 
   // Setters
@@ -113,6 +125,14 @@ export class Tank {
   set model(model) {
     this._model = model;
     this.collisionShape = new THREE.Box3().setFromObject(model);
+  }
+
+  set collidedWithWalls(collided) {
+    this._collidedWithWalls = collided;
+  }
+
+  set inMovement(inMovement) {
+    trhis._inMovement = inMovement;
   }
 
   /**
@@ -191,16 +211,33 @@ export class Tank {
       rotationDirection = rotationDirection >= 0 ? 1 : -1;
     }
 
-    this.model.translateZ(forwardForce * this._moveSpeed);
+    if (!this.collidedWithWalls) {
+      // Movimento normal se não houver colisão com as paredes
+      this.model.translateZ(forwardForce * this._moveSpeed);
+    }
+    else {
+        if(this.inMovement && forwardForce !== 0) {
+          // Deslizar enquanto estiver em contato com a parede
+          this.model.position.add(this.slideVector);
+        }
+    }
 
+    // Resetar a flag de colisão com as paredes
+    this.collidedWithWalls = false;
+
+    // Resetar o movimento
+    this._inMovement = false;
+
+    // Rodar o tanque
     this.model.rotateY(this._rotationSpeed * rotationDirection);
 
+    // Atualizar a última angulação válida
     this._lastValidTargetAngle = this._model.rotation.y;
 
+    // Atualizar a forma de colisão do tanque
     this.collisionShape = null;
     this.collisionShape = new THREE.Box3().setFromObject(this.model);
   }
-
   /**
    * Makes the tank shoot
    */
