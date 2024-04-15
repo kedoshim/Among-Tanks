@@ -122,61 +122,48 @@ export class GameManager {
 
   loadLevel(data, offset) {
     let { x, y } = offset;
-    console.log("Offset");
-    console.log(offset);
+    // console.log("Offset");
+    // console.log(offset);
     let BLOCK_SIZE = 13;
+
+    const translateGeometry = (i, j, yTranslation) => {
+      return {
+        x: BLOCK_SIZE * Math.abs(i + 1 - x),
+        y: yTranslation,
+        z: BLOCK_SIZE * Math.abs(j + 1 - y),
+      };
+    };
+
+    const createBlock = (i, j, color, yTranslation) => {
+      const geometry = new THREE.BoxGeometry(
+        BLOCK_SIZE,
+        BLOCK_SIZE,
+        BLOCK_SIZE
+      );
+      const translation = translateGeometry(i, j, yTranslation);
+      geometry.translate(translation.x, translation.y, translation.z);
+      const material = new THREE.MeshBasicMaterial({ color });
+      const cube = new THREE.Mesh(geometry, material);
+      this.scene.add(cube);
+    };
+
     for (let i = 0; i < data.length; i++) {
       for (let j = 0; j < data[i].length; j++) {
-        if (data[i][j].type === "GroundBlock") {
-          const geometry = new THREE.BoxGeometry(
-            BLOCK_SIZE,
-            BLOCK_SIZE,
-            BLOCK_SIZE
-          );
-          geometry.translate(
-            -(BLOCK_SIZE * Math.abs(i - x)),
-            -13,
-            -(BLOCK_SIZE * Math.abs(j - y))
-          );
-          const material = new THREE.MeshBasicMaterial({ color: 0xb2beb5 });
-          const cube = new THREE.Mesh(geometry, material);
-          this.scene.add(cube);
-        }
-        if (data[i][j].type === "WallBlock") {
-          const geometry = new THREE.BoxGeometry(
-            BLOCK_SIZE,
-            BLOCK_SIZE,
-            BLOCK_SIZE
-          );
-          geometry.translate(
-            -(BLOCK_SIZE * Math.abs(i - x)),
-            0,
-            -(BLOCK_SIZE * Math.abs(j - y))
-          );
-          console.log(`i: ${i} + j: ${j}`);
-          const material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
-          const cube = new THREE.Mesh(geometry, material);
-          this.scene.add(cube);
-        }
-        if (data[i][j].type === "Spawn") {
-          const geometry = new THREE.BoxGeometry(
-            BLOCK_SIZE,
-            BLOCK_SIZE,
-            BLOCK_SIZE
-          );
-          geometry.translate(
-            -(BLOCK_SIZE * Math.abs(i - x)),
-            -13,
-            -(BLOCK_SIZE * Math.abs(j - y))
-          );
-          const spawn = [
-            -(BLOCK_SIZE * Math.abs(i - x)),
-            -(BLOCK_SIZE * Math.abs(j - y)),
-          ];
-          this.playerSpawnPoint.push(spawn);
-          const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-          const cube = new THREE.Mesh(geometry, material);
-          this.scene.add(cube);
+        switch (data[i][j].type) {
+          case "GroundBlock":
+            createBlock(i, j, 0xb2beb5, -13);
+            break;
+          case "WallBlock":
+            createBlock(i, j, 0x0000ff, 0);
+            break;
+          case "Spawn":
+            createBlock(i, j, 0xff0000, -13);
+            const translation = translateGeometry(i, j, -13);
+            const spawn = [translation.x, translation.z];
+            this.playerSpawnPoint.push(spawn);
+            break;
+          default:
+            break;
         }
       }
     }
