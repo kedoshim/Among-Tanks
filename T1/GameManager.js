@@ -65,14 +65,13 @@ export class GameManager {
     this.material = setDefaultMaterial(); // create a basic material
     this.light = initDefaultBasicLight(this.scene);
     this.controls = new InfoBox();
+    this.shotInfo = new SecondaryBox();
     this.keyboard = new KeyboardState();
-    this.axisHelper = new THREE.AxesHelper(12);
     console.log("Inicializando GameManager...");
     // Create a basic light to illuminate the scene
     this.cameraController = new CameraControls(this.renderer, this.config);
     this.camera = this.cameraController.camera;
 
-    this.scene.add(this.axisHelper);
     this.connectedGamepads = [null, null, null, null];
     this.playerSpawnPoint = [];
     this.players = [];
@@ -180,7 +179,7 @@ export class GameManager {
 
   showInformation() {
     // Use this to show information onscreen
-    this.controls.add("Geometric Transformation");
+    this.controls.add("Controls");
     this.controls.addParagraph();
     this.controls.add("Player - MOVE  SHOOT");
     this.controls.add("Player 1: WASD LeftShift");
@@ -225,6 +224,17 @@ export class GameManager {
     this.projectileCollisionSystem.checkIfThereHasBeenCollisionWithTanks();
   }
 
+  displayUpdate() {
+    let info = "";
+    for (let i = 0; i < this.players.length; i++){
+      let shotsTaken = this.players[i].tank.lostHealth;
+      info += `Player ${i}: ${shotsTaken} | `;
+    }
+  
+    this.shotInfo.changeMessage(info);
+    // console.log(info);
+  }
+
   cameraUpdate() {
     this.cameraController.calculatePosition(this.players);
   }
@@ -263,6 +273,7 @@ export class GameManager {
     this.keyboardUpdate();
     this.cameraUpdate();
     this.checkCollision();
+    this.displayUpdate();
     //this.render();
     this.updateProjectiles();
     this.updateHealthBars();

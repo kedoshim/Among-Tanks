@@ -83,6 +83,10 @@ export class Tank {
     return this._projectiles;
   }
 
+  get lostHealth() {
+    return (this._maxHealth - this._health);
+  }
+
   // Setters
   /**
    * @type {String}

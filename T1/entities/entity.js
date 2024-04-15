@@ -73,8 +73,6 @@ export class Entity {
     this._tank._healthBar.setHealthBarPosition(this._tank._model.position);
 
     scene.add(this._tank._healthBar.model);
-    console.log(this._tank._healthBar.model);
-    console.log(this._tank.model);
   }
 
   loadProjectile(scene) {
