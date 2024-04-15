@@ -22,7 +22,6 @@ export class JsonDecoder {
     }
 
     static getSpawnPoints(blocksArray, offset) {
-        console.log(offset)
         let spawnPoints = []
         for(let i = 0; i < blocksArray.length; i++) {
             for(let j = 0; j < blocksArray[i].length; j++) {

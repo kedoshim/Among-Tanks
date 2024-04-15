@@ -97,7 +97,7 @@ export class GameManager {
       const response = await fetch("config.json");
       // Parse JSON data
       this.config = await response.json();
-      console.log(this.config);
+      // console.log(this.config);
     } catch (error) {
       console.error("Error loading config:", error);
     }
@@ -146,6 +146,15 @@ export class GameManager {
       const cube = new THREE.Mesh(geometry, material);
       this.scene.add(cube);
     };
+
+    const plane = createGroundPlaneXZ(
+      1000,
+      1000,
+      undefined,
+      undefined,
+      "rgb(30, 41, 94)"
+    );
+    this.scene.add(plane);
 
     for (let i = 0; i < data.length; i++) {
       for (let j = 0; j < data[i].length; j++) {
