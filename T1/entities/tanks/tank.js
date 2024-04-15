@@ -62,10 +62,9 @@ export class Tank {
   get model() {
     return this._model;
   }
-  
+
   get health() {
     return this._health;
-    
   }
   get healthBar() {
     return this._healthBar;
@@ -84,7 +83,7 @@ export class Tank {
   }
 
   get lostHealth() {
-    return (this._maxHealth - this._health);
+    return this._maxHealth - this._health;
   }
 
   // Setters
@@ -215,6 +214,21 @@ export class Tank {
 
     this.collisionShape = null;
     this.collisionShape = new THREE.Box3().setFromObject(this.model);
+
+    // if (forwardForce != 0) {
+    //   this._playWalkingSound();
+    // }
+  }
+
+  _playWalkingSound() {
+
+    // Check if audio is not paused (i.e., playing)
+    if (!this._walkingAudio.paused) {
+      return; // If playing, do nothing
+    }
+
+    // If not playing, start playing the audio
+    this._walkingAudio.play()
   }
 
   /**
@@ -236,5 +250,8 @@ export class Tank {
     // Criar o projétil na posição calculada e com a direção correta
     let projectile = new Projectile(projectilePosition, direction);
     this._projectiles.push(projectile);
+
+    var audio = new Audio("audio/shot.mp3");
+    audio.play();
   }
 }
