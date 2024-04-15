@@ -41,10 +41,13 @@ export class GameManager {
     }
 
     loadPlayers() {
-        this.players.forEach((entity) => {
-            console.log("loading player " + entity.name);
-            entity.load(this.scene);
-        });
+      for (let i = 0; i < 2; i++) {
+          this.createPlayer();
+      }
+      this.players.forEach((entity) => {
+          console.log("loading player " + entity.name);
+          entity.load(this.scene);
+      });
     }
 
     manageOrbitControls() {
@@ -69,13 +72,10 @@ export class GameManager {
         
         this.scene.add(this.axisHelper)
         this.connectedGamepads = [null, null, null, null]
-        this.playerSpawnPoint = this.config.playerSpawnPoint;
-        console.log(this.playerSpawnPoint)
+        this.playerSpawnPoint = []
         this.players = []
         this.entities = []
-        for (let i = 0; i < 2; i++) {
-            this.createPlayer();
-        }
+        
         this.projectileCollisionSystem = new ProjectileCollisionSystem(this.players);
         this.listening()
     }
@@ -108,7 +108,7 @@ export class GameManager {
 
     createPlayer() {
         let new_player = new Player("", [0, 0], "", "", this.config);
-
+        
         new_player.spawnPoint = this.playerSpawnPoint[Player.playerNumber - 1];
 
         this.players.push(new_player);
@@ -116,6 +116,8 @@ export class GameManager {
 
     drawGround(data, offset) {
         let {x, y} = offset
+        console.log("Offset")
+        console.log(offset)
         let BLOCK_SIZE = 13
         for(let i = 0; i < data.length; i++) {
           for(let j = 0; j < data[i].length; j++) {
@@ -126,22 +128,24 @@ export class GameManager {
               const cube = new THREE.Mesh( geometry, material ); 
               this.scene.add(cube);
             }
-          }
-        }
-    }
-    
-    drawWalls(data, offset) {
-        let {x, y} = offset
-        let BLOCK_SIZE = 13
-        for(let i = 0; i < data.length; i++) {
-          for(let j = 0; j < data[i].length; j++) {
             if(data[i][j].type === "WallBlock") {
               const geometry = new THREE.BoxGeometry( BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE ); 
               geometry.translate(-(BLOCK_SIZE*(Math.abs(i - x))), 0, -(BLOCK_SIZE*(Math.abs(j - y))))
-              const material = new THREE.MeshBasicMaterial( {color: 0x0000ff	} ); 
+              console.log(`i: ${i} + j: ${j}`)
+              const material = new THREE.MeshBasicMaterial( {color: 0x0000ff} ); 
               const cube = new THREE.Mesh( geometry, material ); 
               this.scene.add(cube);
             }
+            if(data[i][j].type === "Spawn") {
+              const geometry = new THREE.BoxGeometry( BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE ); 
+              geometry.translate(-(BLOCK_SIZE*(Math.abs(i - x))), -13, -(BLOCK_SIZE*(Math.abs(j - y))))
+              const spawn = [-(BLOCK_SIZE*(Math.abs(i - x))), -(BLOCK_SIZE*(Math.abs(j - y)))]
+              this.playerSpawnPoint.push(spawn)
+              const material = new THREE.MeshBasicMaterial( {color: 0xff0000	} ); 
+              const cube = new THREE.Mesh( geometry, material ); 
+              this.scene.add(cube);
+            }
+            
           }
         }
     }
@@ -173,7 +177,6 @@ export class GameManager {
     keyboardUpdate() {
         this.keyboard.update();
         this.manageOrbitControls();
-        console.log(this.connectedGamepads)
     
         this.players.every((player, index) => {
           let playerGamepad = null;

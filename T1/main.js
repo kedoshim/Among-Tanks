@@ -27,9 +27,9 @@ async function main() {
   const manager = new GameManager()
   await manager.initialize();
   manager.load()
-  manager.loadPlayers()
   manager.drawGround(manager.levelDecoded.blocks, manager.levelDecoded.offset)
-  manager.drawWalls(manager.levelDecoded.blocks, manager.levelDecoded.offset)
+  manager.loadPlayers()
+  //manager.drawWalls(manager.levelDecoded.blocks, manager.levelDecoded.offset)
   
   function render() {
     manager.frame()
