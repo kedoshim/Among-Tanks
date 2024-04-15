@@ -61,16 +61,18 @@ export class CameraControls {
    */
   _getExtremes(players) {
     let extremes = {
-      maxX: 0,
-      minX: 0,
-      maxZ: 0,
-      minZ: 0,
+      maxX: -Infinity,
+      minX: Infinity,
+      maxZ: -Infinity,
+      minZ: Infinity,
     };
 
     players.forEach((player) => {
       let positionX = player.tank.model.position.x;
 
       let positionZ = player.tank.model.position.z;
+
+      // console.log(positionX, positionZ);
 
       if (positionX > extremes.maxX) extremes.maxX = positionX;
       if (positionX < extremes.minX) extremes.minX = positionX;
@@ -135,6 +137,7 @@ export class CameraControls {
    * @param {Array.<Entity>} players
    */
   calculatePosition(players) {
+    // console.log(players);
     if (this._orbit.enabled) {
       return;
     }

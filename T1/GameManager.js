@@ -33,11 +33,16 @@ export class GameManager {
             this.disconnectGamepad(e)
         });
 
+        const cam = this.camera;
+        const rend = this.renderer;
         window.addEventListener(
-            "resize",
-            this.onWindowResize,
-            false
-        );  
+          "resize",
+          function () {
+            console.log("resized")
+            onWindowResize(cam, rend);
+          },
+          false
+        ); 
     }
 
     loadPlayers() {
