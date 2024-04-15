@@ -45,18 +45,20 @@ export class Entity {
       );
       return;
     }
-    
+
     this._controller.control(keyboard, gamepad);
   }
 
   /**
    * Loads entity's tanks in the provided scene
-   * 
+   *
    * @param {Scene} scene
    */
   load(scene) {
     if (this._tank == null) {
-      console.warn(`Tried to load Entity ${this._name} but their '_tank' attribute was 'null'`)
+      console.warn(
+        `Tried to load Entity ${this._name} but their '_tank' attribute was 'null'`
+      );
       return;
     }
 
@@ -66,8 +68,23 @@ export class Entity {
 
     this._tank._model.position.x = x;
     this._tank._model.position.z = z;
+
+    this._tank._healthBar.createLifeBar();
+    this._tank._healthBar.setHealthBarPosition(this._tank._model.position);
+
+    scene.add(this._tank._healthBar.model);
+    console.log(this._tank._healthBar.model);
+    console.log(this._tank.model);
   }
 
+  loadProjectile(scene) {
+    let projectile = this._tank.projectiles[this._tank.projectiles.lenght - 1];
+    scene.add(projectile);
+  }
+
+  set name(name) {
+    this._name = name;
+  }
   // Getters
 
   /**
@@ -106,6 +123,12 @@ export class Entity {
     return Entity.entityNumber;
   }
 
+  /**
+   * @type {int}
+   */
+  get health() {
+    return this._tank._health;
+  }
 
   // Setters
 
@@ -135,5 +158,12 @@ export class Entity {
    */
   set controller(controller) {
     this._controller = controller;
+  }
+
+  /**
+   * @param {int} health
+   */
+  set health(health) {
+    this._tank._health = health;
   }
 }

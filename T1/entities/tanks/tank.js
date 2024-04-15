@@ -1,9 +1,11 @@
 import * as THREE from "three";
-import { Object3D } from "../../../build/three.module.js";
+import { Projectile } from "../../Projectiles/projectile.js";
+import { Box3, Object3D } from "../../../build/three.module.js";
+import { HealthBar } from "./healthBar.js";
 
 /**
-* General class that represents any tank model
-*/
+ * General class that represents any tank model
+ */
 export class Tank {
   /**
    * Creates an instance of Tank.
@@ -14,52 +16,59 @@ export class Tank {
    * @param {number} [moveSpeed=1]
    * @param {number} [rotationSpeed=0.15]
    */
-  constructor(tankColor, amogColor, moveSpeed = 1, rotationSpeed = 0.15) {
+  constructor(
+    tankColor,
+    amogColor,
+    moveSpeed = 1,
+    rotationSpeed = 0.15,
+    maxHealth = 10
+  ) {
     this._tankColor = tankColor;
     this._amogColor = amogColor;
     this._moveSpeed = moveSpeed;
     this._rotationSpeed = rotationSpeed / 2;
     this._animationRotationSpeed = rotationSpeed;
 
+    this._maxHealth = maxHealth;
+    this._health = this._maxHealth;
+    this._healthBar = new HealthBar(this._maxHealth);
+
     this._model = null;
+
+    this._projectiles = [];
+    this.collisionShape = null;
 
     this._lastValidTargetAngle = 0;
   }
 
   // Getters
-  /**
-   * Description placeholder
-   */
+
   get tankColor() {
     return this._tankColor;
   }
 
-  /**
-   * Description placeholder
-   */
   get amogColor() {
     return this._amogColor;
   }
 
-  /**
-   * Description placeholder
-   */
   get moveSpeed() {
     return this._moveSpeed;
   }
 
-  /**
-   * Description placeholder
-   */
   get rotationSpeed() {
     return this._rotationSpeed;
   }
 
-  /**
-   * Description placeholder
-   */
   get model() {
     return this._model;
+  }
+  
+  get health() {
+    return this._health;
+    
+  }
+  get healthBar() {
+    return this._healthBar;
   }
 
   /**
@@ -68,6 +77,10 @@ export class Tank {
    */
   get lastValidTargetAngle() {
     return this._lastValidTargetAngle;
+  }
+
+  get projectiles() {
+    return this._projectiles;
   }
 
   // Setters
@@ -104,6 +117,14 @@ export class Tank {
    */
   set model(model) {
     this._model = model;
+    this.collisionShape = new THREE.Box3().setFromObject(model);
+  }
+
+  set health(health) {
+    this._health = health;
+  }
+  set healthBar(healthBar) {
+    this._healthBar = healthBar;
   }
 
   /**
@@ -163,6 +184,9 @@ export class Tank {
     // Move this.model
     this.model.position.x += this._moveSpeed * moveX;
     this.model.position.z += this._moveSpeed * moveZ;
+
+    this.collisionShape = null;
+    this.collisionShape = new THREE.Box3().setFromObject(this.model);
   }
 
   /**
@@ -184,13 +208,29 @@ export class Tank {
     this.model.rotateY(this._rotationSpeed * rotationDirection);
 
     this._lastValidTargetAngle = this._model.rotation.y;
+
+    this.collisionShape = null;
+    this.collisionShape = new THREE.Box3().setFromObject(this.model);
   }
 
   /**
    * Makes the tank shoot
    */
   shoot() {
-    // console.log("shoot");
-    //shooting logic
+    const length = 16; // Posição de disparo do projétil em relação ao tanque
+    const projectilePosition = this.model.position.clone(); // Posição inicial do projétil é a mesma do tanque
+
+    const tankForwardVector = new THREE.Vector3(0, 0, 1); // Vetor de avanço do tanque na direção Z positiva
+    tankForwardVector.applyQuaternion(this.model.quaternion); // Aplicar rotação do tanque ao vetor de avanço
+
+    // Calcular a direção do projétil com base no vetor de avanço do tanque
+    const direction = tankForwardVector.normalize();
+
+    // Adicionar a direção ao vetor posição para obter a posição final do projétil
+    projectilePosition.addScaledVector(direction, length);
+
+    // Criar o projétil na posição calculada e com a direção correta
+    let projectile = new Projectile(projectilePosition, direction);
+    this._projectiles.push(projectile);
   }
 }
