@@ -12,35 +12,32 @@ import {
 
 import { CameraControls } from "./camera.js";
 import { Player } from "./entities/player.js";
-import { ProjectileCollisionSystem } from "./CollisionSystem/collisionSystem.js"
+import { ProjectileCollisionSystem } from "./CollisionSystem/collisionSystem.js";
 
 import { getConfig, loadConfig } from "./config.js";
-import {JsonDecoder} from "./level_builder_interpreter/JsonDecoder.js"
+import { JsonDecoder } from "./level_builder_interpreter/JsonDecoder.js";
 import { GameManager } from "./GameManager.js";
 
-
-function frame() {
-
-}
+function frame() {}
 
 async function main() {
-  const manager = new GameManager()
+  const manager = new GameManager();
   await manager.initialize();
-  manager.load()
-  manager.drawGround(manager.levelDecoded.blocks, manager.levelDecoded.offset)
-  manager.loadPlayers()
+  manager.load();
+  manager.loadLevel(manager.levelDecoded.blocks, manager.levelDecoded.offset);
+  manager.loadPlayers();
   //manager.drawWalls(manager.levelDecoded.blocks, manager.levelDecoded.offset)
-  
+
   function render() {
-    manager.frame()
-    requestAnimationFrame(render)
-    manager.render()
+    manager.frame();
+    requestAnimationFrame(render);
+    manager.render();
   }
 
-  render()
+  render();
 }
 
-main()
+main();
 // function render(manager) {
 //   manager.frame();
 //   requestAnimationFrame(render)
@@ -50,5 +47,3 @@ main()
 // window.addEventListener('DOMContentLoaded', () => {
 //   render(gameManager); // Agora o this dentro de frame() se refere a gameManager
 // });
-
-

@@ -16,7 +16,7 @@ export class JsonDecoder {
         let block = {};
         for(let i = 0; i < blocksArray.length; i++) {
             for(let j = 0; j < blocksArray[i].length; j++) {
-                if(blocksArray[i][j].type === "EmptyBlock") return {x:i, y:j}
+                if(blocksArray[i][j].type !== "EmptyBlock") return {x:i, y:j}
             }
         }
     }
