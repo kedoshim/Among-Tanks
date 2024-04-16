@@ -131,7 +131,7 @@ export class GameManager {
     let { x, y } = offset;
     // console.log("Offset");
     // console.log(offset);
-    let BLOCK_SIZE = 13;
+    let BLOCK_SIZE = 17;
 
     const getTranslation = (i, j, yTranslation) => {
       return {
