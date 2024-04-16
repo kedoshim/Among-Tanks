@@ -70,9 +70,9 @@ export class CameraControls {
     };
 
     players.forEach((player) => {
-      let positionX = player.tank.model.position.x;
+      let positionX = player.tank.position.x;
 
-      let positionZ = player.tank.model.position.z;
+      let positionZ = player.tank.position.z;
 
       // console.log(positionX, positionZ);
 

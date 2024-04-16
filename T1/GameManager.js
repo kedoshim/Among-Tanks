@@ -283,7 +283,7 @@ export class GameManager {
   updateHealthBars() {
     this.players.forEach((player) => {
       player.tank.healthBar.updateHealthBar(player.health);
-      player.tank.healthBar.setHealthBarPosition(player.tank.model.position);
+      player.tank.healthBar.setHealthBarPosition(player.tank.position);
     });
   }
 

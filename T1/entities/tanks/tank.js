@@ -23,7 +23,8 @@ export class Tank {
     rotationSpeed = 0.15,
     damage,
     bulletSpeed = 3,
-    maxHealth = 10
+    maxHealth = 10,
+    hitboxSize = 6
   ) {
     this._tankColor = tankColor;
     this._amogColor = amogColor;
@@ -36,6 +37,8 @@ export class Tank {
     this._maxHealth = maxHealth;
     this._health = this._maxHealth;
     this._healthBar = new HealthBar(this._maxHealth);
+
+    this._hitboxSize = hitboxSize;
 
     this._model = null;
 
@@ -77,7 +80,6 @@ export class Tank {
   get healthBar() {
     return this._healthBar;
   }
-  
 
   /**
    * Sets the last movement direction angle selected by
@@ -93,6 +95,13 @@ export class Tank {
 
   get lostHealth() {
     return this._maxHealth - this._health;
+  }
+
+  get position() {
+    if (this._model) return this._model.position;
+  }
+  get rotation() {
+    if (this._model) return this._model.rotation;
   }
 
   // Setters
@@ -149,6 +158,15 @@ export class Tank {
     this._lastValidTargetAngle = angle;
   }
 
+  set position(position) {
+    if (this._model)
+      this._model.position = position;
+  }
+  set rotation(rotation) {
+    if (this._model)
+      this._model.rotation = rotation;
+  }
+
   /**
    * Moves the tank following the directionalMovement mode
    *
@@ -198,11 +216,20 @@ export class Tank {
     this.model.position.z += this._moveSpeed * moveZ;
 
     this.collisionShape = null;
-    if(!this.died) {
-      this.collisionShape = new THREE.Box3().setFromObject(this.model);
+    if (!this.died) {
+      const p1 = new THREE.Vector3(
+        this.position.x - this._hitboxSize,
+        this.position.y - 9,
+        this.position.z - this._hitboxSize
+      );
+      const p2 = new THREE.Vector3(
+        this.position.x + this._hitboxSize,
+        this.position.y + 5,
+        this.position.z + this._hitboxSize
+      );
+      this.collisionShape = new THREE.Box3(p1, p2);
     }
   }
-  
 
   /**
    * Moves the tank following the rotationalMovement mode
@@ -220,19 +247,24 @@ export class Tank {
 
     this.model.translateZ(forwardForce * this._moveSpeed);
 
-    if(forwardForce == 0)
+    if (forwardForce == 0)
       this.model.rotateY(this._rotationSpeed * 0.5 * rotationDirection);
-    else
-      this.model.rotateY(this._rotationSpeed * rotationDirection);
+    else this.model.rotateY(this._rotationSpeed * rotationDirection);
 
     this._lastValidTargetAngle = this._model.rotation.y;
 
     this.collisionShape = null;
     if (!this.died) {
-      const boxSize = 6;
-      const position = this.model.position
-      let p1 = new THREE.Vector3(position.x - boxSize, position.y - 9, position.z - boxSize);
-      let p2 = new THREE.Vector3(position.x + boxSize, position.y + 5, position.z + boxSize);
+      const p1 = new THREE.Vector3(
+        this.position.x - this._hitboxSize,
+        this.position.y - 9,
+        this.position.z - this._hitboxSize
+      );
+      const p2 = new THREE.Vector3(
+        this.position.x + this._hitboxSize,
+        this.position.y + 5,
+        this.position.z + this._hitboxSize
+      );
       this.collisionShape = new THREE.Box3(p1, p2);
     }
 
@@ -242,18 +274,17 @@ export class Tank {
   }
 
   _playWalkingSound() {
-
     // Check if audio is not paused (i.e., playing)
     if (!this._walkingAudio.paused) {
       return; // If playing, do nothing
     }
 
     // If not playing, start playing the audio
-    this._walkingAudio.play()
+    this._walkingAudio.play();
   }
 
   die() {
-    this.died = true
+    this.died = true;
   }
 
   reset() {
@@ -275,7 +306,6 @@ export class Tank {
 
     this._lastShootTime = currentTime;
 
-
     const length = 16; // Posição de disparo do projétil em relação ao tanque
     const projectilePosition = this.model.position.clone(); // Posição inicial do projétil é a mesma do tanque
 
@@ -289,7 +319,12 @@ export class Tank {
     projectilePosition.addScaledVector(direction, length);
 
     // Criar o projétil na posição calculada e com a direção correta
-    let projectile = new Projectile(projectilePosition, direction,this._bulletSpeed,this._damage);
+    let projectile = new Projectile(
+      projectilePosition,
+      direction,
+      this._bulletSpeed,
+      this._damage
+    );
     this._projectiles.push(projectile);
 
     var audio = new Audio("audio/shot.mp3");
