@@ -2,7 +2,8 @@ import { JsonDecoder } from "./level_builder_interpreter/JsonDecoder.js";
 
 const levelPaths = {
   1: "./levels/level1.json",
-  // 2: "./levels/level2.json",
+  1: "./levels/level2.json",
+  2: "./levels/level2.json",
 };
 
 const levels = {};

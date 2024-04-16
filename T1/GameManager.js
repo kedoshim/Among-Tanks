@@ -114,9 +114,9 @@ export class GameManager {
 
     const getTranslation = (i, j, yTranslation) => {
       return {
-        x: BLOCK_SIZE * Math.abs(i + 1 - x),
+        x: BLOCK_SIZE * i + 1 - x,
         y: yTranslation,
-        z: BLOCK_SIZE * Math.abs(j + 1 - y),
+        z: BLOCK_SIZE * j + 1 - y,
       };
     };
 
