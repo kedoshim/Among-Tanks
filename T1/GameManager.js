@@ -14,9 +14,12 @@ import { CameraControls } from "./camera.js";
 import { Player } from "./entities/player.js";
 import { ProjectileCollisionSystem } from "./CollisionSystem/collisionSystem.js";
 import { JsonDecoder } from "./level_builder_interpreter/JsonDecoder.js";
+import { Entity } from "./entities/entity.js";
 
 export class GameManager {
-  constructor() {
+  constructor(renderer = null, m) {
+    this.m = m
+    this.renderer = renderer;
     this.config = {};
     this.levelDecoded = {};
   }
@@ -43,9 +46,12 @@ export class GameManager {
   }
 
   loadPlayers() {
+    Player.playerNumber = 0;
+    Entity.entityNumber = 0;
     for (let i = 0; i < 2; i++) {
       this.createPlayer();
     }
+    console.log(this.players);
     this.players.forEach((entity) => {
       console.log("loading player " + entity.name);
       entity.load(this.scene);
@@ -61,7 +67,8 @@ export class GameManager {
   load() {
     this.numberOfPlayers = 2;
     this.scene = new THREE.Scene(); // Create main scene
-    this.renderer = initRenderer(); // Init a basic renderer
+    if(this.renderer === null)
+      this.renderer = initRenderer(); // Init a basic renderer
     this.material = setDefaultMaterial(); // create a basic material
     this.light = initDefaultBasicLight(this.scene);
     this.controls = new InfoBox();
@@ -73,7 +80,7 @@ export class GameManager {
     this.camera = this.cameraController.camera;
 
     this.connectedGamepads = [null, null, null, null];
-    this.deadPlayers = []
+    this.deadPlayers = [];
     this.playerSpawnPoint = [];
     this.players = [];
     this.entities = [];
@@ -141,7 +148,7 @@ export class GameManager {
         BLOCK_SIZE
       );
       const material = new THREE.MeshBasicMaterial({ color });
-      const cube = new THREE.Mesh(geometry, material); 
+      const cube = new THREE.Mesh(geometry, material);
       const translation = getTranslation(i, j, yTranslation);
       cube.translateX(translation.x);
       cube.translateY(translation.y);
@@ -225,24 +232,24 @@ export class GameManager {
 
   checkCollision() {
     this.projectileCollisionSystem.checkIfThereHasBeenCollisionWithTanks();
+
     this.players.forEach((player, index) => {
-      if(player._tank.died) {
-        this.scene.remove(player._tank.model)
-        this.scene.remove(player._tank.healthBar.model)
-        this.deadPlayers.push(player)
-        this.players.pop(index)
+      if (player._tank.died) {
+        this.scene.remove(player._tank.model);
+        this.scene.remove(player._tank.healthBar.model);
+        this.deadPlayers.push(player);
+        this.players.pop(index);
       }
-      
-    })
+    });
   }
 
   displayUpdate() {
     let info = "";
-    for (let i = 0; i < this.players.length; i++){
+    for (let i = 0; i < this.players.length; i++) {
       let shotsTaken = this.players[i].tank.lostHealth;
       info += `Player ${i}: ${shotsTaken} | `;
     }
-  
+
     this.shotInfo.changeMessage(info);
     // console.log(info);
   }
@@ -280,22 +287,83 @@ export class GameManager {
     });
   }
 
-  async reset() {
-    
+  reset() {
+    let allPlayers = [];
+    this.players.forEach((player) => {
+      allPlayers.push(player);
+      this.scene.remove(player._tank.model);
+      this.scene.remove(player._tank.healthBar.model);
+    });
+    this.deadPlayers.forEach((player) => allPlayers.push(player));
+
+    this.players = [];
+    this.players = allPlayers;
+
+    this.players.forEach((player) => {
+      player.reset(this.scene);
+      player.load(this.scene);
+    });
+
+    this.projectileCollisionSystem = new ProjectileCollisionSystem(
+      this.players
+    );
+
+    this.deadPlayers = [];
+    this.playerSpawnPoint = [];
+    this.entities = [];
   }
 
-  frame() {
-    //this.keyboard.update();
-    if(this.players.length === 1000 - 999) {
-      this.reset()
+  async checkEnd() {
+    if (this.players.length <= 1) {
+      this.deleteScene(this.scene);
+      await this.resetFunction(this.renderer);
+      // this.reset();
+      // alert("end")
+      return true;
     }
-    this.keyboardUpdate();
-    this.cameraUpdate();
-    this.checkCollision();
-    this.displayUpdate();
-    //this.render();
-    this.updateProjectiles();
-    this.updateHealthBars();
+    return false;
+  }
+
+  // deleteScene(scene) {
+  //   // Remove all objects from the scene
+  //   scene.remove(...scene.children);
+
+  //   // Dispose of any resources associated with the scene's materials and geometries
+  //   scene.traverse((object) => {
+  //     if (object instanceof THREE.Mesh) {
+  //       if (object.geometry) {
+  //         object.geometry.dispose();
+  //       }
+  //       if (object.material) {
+  //         if (Array.isArray(object.material)) {
+  //           object.material.forEach((material) => material.dispose());
+  //         } else {
+  //           object.material.dispose();
+  //         }
+  //       }
+  //     }
+  //   });
+  // }
+  deleteScene(scene) {
+    scene.clear();
+  }
+
+  async frame() {
+    console.log(this.m);
+    //this.keyboard.update();
+    if (!(await this.checkEnd())) {
+      this.keyboardUpdate();
+      this.cameraUpdate();
+      this.checkCollision();
+      this.displayUpdate();
+      //this.render();
+      this.updateProjectiles();
+      this.updateHealthBars();
+    }
+  }
+
+  setResetFunction(func) {
+    this.resetFunction = func;
   }
 
   render() {

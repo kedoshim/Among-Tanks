@@ -49,6 +49,14 @@ export class Entity {
     this._controller.control(keyboard, gamepad);
   }
 
+  reset(scene) {
+    this.tank.projectiles.forEach((projectile) => {
+      scene.remove(projectile);
+    })
+    this._tank.reset();
+
+  }
+
   /**
    * Loads entity's tanks in the provided scene
    *
@@ -73,12 +81,15 @@ export class Entity {
     this._tank._healthBar.setHealthBarPosition(this._tank._model.position);
 
     scene.add(this._tank._healthBar.model);
+
+    console.log("load")
   }
 
   loadProjectile(scene) {
     let projectile = this._tank.projectiles[this._tank.projectiles.lenght - 1];
     scene.add(projectile);
   }
+  
 
   set name(name) {
     this._name = name;

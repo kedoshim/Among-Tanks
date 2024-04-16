@@ -229,6 +229,7 @@ export class Tank {
     this.collisionShape = null;
     if(!this.died) {
       this.collisionShape = new THREE.Box3().setFromObject(this.model);
+      // console.log(this.collisionShape)
     }
 
     // if (forwardForce != 0) {
@@ -249,6 +250,13 @@ export class Tank {
 
   die() {
     this.died = true
+  }
+
+  reset() {
+    this.died = false;
+    this._health = this._maxHealth;
+    this._healthBar = new HealthBar(this._maxHealth);
+    this._projectiles = [];
   }
 
   /**

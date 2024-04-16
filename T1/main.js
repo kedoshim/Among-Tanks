@@ -20,16 +20,31 @@ import { GameManager } from "./GameManager.js";
 
 function frame() {}
 
+
 async function main() {
-  const manager = new GameManager();
+  let manager = new GameManager(null,"a");
   await manager.initialize();
   manager.load();
   manager.loadLevel(manager.levelDecoded.blocks, manager.levelDecoded.offset);
   manager.loadPlayers();
   //manager.drawWalls(manager.levelDecoded.blocks, manager.levelDecoded.offset)
 
-  function render() {
-    manager.frame();
+  const resetFunction = async (renderer) => {
+    console.log("end");
+    manager = "minha bunda";
+    manager = new GameManager(renderer, "b");
+    await manager.initialize();
+    manager.load();
+    manager.loadLevel(manager.levelDecoded.blocks, manager.levelDecoded.offset);
+    manager.loadPlayers();
+
+    manager.setResetFunction(resetFunction);
+  };
+
+  manager.setResetFunction(resetFunction)
+
+  async function render() {
+    await manager.frame();
     requestAnimationFrame(render);
     manager.render();
   }
