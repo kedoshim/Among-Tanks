@@ -146,18 +146,12 @@ export class TankCollisionSystem extends CollisionSystem {
                             this.previousBlockThatCollided = wall;
                             this.previousCollision.collided = true;
                             this.previousCollision.horizontal = theImpactWasInThehorizontal;
-
-                            //console.log("Colidiu na horizontal!");
-                            //console.log(wall.model.position)
                         }
                         else if(!theImpactWasInThehorizontal && !this.vertical) {
                             this.vertical = true;
                             this.previousBlockThatCollided = wall;
                             this.previousCollision.collided = true;
                             this.previousCollision.horizontal = theImpactWasInThehorizontal;
-
-                            //console.log("Colidiu na vertical!")
-                            //console.log(wall.model.position)
                         }
                     }
 
@@ -213,30 +207,48 @@ export class TankCollisionSystem extends CollisionSystem {
         if (dHorizontal === 0 && (Math.abs(dVertical) == BLOCK_SIZE * 2 || Math.abs(dVertical) == BLOCK_SIZE)) {
 
             // Se a colisão anterior foi na vertical ela deve ser desconsiderada
-            if(this.previousCollision.horizontal !== true) {
+            if(this.previousCollision.horizontal !== true/* && horizontal*/) {
+                this.vertical = false;
+                this.previousBlockThatCollided = null;
+
                 if(horizontal) {
-                    this.previousBlockThatCollided = wall;
-                    this.previousCollision.horizontal = true;
-                    this.vertical = false;
-                    //this.horizontal = false;
+                    return true;
                 }
-                //return false;
+                else {
+                    return false;
+                }
             }
-            //this.vertical = false;
+            else {
+                if(horizontal) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
         }
         
 
         if (dVertical === 0 && (Math.abs(dHorizontal) == BLOCK_SIZE * 2 || Math.abs(dHorizontal) == BLOCK_SIZE)) {
             if(this.previousCollision.horizontal === true) {
+                this.horizontal = false;
+                this.previousBlockThatCollided = null;
+
                 if(!horizontal) {
-                    this.previousBlockThatCollided = wall;
-                    this.previousCollision.horizontal = false;
-                    this.horizontal = false;
-                    //this.vertical = false;
+                    return true;
                 }
-                //return false;
+                else {
+                    return false;
+                }
             }
-            //this.horizontal = false;
+            else {
+                if(!horizontal) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
         }
 
         return true;
