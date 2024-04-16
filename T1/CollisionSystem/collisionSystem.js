@@ -36,22 +36,31 @@ export class ProjectileCollisionSystem extends CollisionSystem {
         let players = this.players;
         let player = null;
         let hitTank = false;
-
+    
         this.#getAllProjectilesInScene();
         let projectiles = this._projectiles;
-        
+    
         for (let playerIndex = 0; playerIndex < players.length; playerIndex++) {
-            player = players[playerIndex];
-            for (let projectileIndex = 0; projectileIndex < projectiles.length; projectileIndex++) {
-                hitTank = this.checkCollisionBetwennCollisionShapes(player._tank.collisionShape, projectiles[projectileIndex].collisionShape)
-
-                if(hitTank) {
-                    projectiles[projectileIndex].hitTank();
-                    player.lifes -= projectiles[projectileIndex].damage;
-                }
+          player = players[playerIndex];
+          for (
+            let projectileIndex = 0;
+            projectileIndex < projectiles.length;
+            projectileIndex++
+          ) {
+            hitTank = this.checkCollisionBetwennCollisionShapes(
+              player._tank.collisionShape,
+              projectiles[projectileIndex].collisionShape
+            );
+    
+            if (hitTank) {
+              projectiles[projectileIndex].hitTank();
+              player.health -= projectiles[projectileIndex].damage;
+              if(player.health <= 0) player._tank.die()
+            //   console.log(player);
             }
+          }
         }
-    }
+      }
 
     checkCollisionWithWalls() {
         let walls = this.walls;
@@ -70,6 +79,7 @@ export class ProjectileCollisionSystem extends CollisionSystem {
                 hitWall = this.checkCollisionBetwennCollisionShapes(wall.collisionShape, projectile.collisionShape);
     
                 if(hitWall) {
+                    console.log("Atingiu o muro")
                     if (!hasHitWall) { // Verifica se o projétil já colidiu com um muro
                         this.#calculateReflectionDirection(wall.model.position, projectile);
                         projectile.hitWall();

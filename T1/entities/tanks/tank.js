@@ -1,10 +1,11 @@
 import * as THREE from "three";
 import { Projectile } from "../../Projectiles/projectile.js";
 import { Box3, Object3D } from "../../../build/three.module.js";
+import { HealthBar } from "./healthBar.js";
 
 /**
-* General class that represents any tank model
-*/
+ * General class that represents any tank model
+ */
 export class Tank {
   /**
    * Creates an instance of Tank.
@@ -15,7 +16,16 @@ export class Tank {
    * @param {number} [moveSpeed=1]
    * @param {number} [rotationSpeed=0.15]
    */
-  constructor(tankColor, amogColor, moveSpeed = 1, rotationSpeed = 0.15) {
+  constructor(
+    tankColor,
+    amogColor,
+    moveSpeed = 1,
+    rotationSpeed = 0.15,
+    damage,
+    bulletSpeed = 3,
+    maxHealth = 10,
+    hitboxSize = 6
+  ) {
     this._tankColor = tankColor;
     this._amogColor = amogColor;
     this._moveSpeed = moveSpeed;
@@ -23,6 +33,14 @@ export class Tank {
     this._animationRotationSpeed = rotationSpeed;
     this._inMovement = false;
     this._positiveMovement = true;
+    this._damage = damage;
+    this._bulletSpeed = bulletSpeed;
+
+    this._maxHealth = maxHealth;
+    this._health = this._maxHealth;
+    this._healthBar = new HealthBar(this._maxHealth);
+
+    this._hitboxSize = hitboxSize;
 
     this._model = null;
 
@@ -32,33 +50,26 @@ export class Tank {
     this.slideVector = new THREE.Vector3(0,0,0);
 
     this._lastValidTargetAngle = 0;
+
+    this._shootCooldown = 250; // Cooldown time in milliseconds
+    this._lastShootTime = 0; // Last time the shoot function was called
+    this.died = false;
   }
 
   // Getters
-  /**
-   * Description placeholder
-   */
+
   get tankColor() {
     return this._tankColor;
   }
 
-  /**
-   * Description placeholder
-   */
   get amogColor() {
     return this._amogColor;
   }
 
-  /**
-   * Description placeholder
-   */
   get moveSpeed() {
     return this._moveSpeed;
   }
 
-  /**
-   * Description placeholder
-   */
   get rotationSpeed() {
     return this._rotationSpeed;
   }
@@ -72,6 +83,13 @@ export class Tank {
    */
   get model() {
     return this._model;
+  }
+
+  get health() {
+    return this._health;
+  }
+  get healthBar() {
+    return this._healthBar;
   }
 
   /**
@@ -88,6 +106,17 @@ export class Tank {
 
   get collidedWithWalls() {
     return this._collidedWithWalls;
+  }
+  
+  get lostHealth() {
+    return this._maxHealth - this._health;
+  }
+
+  get position() {
+    if (this._model) return this._model.position;
+  }
+  get rotation() {
+    if (this._model) return this._model.rotation;
   }
 
   // Setters
@@ -139,6 +168,13 @@ export class Tank {
     trhis._inMovement = inMovement;
   }
 
+  set health(health) {
+    this._health = health;
+  }
+  set healthBar(healthBar) {
+    this._healthBar = healthBar;
+  }
+
   /**
    * Sets the last movement direction angle selected by
    * the player
@@ -147,6 +183,15 @@ export class Tank {
    */
   set lastValidTargetAngle(angle) {
     this._lastValidTargetAngle = angle;
+  }
+
+  set position(position) {
+    if (this._model)
+      this._model.position = position;
+  }
+  set rotation(rotation) {
+    if (this._model)
+      this._model.rotation = rotation;
   }
 
   /**
@@ -198,11 +243,19 @@ export class Tank {
     this.model.position.z += this._moveSpeed * moveZ;
 
     this.collisionShape = null;
-    const boxSize = 6;
-    const position = this.model.position
-    let p1 = new THREE.Vector3(position.x - boxSize, position.y - 9, position.z - boxSize);
-    let p2 = new THREE.Vector3(position.x + boxSize, position.y + 5, position.z + boxSize);
-    this.collisionShape = new THREE.Box3(p1, p2);
+    if (!this.died) {
+      const p1 = new THREE.Vector3(
+        this.position.x - this._hitboxSize,
+        this.position.y - 9,
+        this.position.z - this._hitboxSize
+      );
+      const p2 = new THREE.Vector3(
+        this.position.x + this._hitboxSize,
+        this.position.y + 5,
+        this.position.z + this._hitboxSize
+      );
+      this.collisionShape = new THREE.Box3(p1, p2);
+    }
   }
 
   /**
@@ -237,23 +290,66 @@ export class Tank {
     this._inMovement = false;
 
     // Rodar o tanque
-    this.model.rotateY(this._rotationSpeed * rotationDirection);
+    if (forwardForce == 0)
+      this.model.rotateY(this._rotationSpeed * 0.5 * rotationDirection);
+    else this.model.rotateY(this._rotationSpeed * rotationDirection);
 
     // Atualizar a última angulação válida
     this._lastValidTargetAngle = this._model.rotation.y;
 
     // Atualizar a forma de colisão do tanque
     this.collisionShape = null;
-    const boxSize = 6;
-    const position = this.model.position;
-    let p1 = new THREE.Vector3(position.x - boxSize, position.y - 9, position.z - boxSize);
-    let p2 = new THREE.Vector3(position.x + boxSize, position.y + 5, position.z + boxSize);
-    this.collisionShape = new THREE.Box3(p1, p2);
+    if (!this.died) {
+      const p1 = new THREE.Vector3(
+        this.position.x - this._hitboxSize,
+        this.position.y - 9,
+        this.position.z - this._hitboxSize
+      );
+      const p2 = new THREE.Vector3(
+        this.position.x + this._hitboxSize,
+        this.position.y + 5,
+        this.position.z + this._hitboxSize
+      );
+      this.collisionShape = new THREE.Box3(p1, p2);
+    }
+
+    // if (forwardForce != 0) {
+    //   this._playWalkingSound();
+    // }
+  }
+
+  _playWalkingSound() {
+    // Check if audio is not paused (i.e., playing)
+    if (!this._walkingAudio.paused) {
+      return; // If playing, do nothing
+    }
+
+    // If not playing, start playing the audio
+    this._walkingAudio.play();
+  }
+
+  die() {
+    this.died = true;
+  }
+
+  reset() {
+    this.died = false;
+    this._health = this._maxHealth;
+    this._healthBar = new HealthBar(this._maxHealth);
+    this._projectiles = [];
   }
   /**
    * Makes the tank shoot
    */
   shoot() {
+    const currentTime = Date.now();
+
+    if (currentTime - this._lastShootTime < this._shootCooldown) {
+      return;
+    }
+
+    this._lastShootTime = currentTime;
+
     const length = 16; // Posição de disparo do projétil em relação ao tanque
     const projectilePosition = this.model.position.clone(); // Posição inicial do projétil é a mesma do tanque
 
@@ -267,7 +363,15 @@ export class Tank {
     projectilePosition.addScaledVector(direction, length);
 
     // Criar o projétil na posição calculada e com a direção correta
-    let projectile = new Projectile(projectilePosition, direction);
+    let projectile = new Projectile(
+      projectilePosition,
+      direction,
+      this._bulletSpeed,
+      this._damage
+    );
     this._projectiles.push(projectile);
-}
+
+    var audio = new Audio("audio/shot.mp3");
+    audio.play();
+  }
 }

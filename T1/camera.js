@@ -13,8 +13,8 @@ export class CameraControls {
    * @constructor
    * @param {THREE.WebGLRenderer} renderer
    */
-  constructor(renderer) {
-    const cameraConfig = getConfig().cameraConfig;
+  constructor(renderer, config = null) {
+    const cameraConfig = config ? config.cameraConfig : getConfig().cameraConfig;
 
     this._camera = new THREE.PerspectiveCamera(
       cameraConfig.FOV,
@@ -36,6 +36,8 @@ export class CameraControls {
 
   enableOrbitControls() {
     this._lastPosition = this._camera.position;
+    this._orbit.target.x = this._mediumPoint[0];
+    this._orbit.target.z = this._mediumPoint[1];
     this._orbit.enabled = true;
   }
 
@@ -61,16 +63,18 @@ export class CameraControls {
    */
   _getExtremes(players) {
     let extremes = {
-      maxX: 0,
-      minX: 0,
-      maxZ: 0,
-      minZ: 0,
+      maxX: -Infinity,
+      minX: Infinity,
+      maxZ: -Infinity,
+      minZ: Infinity,
     };
 
     players.forEach((player) => {
-      let positionX = player.tank.model.position.x;
+      let positionX = player.tank.position.x;
 
-      let positionZ = player.tank.model.position.z;
+      let positionZ = player.tank.position.z;
+
+      // console.log(positionX, positionZ);
 
       if (positionX > extremes.maxX) extremes.maxX = positionX;
       if (positionX < extremes.minX) extremes.minX = positionX;

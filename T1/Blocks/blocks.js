@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 
 export class Block {
-    constructor(position, BLOCK_SIZE) {
-        this.BLOCK_SIZE = BLOCK_SIZE;
-        this.position_x = position.x;
-        this.position_y = position.y;
-        this.position_z = position.z;
+    constructor(/*position, BLOCK_SIZE*/) {
+        //this.BLOCK_SIZE = BLOCK_SIZE;
+        //this.position_x = position.x;
+        //this.position_y = position.y;
+        //this.position_z = position.z;
         this._model = null;
     }
 
@@ -37,11 +37,19 @@ export class Block {
     get model() {
         return this._model;
     }
+
+    setModel(model) {
+        this._model = model;
+    }
+
+    setBlockSize(BLOCK_SIZE) {
+        this.BLOCK_SIZE = BLOCK_SIZE;
+    }
 }
 
 export class CollisionBlock extends Block {
-    constructor(position, BLOCK_SIZE) {
-        super(position, BLOCK_SIZE);
+    constructor(/*position=null, BLOCK_SIZE=null*/) {
+        super(/*position, BLOCK_SIZE*/);
         this.collisionShape = null;
     }
 

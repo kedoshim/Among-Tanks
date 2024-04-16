@@ -1,6 +1,6 @@
 {
   "directionalMovementEnabled": false,
-  "numberOfPlayers" : 4,
+  "numberOfPlayers" : 2,
   "playerSpawnPoint" : [
     [-20, -20],
     [20, -20],
@@ -49,7 +49,7 @@
       "down": 13,
       "left": 14,
       "right": 15,
-      "shoot": 0
+      "shoot": 7
     },
     "deadzone":0.1,
     "stickMultiplier":1
