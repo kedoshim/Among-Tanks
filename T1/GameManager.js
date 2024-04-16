@@ -153,7 +153,7 @@ export class GameManager {
             createBlock(i, j, 0xb2beb5, -BLOCK_SIZE / 2);
             break;
           case "WallBlock":
-            createBlock(i, j, 0x0000ff, BLOCK_SIZE / 2);
+            createBlock(i, j, 0x404040, BLOCK_SIZE / 2);
             break;
           case "Spawn":
             createBlock(i, j, 0xff0000, -BLOCK_SIZE / 2);
