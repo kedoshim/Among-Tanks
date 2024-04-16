@@ -267,7 +267,7 @@ export class GameManager {
     let info = "";
     for (let i = 0; i < this.players.length; i++) {
       let shotsTaken = this.players[i].tank.lostHealth;
-      info += `Player ${i}: ${shotsTaken} | `;
+      info += `Player ${i+1}: ${shotsTaken} | `;
     }
 
     this.shotInfo.changeMessage(info);
@@ -305,34 +305,9 @@ export class GameManager {
     });
   }
 
-  reset() {
-    let allPlayers = [];
-    this.players.forEach((player) => {
-      allPlayers.push(player);
-      this.scene.remove(player._tank.model);
-      this.scene.remove(player._tank.healthBar.model);
-    });
-    this.deadPlayers.forEach((player) => allPlayers.push(player));
-
-    this.players = [];
-    this.players = allPlayers;
-
-    this.players.forEach((player) => {
-      player.reset(this.scene);
-      player.load(this.scene);
-    });
-
-    this.projectileCollisionSystem = new ProjectileCollisionSystem(
-      this.players
-    );
-
-    this.deadPlayers = [];
-    this.playerSpawnPoint = [];
-    this.entities = [];
-  }
-
   checkEnd() {
     if (this.players.length <= 1) {
+      this.shotInfo.hide();
       this.deleteScene(this.scene);
       this.resetFunction();
       alert("Game Over");
