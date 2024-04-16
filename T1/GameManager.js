@@ -55,7 +55,7 @@ export class GameManager {
     Player.playerNumber = 0;
     Entity.entityNumber = 0;
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < this.numberOfPlayers; i++) {
       this.createPlayer();
     }
     console.log(this.players);
@@ -72,7 +72,7 @@ export class GameManager {
   }
 
   load() {
-    this.numberOfPlayers = 2;
+    this.numberOfPlayers = Math.min(this.config.numberOfPlayers, 4);
     this.scene = new THREE.Scene(); // Create main scene
     if (this.renderer === null) this.renderer = initRenderer(); // Init a basic renderer
     this.material = setDefaultMaterial(); // create a basic material
@@ -144,6 +144,8 @@ export class GameManager {
     );
     this.scene.add(plane);
 
+    let spawnIndex = 0;
+
     for (let i = 0; i < data.length; i++) {
       for (let j = 0; j < data[i].length; j++) {
         switch (data[i][j].type) {
@@ -157,11 +159,21 @@ export class GameManager {
             createBlock(i, j, 0xff0000, -BLOCK_SIZE / 2);
             const translation = getTranslation(i, j, -13);
             const spawn = [translation.x, translation.z];
-            this.playerSpawnPoint.push(spawn);
+            this.playerSpawnPoint[spawnIndex] = spawn;
+            spawnIndex++;
             break;
           default:
             break;
         }
+      }
+    }
+    if (spawnIndex < this.numberOfPlayers) {
+      console.log(spawnIndex)
+      for (let i = spawnIndex; i < this.numberOfPlayers; i++){
+        if (this.playerSpawnPoint[i - spawnIndex])
+          this.playerSpawnPoint.push(this.playerSpawnPoint[i-spawnIndex]);
+        else
+        this.playerSpawnPoint.push([2,2]);
       }
     }
   }
