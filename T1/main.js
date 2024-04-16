@@ -14,51 +14,47 @@ import { CameraControls } from "./camera.js";
 import { Player } from "./entities/player.js";
 import { ProjectileCollisionSystem } from "./CollisionSystem/collisionSystem.js";
 
-import { getConfig, loadConfig } from "./config.js";
-import { JsonDecoder } from "./level_builder_interpreter/JsonDecoder.js";
+
 import { GameManager } from "./GameManager.js";
 
-function frame() {}
+import { loadConfig } from "./config.js";
+import { loadLevels, getNextLevel } from "./levels.js";
+
+
 
 
 async function main() {
-  let manager = new GameManager(null,"a");
-  await manager.initialize();
-  manager.load();
-  manager.loadLevel(manager.levelDecoded.blocks, manager.levelDecoded.offset);
-  manager.loadPlayers();
-  //manager.drawWalls(manager.levelDecoded.blocks, manager.levelDecoded.offset)
+  let level = getNextLevel();
 
-  const resetFunction = async (renderer) => {
-    console.log("end");
-    manager = "minha bunda";
-    manager = new GameManager(renderer, "b");
-    await manager.initialize();
-    manager.load();
-    manager.loadLevel(manager.levelDecoded.blocks, manager.levelDecoded.offset);
-    manager.loadPlayers();
+  let manager = new GameManager(level);
+  manager.start()
 
+  
+  const resetFunction = (renderer) => {
+    console.log("restarting game");
+
+    level = getNextLevel();
+    
+    manager = new GameManager(level, renderer);
+    manager.start();
+    
     manager.setResetFunction(resetFunction);
   };
-
-  manager.setResetFunction(resetFunction)
-
-  async function render() {
-    await manager.frame();
+  
+  function render() {
+    manager.frame();
     requestAnimationFrame(render);
     manager.render();
   }
-
+  
+  manager.setResetFunction(resetFunction);
   render();
 }
 
-main();
-// function render(manager) {
-//   manager.frame();
-//   requestAnimationFrame(render)
-//   manager.render();
-// }
+async function initialize() {
+  await loadConfig();
+  await loadLevels();
+}
 
-// window.addEventListener('DOMContentLoaded', () => {
-//   render(gameManager); // Agora o this dentro de frame() se refere a gameManager
-// });
+await initialize();
+main();

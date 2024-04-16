@@ -139,7 +139,6 @@ export class CameraControls {
    * @param {Array.<Entity>} players
    */
   calculatePosition(players) {
-    console.log(players);
     if (this._orbit.enabled) {
       return;
     }

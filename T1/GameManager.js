@@ -15,12 +15,19 @@ import { Player } from "./entities/player.js";
 import { ProjectileCollisionSystem } from "./CollisionSystem/collisionSystem.js";
 import { JsonDecoder } from "./level_builder_interpreter/JsonDecoder.js";
 import { Entity } from "./entities/entity.js";
+import { getConfig } from "./config.js";
 
 export class GameManager {
-  constructor(renderer = null) {
+  constructor(level, renderer = null) {
+    this.levelData = level;
     this.renderer = renderer;
-    this.config = {};
-    this.levelDecoded = {};
+    this.config = getConfig();
+  }
+
+  start() {
+    this.load();
+    this.loadLevel(this.levelData);
+    this.loadPlayers();
   }
 
   listening() {
@@ -47,6 +54,7 @@ export class GameManager {
   loadPlayers() {
     Player.playerNumber = 0;
     Entity.entityNumber = 0;
+
     for (let i = 0; i < 2; i++) {
       this.createPlayer();
     }
@@ -66,8 +74,7 @@ export class GameManager {
   load() {
     this.numberOfPlayers = 2;
     this.scene = new THREE.Scene(); // Create main scene
-    if(this.renderer === null)
-      this.renderer = initRenderer(); // Init a basic renderer
+    if (this.renderer === null) this.renderer = initRenderer(); // Init a basic renderer
     this.material = setDefaultMaterial(); // create a basic material
     this.light = initDefaultBasicLight(this.scene);
     this.controls = new InfoBox();
@@ -91,34 +98,6 @@ export class GameManager {
     this.listening();
   }
 
-  async initialize() {
-    await this.loadConfig();
-    await this.getLevel();
-    //this.load();
-  }
-
-  async loadConfig() {
-    try {
-      // Fetch the JSON file
-      console.log("Loading config");
-      const response = await fetch("config.json");
-      // Parse JSON data
-      this.config = await response.json();
-      // console.log(this.config);
-    } catch (error) {
-      console.error("Error loading config:", error);
-    }
-  }
-
-  async getLevel() {
-    const loaded_level = await fetch(
-      "http://127.0.0.1:5500/T1/level_builder_interpreter/level.json"
-    );
-    const level_cast = await loaded_level.json();
-    const level_decoded = JsonDecoder.decode(level_cast);
-    this.levelDecoded = level_decoded;
-  }
-
   createPlayer() {
     let new_player = new Player("", [0, 0], "", "", this.config);
 
@@ -127,11 +106,11 @@ export class GameManager {
     this.players.push(new_player);
   }
 
-  loadLevel(data, offset) {
-    let { x, y } = offset;
-    // console.log("Offset");
-    // console.log(offset);
-    let BLOCK_SIZE = 17;
+  loadLevel(level) {
+    const data = level.blocks;
+    let { x, y } = level.offset;
+
+    const BLOCK_SIZE = 17;
 
     const getTranslation = (i, j, yTranslation) => {
       return {
@@ -251,7 +230,6 @@ export class GameManager {
     }
 
     this.shotInfo.changeMessage(info);
-    // console.log(info);
   }
 
   cameraUpdate() {
@@ -313,11 +291,11 @@ export class GameManager {
     this.entities = [];
   }
 
-  async checkEnd() {
+  checkEnd() {
     if (this.players.length <= 1) {
       this.deleteScene(this.scene);
-      await this.resetFunction(this.renderer);
-      alert("Game Over")
+      this.resetFunction(this.renderer);
+      alert("Game Over");
       return true;
     }
     return false;
@@ -326,9 +304,8 @@ export class GameManager {
     scene.clear();
   }
 
-  async frame() {
-    //this.keyboard.update();
-    if (!(await this.checkEnd())) {
+  frame() {
+    if (!this.checkEnd()) {
       this.keyboardUpdate();
       this.cameraUpdate();
       this.checkCollision();
@@ -343,10 +320,10 @@ export class GameManager {
   updateHitBox() {
     this.previousHitBox.forEach((box) => {
       this.scene.remove(box);
-    })
+    });
     this.players.forEach((player, index) => {
       this.previousHitBox[index] = player.loadHitBox(this.scene);
-    })
+    });
   }
 
   setResetFunction(func) {
