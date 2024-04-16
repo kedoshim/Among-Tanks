@@ -17,8 +17,7 @@ import { JsonDecoder } from "./level_builder_interpreter/JsonDecoder.js";
 import { Entity } from "./entities/entity.js";
 
 export class GameManager {
-  constructor(renderer = null, m) {
-    this.m = m
+  constructor(renderer = null) {
     this.renderer = renderer;
     this.config = {};
     this.levelDecoded = {};
@@ -84,6 +83,7 @@ export class GameManager {
     this.playerSpawnPoint = [];
     this.players = [];
     this.entities = [];
+    this.previousHitBox = [];
 
     this.projectileCollisionSystem = new ProjectileCollisionSystem(
       this.players
@@ -317,39 +317,16 @@ export class GameManager {
     if (this.players.length <= 1) {
       this.deleteScene(this.scene);
       await this.resetFunction(this.renderer);
-      // this.reset();
-      // alert("end")
+      alert("Game Over")
       return true;
     }
     return false;
   }
-
-  // deleteScene(scene) {
-  //   // Remove all objects from the scene
-  //   scene.remove(...scene.children);
-
-  //   // Dispose of any resources associated with the scene's materials and geometries
-  //   scene.traverse((object) => {
-  //     if (object instanceof THREE.Mesh) {
-  //       if (object.geometry) {
-  //         object.geometry.dispose();
-  //       }
-  //       if (object.material) {
-  //         if (Array.isArray(object.material)) {
-  //           object.material.forEach((material) => material.dispose());
-  //         } else {
-  //           object.material.dispose();
-  //         }
-  //       }
-  //     }
-  //   });
-  // }
   deleteScene(scene) {
     scene.clear();
   }
 
   async frame() {
-    console.log(this.m);
     //this.keyboard.update();
     if (!(await this.checkEnd())) {
       this.keyboardUpdate();
@@ -359,7 +336,17 @@ export class GameManager {
       //this.render();
       this.updateProjectiles();
       this.updateHealthBars();
+      this.updateHitBox();
     }
+  }
+
+  updateHitBox() {
+    this.previousHitBox.forEach((box) => {
+      this.scene.remove(box);
+    })
+    this.players.forEach((player, index) => {
+      this.previousHitBox[index] = player.loadHitBox(this.scene);
+    })
   }
 
   setResetFunction(func) {

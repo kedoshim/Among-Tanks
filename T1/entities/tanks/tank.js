@@ -202,6 +202,7 @@ export class Tank {
       this.collisionShape = new THREE.Box3().setFromObject(this.model);
     }
   }
+  
 
   /**
    * Moves the tank following the rotationalMovement mode
@@ -227,9 +228,12 @@ export class Tank {
     this._lastValidTargetAngle = this._model.rotation.y;
 
     this.collisionShape = null;
-    if(!this.died) {
-      this.collisionShape = new THREE.Box3().setFromObject(this.model);
-      // console.log(this.collisionShape)
+    if (!this.died) {
+      const boxSize = 6;
+      const position = this.model.position
+      let p1 = new THREE.Vector3(position.x - boxSize, position.y - 9, position.z - boxSize);
+      let p2 = new THREE.Vector3(position.x + boxSize, position.y + 5, position.z + boxSize);
+      this.collisionShape = new THREE.Box3(p1, p2);
     }
 
     // if (forwardForce != 0) {

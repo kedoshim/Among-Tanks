@@ -2,6 +2,7 @@ import { Scene } from "../../build/three.module.js";
 import KeyboardState from "../../libs/util/KeyboardState.js";
 import { Controller } from "./controllers/controller.js";
 import { Tank } from "./tanks/tank.js";
+import * as THREE from "three";
 
 /**
  * Represents players and enemies
@@ -88,6 +89,15 @@ export class Entity {
   loadProjectile(scene) {
     let projectile = this._tank.projectiles[this._tank.projectiles.lenght - 1];
     scene.add(projectile);
+  }
+
+  loadHitBox(scene) {
+    // Create a bounding box helper
+    console.log(this.tank.collisionShape);
+    let helper = new THREE.Box3Helper(this.tank.collisionShape, "blue");
+    scene.add(helper);
+
+    return helper;
   }
   
 
