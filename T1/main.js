@@ -24,13 +24,15 @@ import { loadLevels, getNextLevel } from "./levels.js";
 
 
 async function main() {
+  const renderer = initRenderer();
+
   let level = getNextLevel();
 
-  let manager = new GameManager(level);
+  let manager = new GameManager(level,renderer);
   manager.start()
 
   
-  const resetFunction = (renderer) => {
+  const resetFunction = () => {
     console.log("restarting game");
 
     level = getNextLevel();

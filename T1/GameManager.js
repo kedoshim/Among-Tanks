@@ -334,7 +334,7 @@ export class GameManager {
   checkEnd() {
     if (this.players.length <= 1) {
       this.deleteScene(this.scene);
-      this.resetFunction(this.renderer);
+      this.resetFunction();
       alert("Game Over");
       return true;
     }

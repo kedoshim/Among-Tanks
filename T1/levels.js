@@ -25,12 +25,13 @@ export async function loadLevels() {
 }
 
 export function getNextLevel() {
-  try {
-    if (levels[index + 1]) {
-      index += 1;
-    } return levels[index];
-  } catch {
+  if (index + 1 in levelPaths) {
+    index += 1;
+    console.log(levels, index);
+    return levels[index]; 
+  } else {
     index = 1;
+    console.log(levels, index);
     return levels[index];
   }
 }
