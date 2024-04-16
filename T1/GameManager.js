@@ -73,6 +73,7 @@ export class GameManager {
     this.camera = this.cameraController.camera;
 
     this.connectedGamepads = [null, null, null, null];
+    this.deadPlayers = []
     this.playerSpawnPoint = [];
     this.players = [];
     this.entities = [];
@@ -224,6 +225,15 @@ export class GameManager {
 
   checkCollision() {
     this.projectileCollisionSystem.checkIfThereHasBeenCollisionWithTanks();
+    this.players.forEach((player, index) => {
+      if(player._tank.died) {
+        this.scene.remove(player._tank.model)
+        this.scene.remove(player._tank.healthBar.model)
+        this.deadPlayers.push(player)
+        this.players.pop(index)
+      }
+      
+    })
   }
 
   displayUpdate() {
@@ -270,8 +280,15 @@ export class GameManager {
     });
   }
 
+  async reset() {
+    
+  }
+
   frame() {
     //this.keyboard.update();
+    if(this.players.length === 1000 - 999) {
+      this.reset()
+    }
     this.keyboardUpdate();
     this.cameraUpdate();
     this.checkCollision();

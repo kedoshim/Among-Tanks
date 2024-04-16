@@ -46,6 +46,7 @@ export class Tank {
 
     this._shootCooldown = 250; // Cooldown time in milliseconds
     this._lastShootTime = 0; // Last time the shoot function was called
+    this.died = false;
   }
 
   // Getters
@@ -76,6 +77,7 @@ export class Tank {
   get healthBar() {
     return this._healthBar;
   }
+  
 
   /**
    * Sets the last movement direction angle selected by
@@ -196,7 +198,9 @@ export class Tank {
     this.model.position.z += this._moveSpeed * moveZ;
 
     this.collisionShape = null;
-    this.collisionShape = new THREE.Box3().setFromObject(this.model);
+    if(!this.died) {
+      this.collisionShape = new THREE.Box3().setFromObject(this.model);
+    }
   }
 
   /**
@@ -223,7 +227,9 @@ export class Tank {
     this._lastValidTargetAngle = this._model.rotation.y;
 
     this.collisionShape = null;
-    this.collisionShape = new THREE.Box3().setFromObject(this.model);
+    if(!this.died) {
+      this.collisionShape = new THREE.Box3().setFromObject(this.model);
+    }
 
     // if (forwardForce != 0) {
     //   this._playWalkingSound();
@@ -239,6 +245,10 @@ export class Tank {
 
     // If not playing, start playing the audio
     this._walkingAudio.play()
+  }
+
+  die() {
+    this.died = true
   }
 
   /**
