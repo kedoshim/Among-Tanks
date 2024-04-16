@@ -124,7 +124,11 @@ export class Tank {
    */
   set model(model) {
     this._model = model;
-    this.collisionShape = new THREE.Box3().setFromObject(model);
+    const boxSize = 6;
+    const position = this.model.position
+    let p1 = new THREE.Vector3(position.x - boxSize, position.y - 9, position.z - boxSize);
+    let p2 = new THREE.Vector3(position.x + boxSize, position.y + 5, position.z + boxSize);
+    this.collisionShape = new THREE.Box3(p1, p2);
   }
 
   set collidedWithWalls(collided) {
@@ -194,7 +198,11 @@ export class Tank {
     this.model.position.z += this._moveSpeed * moveZ;
 
     this.collisionShape = null;
-    this.collisionShape = new THREE.Box3().setFromObject(this.model);
+    const boxSize = 6;
+    const position = this.model.position
+    let p1 = new THREE.Vector3(position.x - boxSize, position.y - 9, position.z - boxSize);
+    let p2 = new THREE.Vector3(position.x + boxSize, position.y + 5, position.z + boxSize);
+    this.collisionShape = new THREE.Box3(p1, p2);
   }
 
   /**
@@ -236,7 +244,11 @@ export class Tank {
 
     // Atualizar a forma de colisão do tanque
     this.collisionShape = null;
-    this.collisionShape = new THREE.Box3().setFromObject(this.model);
+    const boxSize = 6;
+    const position = this.model.position;
+    let p1 = new THREE.Vector3(position.x - boxSize, position.y - 9, position.z - boxSize);
+    let p2 = new THREE.Vector3(position.x + boxSize, position.y + 5, position.z + boxSize);
+    this.collisionShape = new THREE.Box3(p1, p2);
   }
   /**
    * Makes the tank shoot

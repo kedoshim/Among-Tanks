@@ -104,6 +104,9 @@ export class TankCollisionSystem extends CollisionSystem {
         super(players, walls);
         this.previousCollision = {collided: false, horizontal: false};
         this.previousBlockThatCollided = null;
+        this.actualPlayer = null;
+        this.vertical = false;
+        this.horizontal = false;
     }
 
     checkCollisionWithWalls() {
@@ -113,14 +116,14 @@ export class TankCollisionSystem extends CollisionSystem {
         let player;
         let hitWall;
         let theImpactWasInThehorizontal;
-        let horizontal, vertical;
         let slideVector;
         let dotProduct;
 
         for (let playerIndex = 0; playerIndex < players.length; playerIndex++) {
             player = players[playerIndex];
-            horizontal = false;
-            vertical = false;
+            this.actualPlayer = player;
+            this.horizontal = false;
+            this.vertical = false;
             slideVector = new THREE.Vector3(0, 0, 1);
             slideVector.applyQuaternion(player._tank.model.quaternion);
             player._tank.collidedWithWalls = false;
@@ -135,35 +138,42 @@ export class TankCollisionSystem extends CollisionSystem {
 
                 if(hitWall && dotProduct > 0) {
                     theImpactWasInThehorizontal = this.#theCollisionWasInTheHorizontal(wall.model.position, player._tank.model.position);
-                    let collisionIsValid = this.#checkIfTheCollisionIsVallid(wall.model.position, theImpactWasInThehorizontal);
+                    let collisionIsValid = this.#checkIfTheCollisionIsVallid(wall, theImpactWasInThehorizontal);
                     
                     if(collisionIsValid) {
-                        if(theImpactWasInThehorizontal && !horizontal) {
-                            horizontal = true;
+                        if(theImpactWasInThehorizontal && !this.horizontal) {
+                            this.horizontal = true;
                             this.previousBlockThatCollided = wall;
                             this.previousCollision.collided = true;
                             this.previousCollision.horizontal = theImpactWasInThehorizontal;
-                            slideVector.x = 0;
 
-                            console.log("Colidiu na horizontal!")
+                            //console.log("Colidiu na horizontal!");
+                            //console.log(wall.model.position)
                         }
-                        else if(!theImpactWasInThehorizontal && !vertical) {
-                            vertical = true;
+                        else if(!theImpactWasInThehorizontal && !this.vertical) {
+                            this.vertical = true;
                             this.previousBlockThatCollided = wall;
                             this.previousCollision.collided = true;
                             this.previousCollision.horizontal = theImpactWasInThehorizontal;
-                            slideVector.z = 0;
 
-                            console.log("Colidiu na vertical!")
+                            //console.log("Colidiu na vertical!")
+                            //console.log(wall.model.position)
                         }
                     }
 
                     player._tank.collidedWithWalls = true;
                 }
             }
+
+            if(this.horizontal)
+                slideVector.x = 0;
+            if(this.vertical)
+                slideVector.z = 0;
+
             player._tank.slideVector = slideVector;
             this.previousBlockThatCollided = null;
             this.previousCollision = {collided: false, horizontal: false};
+
         }
     }
 
@@ -188,14 +198,45 @@ export class TankCollisionSystem extends CollisionSystem {
         return tankDirection.dot(t);
     }
 
-    #checkIfTheCollisionIsVallid(wallposition, horizontal) {
+    #checkIfTheCollisionIsVallid(wall, horizontal) {
         if(this.previousBlockThatCollided === null) {
             return true;
         }
 
-        if(this.previousBlockThatCollided.model.position.distanceTo(wallposition) >= this.previousBlockThatCollided.BLOCK_SiZE) {
-            if(this.previousCollision.horizontal !== horizontal)
-                return false;
+        let BLOCK_SIZE = this.previousBlockThatCollided.BLOCK_SIZE;
+
+        // dHorizontal e dVertical := se for 0, estão no mesmo eixo
+        let dHorizontal = wall.model.position.x - this.previousBlockThatCollided.model.position.x; // 0 => possuem a mesma coordenada em x
+        let dVertical = wall.model.position.z - this.previousBlockThatCollided.model.position.z; // 0 => possuem a mesma coordenada em z
+
+        // Se ambos os blocos estão no mesmo eixo e são vizinhos
+        if (dHorizontal === 0 && (Math.abs(dVertical) == BLOCK_SIZE * 2 || Math.abs(dVertical) == BLOCK_SIZE)) {
+
+            // Se a colisão anterior foi na vertical ela deve ser desconsiderada
+            if(this.previousCollision.horizontal !== true) {
+                if(horizontal) {
+                    this.previousBlockThatCollided = wall;
+                    this.previousCollision.horizontal = true;
+                    this.vertical = false;
+                    //this.horizontal = false;
+                }
+                //return false;
+            }
+            //this.vertical = false;
+        }
+        
+
+        if (dVertical === 0 && (Math.abs(dHorizontal) == BLOCK_SIZE * 2 || Math.abs(dHorizontal) == BLOCK_SIZE)) {
+            if(this.previousCollision.horizontal === true) {
+                if(!horizontal) {
+                    this.previousBlockThatCollided = wall;
+                    this.previousCollision.horizontal = false;
+                    this.horizontal = false;
+                    //this.vertical = false;
+                }
+                //return false;
+            }
+            //this.horizontal = false;
         }
 
         return true;
