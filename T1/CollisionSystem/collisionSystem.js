@@ -59,7 +59,7 @@ export class ProjectileCollisionSystem extends CollisionSystem {
             }
           }
         }
-      }
+    }
 
     checkCollisionWithWalls() {
         let walls = this.walls;
@@ -126,6 +126,7 @@ export class ProjectileCollisionSystem extends CollisionSystem {
             else {
                 reflectionDirection = new THREE.Vector3(0, 0, 1);
             }
+            projectile.reflection(reflectionDirection);
         }
         if(dVertical === 0) {
             if (projectile.projectile.position.x < walls[0].model.position.x) {
@@ -134,9 +135,9 @@ export class ProjectileCollisionSystem extends CollisionSystem {
             else {
                 reflectionDirection = new THREE.Vector3(1, 0, 0);
             }
+            projectile.reflection(reflectionDirection);
         }
 
-        projectile.reflection(reflectionDirection);
     }
 
     #calculateReflectionDirection(wallPosition, projectile) { 
@@ -164,6 +165,7 @@ export class TankCollisionSystem extends CollisionSystem {
         this.actualPlayer = null;
         this.vertical = false;
         this.horizontal = false;
+        this.slideVector = null;
     }
 
     checkCollisionWithWalls() {
@@ -319,5 +321,94 @@ export class TankCollisionSystem extends CollisionSystem {
         }
 
         return true;
+    }
+
+
+    checkCollisionWithWalls2() {
+        let walls = this.walls; // lista de todos os muros
+        let players = this.players; // lista de todos os jogadores
+        let player; // Instância de jogador da lista
+        let wall; // instância de muro da lista
+        let wallsThatCollided = [];
+        let dotProduct; // produto interno entre a direção do movimento e o vetor que vai da posição do tanque até o muro
+        let hitWall; // se o tanque colidiu com o n-ésimo muro
+
+        for (let playerIndex = 0; playerIndex < players.length; playerIndex++) {
+            wallsThatCollided = [];
+            player = players[playerIndex];
+            this.actualPlayer = player;
+            this.horizontal = false;
+            this.vertical = false;
+            this.slideVector = new THREE.Vector3(0, 0, 1);
+            this.slideVector.applyQuaternion(player._tank.model.quaternion);
+            player._tank.collidedWithWalls = false;
+            if(!player._tank._positiveMovement) {
+                this.slideVector.multiplyScalar(-1);
+            }
+
+            for (let wallIndex = 0; wallIndex < walls.length; wallIndex++) {
+                wall = walls[wallIndex];
+                hitWall = this.checkCollisionBetwennCollisionShapes(wall.collisionShape, player._tank.collisionShape);
+                dotProduct = this.#dotProductBetweenTankDirectionAndVectorPosition(this.slideVector, wall.model.position, player._tank.model.position); 
+
+                if(hitWall && dotProduct > 0) {
+                    wallsThatCollided.push(wall);
+                    player._tank.collidedWithWalls = true;
+                }
+            }
+
+            console.log("Quantidade de muros detectados: " + wallsThatCollided.length)
+
+            this.#calculateSlideDirectionBasedOnMultiplesBlocks(wallsThatCollided, player);
+
+            if(this.horizontal || Math.abs(this.slideVector.x)<0.24)
+                this.slideVector.x = 0;
+            if(this.vertical || Math.abs(this.slideVector.z)<0.24)
+                this.slideVector.z = 0;
+
+            player._tank.slideVector = this.slideVector;
+        }
+    }
+
+    #calculateSlideDirectionBasedOnMultiplesBlocks(walls, player) {
+        // For 3 walls collision
+        if(walls.length === 3) {
+            this.horizontal = true;
+            this.vertical = true;
+            //console.log("Colidiu com 3")
+        }
+        else if(walls.length === 2) {
+            const dHorizontal = walls[0].model.position.z - walls[1].model.position.z;
+            const dVertical = walls[0].model.position.x - walls[1].model.position.x;
+
+            if(dHorizontal === 0) {
+                this.vertical = true;
+            }
+            else if(dVertical === 0) {
+                this.horizontal = true;
+            }
+            else {
+                this.horizontal = true;
+                this.vertical = true;
+            }
+            //console.log("Colidiu com 2")
+        }
+        else if (walls.length === 1){ // 1 muro só
+            const impactOrientation = this.#theCollisionWasInTheHorizontal(walls[0].model.position, player._tank.position)
+            // const wallPosition = walls[0].model.position;
+            // const playerPosition = player._tank.model.position;
+            // let dHorizontal = wallPosition.x - playerPosition.x;
+            // let dVertical = wallPosition.z - playerPosition.z;
+
+            if(/*Math.abs(x_distance) >= walls[0].BLOCK_SIZE/2*/impactOrientation) {
+                console.log("Colidiu na horizontal")
+                this.horizontal = true;
+            }
+            else/* if (Math.abs(x_distance) < Math.abs(z_distance))*/{
+                this.vertical = true;
+            }
+            //console.log("Colidiu com 1")
+        }
+        
     }
 }
