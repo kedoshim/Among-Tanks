@@ -330,7 +330,7 @@ export class GameManager {
       //this.render();
       this.updateProjectiles();
       this.updateHealthBars();
-      this.updateHitBox();
+      // this.updateHitBox();
     }
   }
 

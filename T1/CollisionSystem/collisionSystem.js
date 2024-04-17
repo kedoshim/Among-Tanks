@@ -193,9 +193,11 @@ export class TankCollisionSystem extends CollisionSystem {
             for (let wallIndex = 0; wallIndex < walls.length; wallIndex++) {
                 wall = walls[wallIndex];
                 hitWall = this.checkCollisionBetwennCollisionShapes(wall.collisionShape, player._tank.collisionShape);
-                dotProduct = this.#dotProductBetweenTankDirectionAndVectorPosition(slideVector, wall.model.position, player._tank.model.position);                
+                dotProduct = this.#dotProductBetweenTankDirectionAndVectorPosition(slideVector, wall.model.position, player._tank.model.position); 
+                
+                const isFacingWall = dotProduct <= 0 ? true : false; 
 
-                if(hitWall && dotProduct > -4.4) {
+                if(hitWall && !isFacingWall) {
                     theImpactWasInThehorizontal = this.#theCollisionWasInTheHorizontal(wall.model.position, player._tank.model.position);
                     let collisionIsValid = this.#checkIfTheCollisionIsVallid(wall, theImpactWasInThehorizontal);
                     
