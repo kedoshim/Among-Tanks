@@ -254,10 +254,11 @@ export class Tank {
 
     // Smoothly rotate this.model towards the target angle
     this.model.rotation.y += rotationDifference * this._animationRotationSpeed;
-
     // Move this.model
     this.model.position.x += this._moveSpeed * moveX;
     this.model.position.z += this._moveSpeed * moveZ;
+
+    console.log(moveX, moveZ);
 
     this.collisionShape = null;
     if (!this.died) {
