@@ -368,7 +368,7 @@ export class Tank {
 
     this._lastShootTime = currentTime;
 
-    const length = 16; // Posição de disparo do projétil em relação ao tanque
+    const length = 11; // Posição de disparo do projétil em relação ao tanque
     const projectilePosition = this.model.position.clone(); // Posição inicial do projétil é a mesma do tanque
 
     const tankForwardVector = new THREE.Vector3(0, 0, 1); // Vetor de avanço do tanque na direção Z positiva
