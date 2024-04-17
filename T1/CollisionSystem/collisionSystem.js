@@ -144,15 +144,14 @@ export class TankCollisionSystem extends CollisionSystem {
                 wall = walls[wallIndex];
                 hitWall = this.checkCollisionBetwennCollisionShapes(wall.collisionShape, player._tank.collisionShape);
                 dotProduct = this.#dotProductBetweenTankDirectionAndVectorPosition(slideVector, wall.model.position, player._tank.model.position);
-
-                // if(hitWall)
-                //     console.log(dotProduct);
-
-                if(hitWall && dotProduct > -4.4) {
+                
+                if(hitWall)
+                    console.log(wall)
+                if(hitWall) {
                     theImpactWasInThehorizontal = this.#theCollisionWasInTheHorizontal(wall.model.position, player._tank.model.position);
-                    let collisionIsValid = this.#checkIfTheCollisionIsVallid(wall, theImpactWasInThehorizontal);
+                    // let collisionIsValid = this.#checkIfTheCollisionIsVallid(wall, theImpactWasInThehorizontal);
                     
-                    if(collisionIsValid) {
+                    // if(collisionIsValid) {
                         if(theImpactWasInThehorizontal && !this.horizontal) {
                             this.horizontal = true;
                             this.previousBlockThatCollided = wall;
@@ -165,7 +164,7 @@ export class TankCollisionSystem extends CollisionSystem {
                             this.previousCollision.collided = true;
                             this.previousCollision.horizontal = theImpactWasInThehorizontal;
                         }
-                    }
+                    // }
 
                     player._tank.collidedWithWalls = true;
                 }

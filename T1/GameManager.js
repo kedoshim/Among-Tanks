@@ -12,11 +12,15 @@ import {
 
 import { CameraControls } from "./camera.js";
 import { Player } from "./entities/player.js";
-import { ProjectileCollisionSystem, TankCollisionSystem } from "./CollisionSystem/collisionSystem.js";
+import {
+  ProjectileCollisionSystem,
+  TankCollisionSystem,
+} from "./CollisionSystem/collisionSystem.js";
 import { JsonDecoder } from "./level_builder_interpreter/JsonDecoder.js";
 import { Entity } from "./entities/entity.js";
 import { getConfig } from "./config.js";
 import { CollisionBlock } from "./Blocks/blocks.js";
+import { Euler, Vector3 } from "../build/three.module.js";
 
 export class GameManager {
   constructor(level, renderer = null) {
@@ -122,6 +126,8 @@ export class GameManager {
     const data = level.blocks;
     let { x, y } = level.offset;
 
+    let dataCopy = [...data];
+
     const BLOCK_SIZE = 17;
 
     const getTranslation = (i, j, yTranslation) => {
@@ -132,29 +138,69 @@ export class GameManager {
       };
     };
 
-    const createBlock = (i, j, color, yTranslation) => {
-      const geometry = new THREE.BoxGeometry(
-        BLOCK_SIZE,
-        BLOCK_SIZE,
-        BLOCK_SIZE
-      );
+    const createBlock = (
+      i,
+      j,
+      color,
+      yTranslation,
+      size = 1,
+      orientation = null,
+      positionInMiddle = false
+    ) => {
+      let geometry;
+
+      switch (orientation) {
+        case null:
+          break;
+          case "row":
+            if (positionInMiddle) i = i - 0.5;
+            break;
+        case "collumn":
+          if (positionInMiddle) j = j - 0.5;
+          break;
+        }
+        
+      geometry = new THREE.BoxGeometry(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
       const material = new THREE.MeshBasicMaterial({ color });
       const cube = new THREE.Mesh(geometry, material);
       const translation = getTranslation(i, j, yTranslation);
       cube.translateX(translation.x);
       cube.translateY(translation.y);
       cube.translateZ(translation.z);
+      
+      switch (orientation) {
+        case "row":
+          cube.scale.set(size, 1, 1);
+          break;
+          case "collumn":
+          cube.scale.set(1, 1, size);
+          break;
+      }
 
       if (color === this.wallColor) {
+        // Calculate bounding box manually
+        const minPoint = new THREE.Vector3(
+          cube.position.x - BLOCK_SIZE / 2,
+          cube.position.y - BLOCK_SIZE / 2,
+          cube.position.z - BLOCK_SIZE / 2
+        );
+        const maxPoint = new THREE.Vector3(
+          cube.position.x + BLOCK_SIZE / 2,
+          cube.position.y + BLOCK_SIZE / 2,
+          cube.position.z + BLOCK_SIZE / 2
+        );
+
         let wall = new CollisionBlock();
-        wall.setBlockSize(BLOCK_SIZE);
-        wall.setModel(cube);
-        wall.createCollisionShape();
+        wall.createCollisionShape(cube, minPoint, maxPoint);
         this.walls.push(wall);
+        let helper = new THREE.Box3Helper(wall.collisionShape, "blue");
+        this.scene.add(helper);
       }
 
       this.scene.add(cube);
     };
+
+
 
     const plane = createGroundPlaneXZ(
       1000,
@@ -167,14 +213,125 @@ export class GameManager {
 
     let spawnIndex = 0;
 
+    const createMergedGroupRow = (groupSize, i, j) => {
+      const initialCoordinate = j - groupSize + 1;
+
+      const mediumCoordinate = groupSize / 2 + initialCoordinate - 0.5;
+
+      for (let n = initialCoordinate; n <= j; n++) {
+        if (n == mediumCoordinate) {
+          dataCopy[n][i].type = "MergedBlock";
+          dataCopy[n][i].size = groupSize;
+          dataCopy[n][i].orientation = "row";
+        } else if (n == mediumCoordinate + 0.5) {
+          dataCopy[n][i].type = "MergedEvenBlock";
+          dataCopy[n][i].size = groupSize;
+          dataCopy[n][i].orientation = "row";
+        } else {
+          dataCopy[n][i].type = "EmptyBlock";
+        }
+      }
+
+      // [e , w , w , w, e, w]
+    };
+    const createMergedGroupCollumn = (groupSize, i, j) => {
+      const initialCoordinate = j - groupSize + 1;
+
+      const mediumCoordinate = groupSize / 2 + initialCoordinate - 0.5;
+
+      for (let n = initialCoordinate; n <= j; n++) {
+        if (n == mediumCoordinate) {
+          dataCopy[i][n].type = "MergedBlock";
+          dataCopy[i][n].size = groupSize;
+          dataCopy[i][n].orientation = "collumn";
+        } else if (n == mediumCoordinate + 0.5) {
+          dataCopy[i][n].type = "MergedEvenBlock";
+          dataCopy[i][n].size = groupSize;
+          dataCopy[i][n].orientation = "collumn";
+        } else {
+          dataCopy[i][n].type = "EmptyBlock";
+        }
+      }
+    };
+
+    // loop collumns
     for (let i = 0; i < data.length; i++) {
+      let lastIterationWasWall = false;
+      let groupSize = 0;
       for (let j = 0; j < data[i].length; j++) {
-        switch (data[i][j].type) {
+        if (lastIterationWasWall === false) {
+          if (data[i][j].type == "WallBlock") {
+            lastIterationWasWall = true;
+            groupSize = 1;
+          } else {
+            lastIterationWasWall = false;
+          }
+        } else {
+          if (data[i][j].type == "WallBlock") {
+            groupSize += 1;
+            if (j + 1 == data[i].length)
+              createMergedGroupCollumn(groupSize, i, j);
+          } else {
+            if (groupSize > 1) createMergedGroupCollumn(groupSize, i, j - 1);
+            lastIterationWasWall = false;
+          }
+        }
+      }
+    }
+
+    // loop rows
+    for (let i = 0; i < data[i].length; i++) {
+      let lastIterationWasWall = false;
+      let groupSize = 0;
+      for (let j = 0; j < data.length; j++) {
+        if (lastIterationWasWall === false) {
+          if (data[j][i].type == "WallBlock") {
+            lastIterationWasWall = true;
+            groupSize = 1;
+          } else {
+            lastIterationWasWall = false;
+          }
+        } else {
+          if (data[j][i].type == "WallBlock") {
+            groupSize += 1;
+            if (j + 1 == data.length) createMergedGroupRow(groupSize, i, j);
+          } else {
+            if (groupSize > 1) createMergedGroupRow(groupSize, i, j - 1);
+            lastIterationWasWall = false;
+          }
+        }
+      }
+    }
+
+    for (let i = 0; i < dataCopy.length; i++) {
+      for (let j = 0; j < dataCopy[i].length; j++) {
+        switch (dataCopy[i][j].type) {
           case "GroundBlock":
             createBlock(i, j, this.groundColor, -BLOCK_SIZE / 2);
             break;
           case "WallBlock":
             createBlock(i, j, this.wallColor, BLOCK_SIZE / 2);
+            break;
+          case "MergedBlock":
+            createBlock(
+              i,
+              j,
+              this.wallColor,
+              BLOCK_SIZE / 2,
+              dataCopy[i][j].size,
+              dataCopy[i][j].orientation
+            );
+            break;
+          case "MergedEvenBlock":
+            createBlock(
+              i,
+              j,
+              this.wallColor,
+              BLOCK_SIZE / 2,
+              dataCopy[i][j].size,
+              dataCopy[i][j].orientation,
+              true
+            );
             break;
           case "Spawn":
             createBlock(i, j, this.spawnColor, -BLOCK_SIZE / 2);
@@ -189,19 +346,24 @@ export class GameManager {
       }
     }
     if (spawnIndex < this.numberOfPlayers) {
-      console.log(spawnIndex)
-      for (let i = spawnIndex; i < this.numberOfPlayers; i++){
+      console.log(spawnIndex);
+      for (let i = spawnIndex; i < this.numberOfPlayers; i++) {
         if (this.playerSpawnPoint[i - spawnIndex])
-          this.playerSpawnPoint.push(this.playerSpawnPoint[i-spawnIndex]);
-        else
-        this.playerSpawnPoint.push([2,2]);
+          this.playerSpawnPoint.push(this.playerSpawnPoint[i - spawnIndex]);
+        else this.playerSpawnPoint.push([2, 2]);
       }
     }
   }
 
   loadCollisionSystems() {
-    this.tankCollisionSystem = new TankCollisionSystem(this.players, this.walls);
-    this.projectileCollisionSystem = new ProjectileCollisionSystem(this.players, this.walls);
+    this.tankCollisionSystem = new TankCollisionSystem(
+      this.players,
+      this.walls
+    );
+    this.projectileCollisionSystem = new ProjectileCollisionSystem(
+      this.players,
+      this.walls
+    );
   }
 
   showInformation() {
@@ -242,6 +404,11 @@ export class GameManager {
       return true;
     });
 
+    this.players[0].tank.model.position.copy(
+      new THREE.Vector3(105.11640851864755, 9.9, 31.999545926786677)
+    );
+    this.players[0].tank.rotation.copy(new Euler(-0, 1.0790926535898002, -0));
+
     this.entities.forEach((entity) => {
       entity.runController();
     });
@@ -267,7 +434,7 @@ export class GameManager {
     let info = "";
     for (let i = 0; i < this.players.length; i++) {
       let shotsTaken = this.players[i].tank.lostHealth;
-      info += `Player ${i+1}: ${shotsTaken} | `;
+      info += `Player ${i + 1}: ${shotsTaken} | `;
     }
 
     this.shotInfo.changeMessage(info);

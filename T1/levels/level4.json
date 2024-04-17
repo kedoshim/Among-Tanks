@@ -1,0 +1,341 @@
+[
+  [
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    }
+  ],
+  [
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    { "blockSize": 4, "color": 6651116, "type": "WallBlock", "collision": true }
+  ],
+  [
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    { "blockSize": 4, "color": 6651116, "type": "WallBlock", "collision": true }
+  ],
+  [
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    }
+  ],
+  [
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    }
+  ],
+  [
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    }
+  ],
+  [
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    }
+  ],
+  [
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    }
+  ],
+  [
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    }
+  ],
+  [
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    }
+  ],
+  [
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    }
+  ],
+  [
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    { "blockSize": 4, "color": 6651116, "type": "WallBlock", "collision": true }
+  ],
+  [
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 16777215,
+      "type": "EmptyBlock",
+      "collision": false
+    },
+    {
+      "blockSize": 4,
+      "color": 12895428,
+      "type": "GroundBlock",
+      "collision": true
+    },
+    { "blockSize": 4, "color": 6651116, "type": "WallBlock", "collision": true }
+  ],
+  [
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    {
+      "blockSize": 4,
+      "color": 6651116,
+      "type": "WallBlock",
+      "collision": true
+    },
+    { "blockSize": 4, "color": 6651116, "type": "WallBlock", "collision": true }
+  ]
+]
