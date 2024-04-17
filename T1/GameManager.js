@@ -244,11 +244,6 @@ export class GameManager {
       return true;
     });
 
-    this.players[0].tank.model.position.copy(
-      new THREE.Vector3(105.11640851864755, 9.9, 31.999545926786677)
-    );
-    this.players[0].tank.rotation.copy(new THREE.Euler(-0, 1.0790926535898002, -0));
-
     this.entities.forEach((entity) => {
       entity.runController();
     });
@@ -335,7 +330,7 @@ export class GameManager {
       //this.render();
       this.updateProjectiles();
       this.updateHealthBars();
-      this.updateHitBox();
+      // this.updateHitBox();
     }
   }
 
