@@ -1,14 +1,16 @@
 import * as THREE from 'three';
 
 export class CollisionBlock{
-    constructor() {
+    constructor(BLockSize) {
+        this.blockSize = BLockSize
         this.collisionShape = null;
     }
 
     createCollisionShape(model,min,max) {
         try {
-            let collisionShape = new THREE.Box3().setFromObject(model);
-            // collisionShape.set(min,max)
+            let collisionShape = new THREE.Box3()
+            collisionShape.set(min, max);
+            model.geometry.boundingBox = collisionShape;
             this.model = model;
             this.collisionShape = collisionShape;
         } catch (error) {

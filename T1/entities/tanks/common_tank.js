@@ -8,7 +8,7 @@ export class CommonTank extends Tank {
   constructor(tankColor, amogColor) {
     let moveSpeed = 1;
     let rotationSpeed = 0.15;
-    let maxHealth = 10;
+    let maxHealth = 1000;
     let bulletSpeed = 2;
     let damage = 1;
     super(tankColor, amogColor, moveSpeed, rotationSpeed, damage, bulletSpeed, maxHealth);
