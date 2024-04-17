@@ -56,7 +56,6 @@ export class ProjectileCollisionSystem extends CollisionSystem {
               projectiles[projectileIndex].hitTank();
               player.health -= projectiles[projectileIndex].damage;
               if(player.health <= 0) player._tank.die()
-            //   console.log(player);
             }
           }
         }
@@ -66,31 +65,81 @@ export class ProjectileCollisionSystem extends CollisionSystem {
         let walls = this.walls;
         let wall = null;
         let hitWall;
+        let wallsThatCollided = [];
     
         this.#getAllProjectilesInScene();
         let projectiles = this._projectiles;
     
         for (let projectileIndex = 0; projectileIndex < projectiles.length; projectileIndex++) {
             let projectile = projectiles[projectileIndex];
-            let hasHitWall = false; // Variável para controlar se o projétil colidiu com um muro
+            wallsThatCollided = [];
     
             for (let wallIndex = 0; wallIndex < walls.length; wallIndex++) {
                 wall = walls[wallIndex];
                 hitWall = this.checkCollisionBetwennCollisionShapes(wall.collisionShape, projectile.collisionShape);
     
                 if(hitWall) {
-                    if (!hasHitWall) { // Verifica se o projétil já colidiu com um muro
-                        this.#calculateReflectionDirection(wall.model.position, projectile);
-                        projectile.hitWall();
-                        hasHitWall = true; // Define que o projétil colidiu com um muro
+                    wallsThatCollided.push(wall);
+                }
+            }
+
+            if (wallsThatCollided.length === 1) {
+                this.#calculateReflectionDirection(wallsThatCollided[0].model.position, projectile);
+                projectile.hitWall();
+            }
+            else if(wallsThatCollided.length > 1) {
+                //console.log("Atingiu " + wallsThatCollided.length +" muros ao mesmo tempo!")
+                let distance = [];
+                for (let wallIndex = 0; wallIndex < wallsThatCollided.length; wallIndex++) {
+                    distance.push(projectile.lastPosition.distanceTo(wallsThatCollided[wallIndex].model.position));
+                }
+                let indiceMenorValor = 0;
+                let maiorValor = distance[0];
+
+                for (let i = 1; i < distance.length; i++) {
+                    if (distance[i] > maiorValor) {
+                        maiorValor = distance[i];
+                        indiceMenorValor = i;
                     }
                 }
+                this.#calculateReflectionDirectionBasedOnMultiplesBlocks(wallsThatCollided, projectile);
+                projectile.hitWall();
             }
         }
     }
 
-    #calculateReflectionDirection(wallPosition, projectile) {    
+    #calculateReflectionDirectionBasedOnMultiplesBlocks(walls, projectile) {
+        // For 3 walls collision
+        if(walls.length === 3) {
+            projectile.direction.multiplyScalar(-1);
+            projectile.projectile.position.set(projectile.lastPosition.x, projectile.lastPosition.y, projectile.lastPosition.z);
+        }
 
+        const dHorizontal = walls[0].model.position.z - walls[1].model.position.z;
+        const dVertical = walls[0].model.position.x - walls[1].model.position.x;
+        let reflectionDirection;
+
+        if(dHorizontal === 0) {
+            if (projectile.projectile.position.z < walls[0].model.position.z) {
+                reflectionDirection = new THREE.Vector3(0, 0, -1);
+            }
+            else {
+                reflectionDirection = new THREE.Vector3(0, 0, 1);
+            }
+        }
+        if(dVertical === 0) {
+            if (projectile.projectile.position.x < walls[0].model.position.x) {
+                reflectionDirection = new THREE.Vector3(-1, 0, 0);
+            }
+            else {
+                reflectionDirection = new THREE.Vector3(1, 0, 0);
+            }
+        }
+
+        projectile.reflection(reflectionDirection);
+    }
+
+    #calculateReflectionDirection(wallPosition, projectile) { 
         // calculate the difference betwenn positions
         const x_distance = wallPosition.x - projectile.projectile.position.x;
         const z_distance = wallPosition.z - projectile.projectile.position.z;
@@ -98,11 +147,10 @@ export class ProjectileCollisionSystem extends CollisionSystem {
         
     
         if (Math.abs(x_distance) > Math.abs(z_distance)) {
-            reflectionDirection = new THREE.Vector3(x_distance > 0 ? -1 : 1, 0, 0);
+            reflectionDirection = new THREE.Vector3(x_distance > 0 ? 1 : -1, 0, 0);
         } else {
-            reflectionDirection = new THREE.Vector3(0, 0, z_distance > 0 ? 1 : -1);
+            reflectionDirection = new THREE.Vector3(0, 0, z_distance > 0 ? -1 : 1);
         }
-    
         // Apply the reflection
         projectile.reflection(reflectionDirection);
     }
@@ -143,10 +191,7 @@ export class TankCollisionSystem extends CollisionSystem {
             for (let wallIndex = 0; wallIndex < walls.length; wallIndex++) {
                 wall = walls[wallIndex];
                 hitWall = this.checkCollisionBetwennCollisionShapes(wall.collisionShape, player._tank.collisionShape);
-                dotProduct = this.#dotProductBetweenTankDirectionAndVectorPosition(slideVector, wall.model.position, player._tank.model.position);
-
-                // if(hitWall)
-                //     console.log(dotProduct);
+                dotProduct = this.#dotProductBetweenTankDirectionAndVectorPosition(slideVector, wall.model.position, player._tank.model.position);                
 
                 if(hitWall && dotProduct > -4.4) {
                     theImpactWasInThehorizontal = this.#theCollisionWasInTheHorizontal(wall.model.position, player._tank.model.position);
@@ -222,6 +267,7 @@ export class TankCollisionSystem extends CollisionSystem {
 
         // Se ambos os blocos estão no mesmo eixo e são vizinhos
         if (dHorizontal === 0 && (Math.abs(dVertical) == BLOCK_SIZE * 2 || Math.abs(dVertical) == BLOCK_SIZE)) {
+            this.horizontal = true;
 
             // Se a colisão anterior foi na vertical ela deve ser desconsiderada
             if(this.previousCollision.horizontal !== true/* && horizontal*/) {
@@ -247,6 +293,8 @@ export class TankCollisionSystem extends CollisionSystem {
         
 
         if (dVertical === 0 && (Math.abs(dHorizontal) == BLOCK_SIZE * 2 || Math.abs(dHorizontal) == BLOCK_SIZE)) {
+            this.vertical = true;
+            
             if(this.previousCollision.horizontal === true) {
                 this.horizontal = false;
                 this.previousBlockThatCollided = null;
