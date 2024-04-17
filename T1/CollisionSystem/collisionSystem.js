@@ -126,6 +126,7 @@ export class ProjectileCollisionSystem extends CollisionSystem {
             else {
                 reflectionDirection = new THREE.Vector3(0, 0, 1);
             }
+            projectile.reflection(reflectionDirection);
         }
         if(dVertical === 0) {
             if (projectile.projectile.position.x < walls[0].model.position.x) {
@@ -134,9 +135,9 @@ export class ProjectileCollisionSystem extends CollisionSystem {
             else {
                 reflectionDirection = new THREE.Vector3(1, 0, 0);
             }
+            projectile.reflection(reflectionDirection);
         }
 
-        projectile.reflection(reflectionDirection);
     }
 
     #calculateReflectionDirection(wallPosition, projectile) { 
