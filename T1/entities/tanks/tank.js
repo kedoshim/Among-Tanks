@@ -363,7 +363,7 @@ export class Tank {
     const currentTime = Date.now();
 
     if (currentTime - this._lastShootTime < this._shootCooldown) {
-      return;
+      return; 
     }
 
     this._lastShootTime = currentTime;

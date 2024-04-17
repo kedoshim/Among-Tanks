@@ -1,5 +1,5 @@
 {
-  "directionalMovementEnabled": falsegit ,
+  "directionalMovementEnabled": false,
   "numberOfPlayers" : 2,
   "playerSpawnPoint" : [
     [-20, -20],
