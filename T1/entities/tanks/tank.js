@@ -237,7 +237,8 @@ export class Tank {
 
     if (!this.collidedWithWalls) {
       // Movimento normal se não houver colisão com as paredes
-      this.model.translateZ(forwardForce * this._moveSpeed);
+      this.model.position.x += this._moveSpeed * moveX;
+      this.model.position.z += this._moveSpeed * moveZ;
     }
     else {
       if(this.inMovement && forwardForce !== 0) {
@@ -255,8 +256,6 @@ export class Tank {
     // Smoothly rotate this.model towards the target angle
     this.model.rotation.y += rotationDifference * this._animationRotationSpeed;
     // Move this.model
-    this.model.position.x += this._moveSpeed * moveX;
-    this.model.position.z += this._moveSpeed * moveZ;
 
     console.log(moveX, moveZ);
 
