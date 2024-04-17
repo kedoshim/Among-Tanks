@@ -235,6 +235,23 @@ export class Tank {
         2 * Math.PI
       ) - Math.PI;
 
+    if (!this.collidedWithWalls) {
+      // Movimento normal se não houver colisão com as paredes
+      this.model.translateZ(forwardForce * this._moveSpeed);
+    }
+    else {
+      if(this.inMovement && forwardForce !== 0) {
+        // Deslizar enquanto estiver em contato com a parede
+        this.model.position.add(this.slideVector);
+      }
+    }
+
+    // Resetar a flag de colisão com as paredes
+    this.collidedWithWalls = false;
+
+    // Resetar o movimento
+    this._inMovement = false;
+
     // Smoothly rotate this.model towards the target angle
     this.model.rotation.y += rotationDifference * this._animationRotationSpeed;
 

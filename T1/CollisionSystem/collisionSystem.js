@@ -79,7 +79,6 @@ export class ProjectileCollisionSystem extends CollisionSystem {
                 hitWall = this.checkCollisionBetwennCollisionShapes(wall.collisionShape, projectile.collisionShape);
     
                 if(hitWall) {
-                    console.log("Atingiu o muro")
                     if (!hasHitWall) { // Verifica se o projétil já colidiu com um muro
                         this.#calculateReflectionDirection(wall.model.position, projectile);
                         projectile.hitWall();
@@ -146,7 +145,10 @@ export class TankCollisionSystem extends CollisionSystem {
                 hitWall = this.checkCollisionBetwennCollisionShapes(wall.collisionShape, player._tank.collisionShape);
                 dotProduct = this.#dotProductBetweenTankDirectionAndVectorPosition(slideVector, wall.model.position, player._tank.model.position);
 
-                if(hitWall && dotProduct > 0) {
+                // if(hitWall)
+                //     console.log(dotProduct);
+
+                if(hitWall && dotProduct > -4.4) {
                     theImpactWasInThehorizontal = this.#theCollisionWasInTheHorizontal(wall.model.position, player._tank.model.position);
                     let collisionIsValid = this.#checkIfTheCollisionIsVallid(wall, theImpactWasInThehorizontal);
                     
@@ -169,9 +171,9 @@ export class TankCollisionSystem extends CollisionSystem {
                 }
             }
 
-            if(this.horizontal)
+            if(this.horizontal || Math.abs(slideVector.x)<0.24)
                 slideVector.x = 0;
-            if(this.vertical)
+            if(this.vertical || Math.abs(slideVector.z)<0.24)
                 slideVector.z = 0;
 
             player._tank.slideVector = slideVector;
@@ -209,9 +211,14 @@ export class TankCollisionSystem extends CollisionSystem {
 
         let BLOCK_SIZE = this.previousBlockThatCollided.BLOCK_SIZE;
 
+        let vertical = !horizontal;
+
         // dHorizontal e dVertical := se for 0, estão no mesmo eixo
         let dHorizontal = wall.model.position.x - this.previousBlockThatCollided.model.position.x; // 0 => possuem a mesma coordenada em x
         let dVertical = wall.model.position.z - this.previousBlockThatCollided.model.position.z; // 0 => possuem a mesma coordenada em z
+
+        console.log(dHorizontal);
+        console.log(dVertical);
 
         // Se ambos os blocos estão no mesmo eixo e são vizinhos
         if (dHorizontal === 0 && (Math.abs(dVertical) == BLOCK_SIZE * 2 || Math.abs(dVertical) == BLOCK_SIZE)) {
@@ -244,7 +251,7 @@ export class TankCollisionSystem extends CollisionSystem {
                 this.horizontal = false;
                 this.previousBlockThatCollided = null;
 
-                if(!horizontal) {
+                if(vertical) {
                     return true;
                 }
                 else {
@@ -252,7 +259,7 @@ export class TankCollisionSystem extends CollisionSystem {
                 }
             }
             else {
-                if(!horizontal) {
+                if(vertical) {
                     return true;
                 }
                 else {
