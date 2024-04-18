@@ -1,11 +1,7 @@
 import * as THREE from 'three';
 
 export class Block {
-    constructor(/*position, BLOCK_SIZE*/) {
-        //this.BLOCK_SIZE = BLOCK_SIZE;
-        //this.position_x = position.x;
-        //this.position_y = position.y;
-        //this.position_z = position.z;
+    constructor() {
         this._model = null;
     }
 
@@ -48,8 +44,8 @@ export class Block {
 }
 
 export class CollisionBlock extends Block {
-    constructor(/*position=null, BLOCK_SIZE=null*/) {
-        super(/*position, BLOCK_SIZE*/);
+    constructor() {
+        super();
         this.collisionShape = null;
     }
 

@@ -12,10 +12,10 @@ import {
 
 import { CameraControls } from "./camera.js";
 import { Player } from "./entities/player.js";
-import { ProjectileCollisionSystem, TankCollisionSystem } from "./CollisionSystem/collisionSystem.js";
+import { ProjectileCollisionSystem, TankCollisionSystem } from "./collision.js";
 import { Entity } from "./entities/entity.js";
 import { getConfig } from "./config.js";
-import { CollisionBlock } from "./Blocks/blocks.js";
+import { CollisionBlock } from "./blocks.js";
 
 export class GameManager {
   constructor(level, renderer = null) {

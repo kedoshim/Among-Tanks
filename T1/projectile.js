@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { setDefaultMaterial } from "../../libs/util/util.js";
+import { setDefaultMaterial } from "../libs/util/util.js";
 
 export class Projectile {
     constructor(position, direction, speed=0.1, damage=1, ricochetsAmount=2, color="white") {

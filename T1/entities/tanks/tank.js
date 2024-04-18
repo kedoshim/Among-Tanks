@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Projectile } from "../../Projectiles/projectile.js";
+import { Projectile } from "../../projectile.js";
 import { Object3D } from "../../../build/three.module.js";
 import { HealthBar } from "./healthBar.js";
 
