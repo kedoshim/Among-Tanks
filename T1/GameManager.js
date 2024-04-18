@@ -74,7 +74,7 @@ export class GameManager {
   }
 
   load() {
-    this.numberOfPlayers = Math.min(this.config.numberOfPlayers, 4);
+    this.numberOfPlayers = Math.max(2,Math.min(this.config.numberOfPlayers, 4)); //min = 2, max = 4
     this.scene = new THREE.Scene(); // Create main scene
     if (this.renderer === null) this.renderer = initRenderer(); // Init a basic renderer
     this.material = setDefaultMaterial(); // create a basic material
