@@ -69,7 +69,8 @@ export class CameraControls {
       minZ: Infinity,
     };
 
-    players.forEach((player) => {
+    for (const key in players) {
+      const player = players[key];
       let positionX = player.tank.position.x;
 
       let positionZ = player.tank.position.z;
@@ -80,7 +81,7 @@ export class CameraControls {
       if (positionX < extremes.minX) extremes.minX = positionX;
       if (positionZ > extremes.maxZ) extremes.maxZ = positionZ;
       if (positionZ < extremes.minZ) extremes.minZ = positionZ;
-    });
+    }
     extremes.maxX += this._padding;
     extremes.maxZ += this._padding;
     extremes.minX -= this._padding;

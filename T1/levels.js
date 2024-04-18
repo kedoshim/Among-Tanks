@@ -1,7 +1,7 @@
 const levelPaths = {
   1: "./levels/level1.json",
-  // 2: "./levels/level2.json",
-  // 3: "./levels/level3.json",
+  2: "./levels/level2.json",
+  1: "./levels/level3.json",
 };
 
 const levels = {};

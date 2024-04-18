@@ -25,11 +25,11 @@ export class GameManager {
   }
 
   start() {
-    this.load();
+    this.setup();
     this.defineLevelColors();
     this.loadLevel(this.levelData);
-    this.loadPlayers();
-    this.loadCollisionSystems();
+    this.createPlayers();
+    this.createCollisionSystem();
   }
 
   listening() {
@@ -53,18 +53,18 @@ export class GameManager {
     );
   }
 
-  loadPlayers() {
+  createPlayers() {
     Player.playerNumber = 0;
     Entity.entityNumber = 0;
 
-    for (let i = 0; i < this.numberOfPlayers; i++) {
-      this.createPlayer();
+    for (let i = 1; i <= this.numberOfPlayers; i++) {
+      this.createPlayer(i);
     }
-    // console.log(this.players);
-    this.players.forEach((entity) => {
-      console.log("loading player " + entity.name);
-      entity.load(this.scene);
-    });
+    for (const key in this.players) {
+      const player = this.players[key];
+      console.log("loading player '" + player.name + "'");
+      player.load(this.scene);
+    }
   }
 
   manageOrbitControls() {
@@ -73,7 +73,7 @@ export class GameManager {
     }
   }
 
-  load() {
+  setup() {
     this.numberOfPlayers = Math.max(2,Math.min(this.config.numberOfPlayers, 4)); //min = 2, max = 4
     this.scene = new THREE.Scene(); // Create main scene
     if (this.renderer === null) this.renderer = initRenderer(); // Init a basic renderer
@@ -88,10 +88,10 @@ export class GameManager {
     this.camera = this.cameraController.camera;
 
     this.connectedGamepads = [null, null, null, null];
-    this.deadPlayers = [];
+    this.deadPlayers = {};
     this.deadIndex = [];
     this.playerSpawnPoint = [];
-    this.players = [];
+    this.players = {};
     this.entities = [];
     this.previousHitBox = [];
 
@@ -102,12 +102,12 @@ export class GameManager {
     this.listening();
   }
 
-  createPlayer() {
+  createPlayer(index) {
     let new_player = new Player("", [0, 0], "", "", this.config);
 
     new_player.spawnPoint = this.playerSpawnPoint[Player.playerNumber - 1];
 
-    this.players.push(new_player);
+    this.players[index] = new_player;
   }
 
   defineLevelColors() {
@@ -200,7 +200,7 @@ export class GameManager {
     }
   }
 
-  loadCollisionSystems() {
+  createCollisionSystem() {
     this.tankCollisionSystem = new TankCollisionSystem(this.players, this.walls);
     this.projectileCollisionSystem = new ProjectileCollisionSystem(this.players, this.walls);
   }
@@ -233,15 +233,14 @@ export class GameManager {
     this.keyboard.update();
     this.manageOrbitControls();
 
-    this.players.every((player, index) => {
+    for (const key in this.players) {
+      const player = this.players[key];
       let playerGamepad = null;
-      if (this.connectedGamepads[index] != null) {
-        playerGamepad = navigator.getGamepads()[index];
-        // console.log("controller " + (index+1));
+      if (this.connectedGamepads[key] != null) {
+        playerGamepad = navigator.getGamepads()[key];
       }
       player.runController(this.keyboard, playerGamepad);
-      return true;
-    });
+    }
 
     this.entities.forEach((entity) => {
       entity.runController();
@@ -251,16 +250,17 @@ export class GameManager {
   checkCollision() {
     this.projectileCollisionSystem.checkIfThereHasBeenCollisionWithTanks();
 
-    this.players.forEach((player, index) => {
+    for (const key in this.players) {
+      const player = this.players[key];
       if (player._tank.died) {
-        this.scene.remove(player._tank.model);
-        this.scene.remove(player._tank.healthBar.model);
-        this.deadPlayers.push(player);
-        this.deadIndex.push(index)
-        this.deadIndex.push(index);
-        this.players.pop(index);
+        this.scene.remove(player.tank.model);
+        this.scene.remove(player.tank.healthBar.model);
+        this.deadPlayers[key] = player;
+        this.deadIndex.push(key)
+        delete this.players[key];
+        console.log(player)
       }
-    });
+    }
 
     this.projectileCollisionSystem.checkCollisionWithWalls();
     this.tankCollisionSystem.checkCollisionWithWalls();
@@ -284,8 +284,9 @@ export class GameManager {
   }
 
   updateProjectiles() {
-    this.players.forEach((player) => {
-      let projectiles = player._tank.projectiles;
+    for (const key in this.players) {
+      const player = this.players[key];
+      let projectiles = player.tank.projectiles;
       for (let index = projectiles.length - 1; index >= 0; index--) {
         if (!projectiles[index].isAlreadyInScene()) {
           this.scene.add(projectiles[index].projectile);
@@ -301,29 +302,30 @@ export class GameManager {
           projectiles[index].moveStep();
         }
       }
-    });
+    }
   }
 
   updateHealthBars() {
-    this.players.forEach((player) => {
+    for (const key in this.players) {
+      const player = this.players[key];
       player.tank.healthBar.updateHealthBar(player.health);
       player.tank.healthBar.setHealthBarPosition(player.tank.position);
-    });
+    }
   }
 
   checkEnd() {
     
-    if (this.players.length <= 1) {
+    if (Object.keys(this.players).length <= 1) {
       let winner = 0;
-      for(let i = 0; i < this.config.numberOfPlayers; i++) {
-        if(!this.deadIndex.includes(i)) {
-          winner = i;
-        }
+      for (const key in this.players) {
+          if (!this.deadIndex.includes(key)) {
+              winner = key;
+          }
       }
       this.shotInfo.hide();
       this.deleteScene(this.scene);
       this.resetFunction();
-      winner = winner + 1
+      winner = winner;
       alert("Game Over! Player " + winner + " won!");
       return true;
     }
@@ -350,9 +352,10 @@ export class GameManager {
     this.previousHitBox.forEach((box) => {
       this.scene.remove(box);
     });
-    this.players.forEach((player, index) => {
+    for (const key in this.players) {
+      const player = this.players[key];
       this.previousHitBox[index] = player.loadHitBox(this.scene);
-    });
+    }
   }
 
   setResetFunction(func) {

@@ -10,7 +10,7 @@ import { loadLevels, getNextLevel } from "./levels.js";
 
 
 
-async function main() {
+async function main() { 
   const renderer = initRenderer();
 
   let level = getNextLevel();

@@ -70,7 +70,7 @@ export class Player extends Entity {
     let playerConfig = config ? config.playerConfig : getConfig().playerConfig;
 
     if (name === "") {
-      name = `Player_${Player.playerNumber}`;
+      name = `Player_${Player.playerNumber + 1}`;
     }
     if (amogColor === "") {
       amogColor = playerConfig.defaultPlayerAmogusColors[Player.playerNumber];
