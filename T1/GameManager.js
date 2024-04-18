@@ -89,6 +89,7 @@ export class GameManager {
 
     this.connectedGamepads = [null, null, null, null];
     this.deadPlayers = [];
+    this.deadIndex = [];
     this.playerSpawnPoint = [];
     this.players = [];
     this.entities = [];
@@ -254,6 +255,8 @@ export class GameManager {
         this.scene.remove(player._tank.model);
         this.scene.remove(player._tank.healthBar.model);
         this.deadPlayers.push(player);
+        this.deadIndex.push(index)
+        this.deadIndex.push(index);
         this.players.pop(index);
       }
     });
@@ -305,11 +308,19 @@ export class GameManager {
   }
 
   checkEnd() {
+    
     if (this.players.length <= 1) {
+      let winner = 0;
+      for(let i = 0; i < this.config.numberOfPlayers; i++) {
+        if(!this.deadIndex.includes(i)) {
+          winner = i;
+        }
+      }
       this.shotInfo.hide();
       this.deleteScene(this.scene);
       this.resetFunction();
-      alert("Game Over");
+      winner = winner + 1
+      alert("Game Over, player " + winner + " venceu");
       return true;
     }
     return false;

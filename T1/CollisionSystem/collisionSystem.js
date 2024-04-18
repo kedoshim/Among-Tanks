@@ -316,7 +316,9 @@ export class TankCollisionSystem extends CollisionSystem {
         let dHorizontal = wall.model.position.x - this.previousBlockThatCollided.model.position.x; // 0 => possuem a mesma coordenada em x
         let dVertical = wall.model.position.z - this.previousBlockThatCollided.model.position.z; // 0 => possuem a mesma coordenada em z
 
+
         // Se ambos os blocos estão na horizontal e são vizinhos
+
         if (dHorizontal === 0 && (Math.abs(dVertical) == BLOCK_SIZE * 2 || Math.abs(dVertical) == BLOCK_SIZE)) {
             this.horizontal = true;
 
