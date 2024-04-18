@@ -1,19 +1,6 @@
-import * as THREE from "three";
-import KeyboardState from "../libs/util/KeyboardState.js";
 import {
-  initRenderer,
-  initDefaultBasicLight,
-  setDefaultMaterial,
-  InfoBox,
-  SecondaryBox,
-  onWindowResize,
-  createGroundPlaneXZ,
+  initRenderer
 } from "../libs/util/util.js";
-
-import { CameraControls } from "./camera.js";
-import { Player } from "./entities/player.js";
-import { ProjectileCollisionSystem } from "./CollisionSystem/collisionSystem.js";
-
 
 import { GameManager } from "./GameManager.js";
 
