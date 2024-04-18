@@ -24,10 +24,11 @@ function darkenColor(rgbString, factor) {
 }
 
 function createAmogus(x, y, color) {
+  const levelHeight = 5;
   const bodyModel = new THREE.CapsuleGeometry(3.5, 3, 5, 20);
   let body = new THREE.Mesh(bodyModel, setDefaultMaterial(color));
   // position the amog
-  body.position.set(x + 0, 6.4, y + 0.0);
+  body.position.set(x + 0, 6.4 + levelHeight, y + 0.0);
 
   const legModel = new THREE.CylinderGeometry(2, 0.8, 5);
   let left_leg = new THREE.Mesh(legModel, setDefaultMaterial(color));

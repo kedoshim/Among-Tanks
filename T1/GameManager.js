@@ -117,6 +117,7 @@ export class GameManager {
   }
 
   loadLevel(level) {
+    const levelHeight = 5;
     const data = level.blocks;
     let { x, y } = level.offset;
 
@@ -171,13 +172,13 @@ export class GameManager {
       for (let j = 0; j < data[i].length; j++) {
         switch (data[i][j].type) {
           case "GroundBlock":
-            createBlock(i, j, this.groundColor, -BLOCK_SIZE / 2);
+            createBlock(i, j, this.groundColor, -BLOCK_SIZE / 2 + levelHeight);
             break;
           case "WallBlock":
-            createBlock(i, j, this.wallColor, BLOCK_SIZE / 2);
+            createBlock(i, j, this.wallColor, BLOCK_SIZE / 2 + levelHeight);
             break;
           case "Spawn":
-            createBlock(i, j, this.spawnColor, -BLOCK_SIZE / 2);
+            createBlock(i, j, this.spawnColor, -BLOCK_SIZE / 2 + levelHeight  );
             const translation = getTranslation(i, j, -13);
             const spawn = [translation.x, translation.z];
             this.playerSpawnPoint[spawnIndex] = spawn;
