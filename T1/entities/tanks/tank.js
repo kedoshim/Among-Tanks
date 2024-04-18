@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { Projectile } from "../../Projectiles/projectile.js";
-import { Box3, Object3D } from "../../../build/three.module.js";
+import { Object3D } from "../../../build/three.module.js";
 import { HealthBar } from "./healthBar.js";
 
 /**
@@ -36,6 +36,7 @@ export class Tank {
     this._damage = damage;
     this._bulletSpeed = bulletSpeed;
 
+    // Cria a barra de vida
     this._maxHealth = maxHealth;
     this._health = this._maxHealth;
     this._healthBar = new HealthBar(this._maxHealth);
@@ -388,7 +389,7 @@ export class Tank {
     );
     this._projectiles.push(projectile);
 
-    var audio = new Audio("audio/shot.mp3");
+    var audio = new Audio("audio/shot.mp3"); // Áudio do tiro
     audio.play();
   }
 }

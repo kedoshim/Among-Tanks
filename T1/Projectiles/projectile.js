@@ -11,7 +11,7 @@ export class Projectile {
         this.alreadyInScene = false;
         this.direction = direction.normalize();
 
-        this.projectile = this.build_projectile(1, color);
+        this.projectile = this.build_projectile(1, color); // modelo do projétil
         this.projectile.position.set(position.x, position.y - 3, position.z);
         this.lastPosition = new THREE.Vector3(position.x, position.y - 3, position.z)
 
@@ -52,6 +52,7 @@ export class Projectile {
         return this.collisionShape;
     }
 
+    // Cria uma esfera para representar o projétil
     build_projectile(radius, color) {
         let projectile_sphere = new THREE.SphereGeometry(radius);
         let material = setDefaultMaterial(color);

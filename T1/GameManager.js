@@ -13,7 +13,6 @@ import {
 import { CameraControls } from "./camera.js";
 import { Player } from "./entities/player.js";
 import { ProjectileCollisionSystem, TankCollisionSystem } from "./CollisionSystem/collisionSystem.js";
-import { JsonDecoder } from "./level_builder_interpreter/JsonDecoder.js";
 import { Entity } from "./entities/entity.js";
 import { getConfig } from "./config.js";
 import { CollisionBlock } from "./Blocks/blocks.js";
@@ -31,8 +30,6 @@ export class GameManager {
     this.loadLevel(this.levelData);
     this.loadPlayers();
     this.loadCollisionSystems();
-
-    console.log(this.walls.length);
   }
 
   listening() {
