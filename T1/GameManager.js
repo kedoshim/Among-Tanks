@@ -320,7 +320,7 @@ export class GameManager {
       this.deleteScene(this.scene);
       this.resetFunction();
       winner = winner + 1
-      alert("Game Over, player " + winner + " venceu");
+      alert("Game Over! Player " + winner + " won!");
       return true;
     }
     return false;
@@ -338,11 +338,11 @@ export class GameManager {
       //this.render();
       this.updateProjectiles();
       this.updateHealthBars();
-      // this.updateHitBox();
+      // this.updateHitBoxDisplay();
     }
   }
 
-  updateHitBox() {
+  updateHitBoxDisplay() {
     this.previousHitBox.forEach((box) => {
       this.scene.remove(box);
     });
