@@ -153,7 +153,7 @@
     {
       "blockSize": 4,
       "color": 12895428,
-      "type": "GroundBlock",
+      "type": "Spawn",
       "collision": true
     },
     {
@@ -976,7 +976,7 @@
     {
       "blockSize": 4,
       "color": 12895428,
-      "type": "GroundBlock",
+      "type": "Spawn",
       "collision": true
     },
     {
