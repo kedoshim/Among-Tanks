@@ -267,13 +267,16 @@ export class GameManager {
   }
 
   displayUpdate() {
-    let info = "";
+    let info = "Tiros Recebidos: ";
     for (let i = 0; i < this.players.length; i++) {
       let shotsTaken = this.players[i].tank.lostHealth;
       info += `Player ${i+1}: ${shotsTaken} | `;
     }
 
+    info = info.substring(0, info.length -2);
+
     this.shotInfo.changeMessage(info);
+    this.shotInfo.changeStyle("#00b3ad", 0xffffff, "25", "Lucida Console");
   }
 
   cameraUpdate() {
