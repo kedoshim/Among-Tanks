@@ -14,31 +14,31 @@ export class CollisionSystem {
 }
 
 export class ProjectileCollisionSystem extends CollisionSystem {
-    constructor(players, walls) {
+    constructor(players, walls, projectiles) {
         super(players, walls);
-        this._projectiles = [];
+        this.projectiles = projectiles;
     }
 
     // Função responsável por reunir todos os projéteis da cena em um único vetor
-    #getAllProjectilesInScene() {
-        let players = this.players;
-        let player = null;
-        let projectiles = [];
+    // _getAllProjectilesInScene() {
+    //     let players = this.players;
+    //     let player = null;
+    //     let projectiles = [];
 
-        // itera sobre todos os players e adiciona todos os projéteis na lista projectiles
-        for (const key in this.players) {
-            const player = this.players[key];
-            for (
-                let projectileIndex = 0;
-                projectileIndex < player._tank.projectiles.length;
-                projectileIndex++
-            ) {
-                projectiles.push(player._tank.projectiles[projectileIndex]);
-            }
-        }
-        this._projectiles = [];
-        this._projectiles = projectiles;
-    }
+    //     // itera sobre todos os players e adiciona todos os projéteis na lista projectiles
+    //     for (const key in this.players) {
+    //         const player = this.players[key];
+    //         for (
+    //             let projectileIndex = 0;
+    //             projectileIndex < player._tank.projectiles.length;
+    //             projectileIndex++
+    //         ) {
+    //             projectiles.push(player._tank.projectiles[projectileIndex]);
+    //         }
+    //     }
+    //     this._projectiles = [];
+    //     this._projectiles = projectiles;
+    // }
 
     // Checa se houve colisão de algum projétil com algum tanque
     checkIfThereHasBeenCollisionWithTanks() {
@@ -47,8 +47,8 @@ export class ProjectileCollisionSystem extends CollisionSystem {
         let hitTank = false;
 
         // identifica todos os projéteis na cena
-        this.#getAllProjectilesInScene();
-        let projectiles = this._projectiles;
+        // this._getAllProjectilesInScene();
+        let projectiles = this.projectiles;
 
         // itera sobre todos os jogadores
         for (const key in this.players) {
@@ -92,8 +92,8 @@ export class ProjectileCollisionSystem extends CollisionSystem {
         let hitWall;
         let wallsThatCollided = [];
 
-        this.#getAllProjectilesInScene();
-        let projectiles = this._projectiles; // pegar todos os projéteis da cena.
+        // this._getAllProjectilesInScene();
+        let projectiles = this.projectiles; // pegar todos os projéteis da cena.
 
         // iterar sobre todos os projéteis da cena
         for (
@@ -120,7 +120,7 @@ export class ProjectileCollisionSystem extends CollisionSystem {
 
             // Se colidiu apenas com um muro, calcular a reflexão na parede e dizer ao projétil que ele acertou um muro (diminuir um ricochete)
             if (wallsThatCollided.length === 1) {
-                this.#calculateReflectionDirection(
+                this._calculateReflectionDirection(
                     wallsThatCollided[0].model.position,
                     projectile
                 );
@@ -129,7 +129,7 @@ export class ProjectileCollisionSystem extends CollisionSystem {
                 /**
                  * Se o projétil atingiu mais de um muro ao mesmo tempo é necessário tratar todas essas colisões com cuidado
                  */
-                this.#calculateReflectionDirectionBasedOnMultiplesBlocks(
+                this._calculateReflectionDirectionBasedOnMultiplesBlocks(
                     wallsThatCollided,
                     projectile
                 );
@@ -139,7 +139,7 @@ export class ProjectileCollisionSystem extends CollisionSystem {
     }
 
     // calcula que tipo de reflexão deverá ser aplicada dependendo da quantidade de muros atingidos
-    #calculateReflectionDirectionBasedOnMultiplesBlocks(walls, projectile) {
+    _calculateReflectionDirectionBasedOnMultiplesBlocks(walls, projectile) {
         // Se forem 3 muros, simplesmente fazer o projétil "dar meia volta"
         if (walls.length === 3) {
             projectile.direction.multiplyScalar(-1);
@@ -178,7 +178,7 @@ export class ProjectileCollisionSystem extends CollisionSystem {
         }
     }
 
-    #calculateReflectionDirection(wallPosition, projectile) {
+    _calculateReflectionDirection(wallPosition, projectile) {
         // calculate the difference betwenn positions
         const x_distance = wallPosition.x - projectile.projectile.position.x;
         const z_distance = wallPosition.z - projectile.projectile.position.z;
@@ -250,7 +250,7 @@ export class TankCollisionSystem extends CollisionSystem {
                     player._tank.collisionShape
                 );
                 dotProduct =
-                    this.#dotProductBetweenTankDirectionAndVectorPosition(
+                    this._dotProductBetweenTankDirectionAndVectorPosition(
                         slideVector,
                         wall.model.position,
                         player._tank.model.position
@@ -263,13 +263,13 @@ export class TankCollisionSystem extends CollisionSystem {
                 if (hitWall && dotProduct > -4.4) {
                     // Verifica se o impacto foi na horizontal
                     theImpactWasInThehorizontal =
-                        this.#theCollisionWasInTheHorizontal(
+                        this._theCollisionWasInTheHorizontal(
                             wall.model.position,
                             player._tank.model.position
                         );
 
                     // verifica se a colisão atual é válida se já houveram outras colisões
-                    let collisionIsValid = this.#checkIfTheCollisionIsVallid(
+                    let collisionIsValid = this._checkIfTheCollisionIsVallid(
                         wall,
                         theImpactWasInThehorizontal
                     );
@@ -322,7 +322,7 @@ export class TankCollisionSystem extends CollisionSystem {
     }
 
     // verifica se a colisão foi na horizontal e, se sim, retorna true, senão false
-    #theCollisionWasInTheHorizontal(wallPosition, tankPosition) {
+    _theCollisionWasInTheHorizontal(wallPosition, tankPosition) {
         const x_distance = wallPosition.x - tankPosition.x;
         const z_distance = wallPosition.z - tankPosition.z;
         let direction; // true: Horizontal Orientation, false: Vertical Orientation
@@ -340,7 +340,7 @@ export class TankCollisionSystem extends CollisionSystem {
      *  Calcula o produto interno entre o vetor que aponta na direção do movimento e o vetor que vai da posição do tanque
      *  até o centro do muro. O produto interno serve para verificar se o tanque está se movimentado em direção ao muro.
      */
-    #dotProductBetweenTankDirectionAndVectorPosition(
+    _dotProductBetweenTankDirectionAndVectorPosition(
         tankDirection,
         wallPosition,
         tankPosition
@@ -358,7 +358,7 @@ export class TankCollisionSystem extends CollisionSystem {
      * Checa se a colisão atual é válida em relação à última colisão detectada. Isso é utilizado para verificar se o tanque colidiu
      * em mais de um muro.
      */
-    #checkIfTheCollisionIsVallid(wall, horizontal) {
+    _checkIfTheCollisionIsVallid(wall, horizontal) {
         // Se não nenhuma colisão foi detectada, então a colisao atual é válida
         if (this.previousBlockThatCollided === null) {
             return true;
@@ -483,7 +483,7 @@ export class TankCollisionSystem extends CollisionSystem {
                     player._tank.collisionShape
                 );
                 dotProduct =
-                    this.#dotProductBetweenTankDirectionAndVectorPosition(
+                    this._dotProductBetweenTankDirectionAndVectorPosition(
                         this.slideVector,
                         wall.model.position,
                         player._tank.model.position
@@ -495,7 +495,7 @@ export class TankCollisionSystem extends CollisionSystem {
                 }
             }
 
-            this.#calculateSlideDirectionBasedOnMultiplesBlocks(
+            this._calculateSlideDirectionBasedOnMultiplesBlocks(
                 wallsThatCollided,
                 player
             );
@@ -511,7 +511,7 @@ export class TankCollisionSystem extends CollisionSystem {
     }
 
     // Método que define em quais direções serão impedidas de movimentar
-    #calculateSlideDirectionBasedOnMultiplesBlocks(walls, player) {
+    _calculateSlideDirectionBasedOnMultiplesBlocks(walls, player) {
         // Se forem detectados 3 muros, o projétil será refletido
         if (walls.length === 3) {
             this.horizontal = true;
@@ -536,7 +536,7 @@ export class TankCollisionSystem extends CollisionSystem {
             }
         } else if (walls.length === 1) {
             // 1 muro só
-            const impactOrientation = this.#theCollisionWasInTheHorizontal(
+            const impactOrientation = this._theCollisionWasInTheHorizontal(
                 walls[0].model.position,
                 player._tank.position
             );

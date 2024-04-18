@@ -84,11 +84,6 @@ export class Entity {
     scene.add(this._tank._healthBar.model);
   }
 
-  loadProjectile(scene) {
-    let projectile = this._tank.projectiles[this._tank.projectiles.lenght - 1];
-    scene.add(projectile);
-  }
-
   loadHitBox(scene) {
     // Create a bounding box helper
     let helper = new THREE.Box3Helper(this.tank.collisionShape, "blue");
