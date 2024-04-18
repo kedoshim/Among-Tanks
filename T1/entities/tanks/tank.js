@@ -21,10 +21,8 @@ export class Tank {
         amogColor,
         moveSpeed = 1,
         rotationSpeed = 0.15,
-        damage,
-        bulletSpeed = 3,
         maxHealth = 10,
-        hitboxSize = 6
+        shootingOpitions = null
     ) {
         this._tankColor = tankColor;
         this._amogColor = amogColor;
@@ -33,15 +31,31 @@ export class Tank {
         this._animationRotationSpeed = rotationSpeed;
         this._inMovement = false;
         this._positiveMovement = true;
-        this._damage = damage;
-        this._bulletSpeed = bulletSpeed;
+
+        if (!shootingOpitions) {
+            this.shootingOpitions = shootingOpitions =
+            {
+                bulletSpeed: 2,
+                damage: 1,
+                spreadShots: 1,
+                semiAutoShots: 1,
+                cooldown: 250,
+            };
+        }
+
+        this._bulletSpeed = shootingOpitions.bulletSpeed;
+        this._damage = shootingOpitions.damage;
+        this._spreadShots = shootingOpitions.spreadShots;
+        this._semiAutoShots = shootingOpitions.semiAutoShots;
+        this._shootCooldown = shootingOpitions.cooldown
+        
 
         // Cria a barra de vida
         this._maxHealth = maxHealth;
         this._health = this._maxHealth;
         this._healthBar = new HealthBar(this._maxHealth);
 
-        this._hitboxSize = hitboxSize;
+        this._hitboxSize = 6;
 
         this._model = null;
 
@@ -52,7 +66,6 @@ export class Tank {
 
         this._lastValidTargetAngle = 0;
 
-        this._shootCooldown = 250; // Cooldown time in milliseconds
         this._lastShootTime = 0; // Last time the shoot function was called
         this.died = false;
     }
@@ -381,19 +394,51 @@ export class Tank {
         tankForwardVector.applyQuaternion(this.model.quaternion); // Aplicar rotação do tanque ao vetor de avanço
 
         // Calcular a direção do projétil com base no vetor de avanço do tanque
-        const direction = tankForwardVector.normalize();
+        const originalDirection = tankForwardVector.normalize();
 
-        // Adicionar a direção ao vetor posição para obter a posição final do projétil
-        projectilePosition.addScaledVector(direction, length);
+        // Se houver apenas 1 tiro, não é necessário calcular a direção do spread
+        if (this._spreadShots === 1) {
+            // Adicionar a direção ao vetor posição para obter a posição final do projétil
+            projectilePosition.addScaledVector(originalDirection, length);
 
-        // Criar o projétil na posição calculada e com a direção correta
-        let projectile = new Projectile(
-            projectilePosition,
-            direction,
-            this._bulletSpeed,
-            this._damage
-        );
-        this._projectiles.push(projectile);
+            // Criar o projétil na posição calculada e com a direção correta
+            let projectile = new Projectile(
+                projectilePosition,
+                originalDirection.clone(),
+                this._bulletSpeed,
+                this._damage
+            );
+            this._projectiles.push(projectile);
+        } else {
+            // Distribuir o cone de tiro entre os projéteis
+            const spreadAngle = Math.PI / 2; // Ângulo máximo do cone (90 graus em radianos)
+            const angleIncrement = spreadAngle / (this._spreadShots - 1); // Incremento de ângulo entre os projéteis
+
+            // Loop para disparar múltiplos projéteis com um pequeno atraso entre cada tiro
+            for (let i = 0; i < this._spreadShots; i++) {
+                // Calcular a direção para o projétil atual com base no ângulo do cone
+                const angle =
+                    (i - (this._spreadShots - 1) / 2) * angleIncrement; // Distribuição simétrica em relação ao eixo central
+                const direction = originalDirection
+                    .clone()
+                    .applyAxisAngle(new THREE.Vector3(0, 1, 0), angle);
+
+                // Adicionar a direção ao vetor posição para obter a posição final do projétil
+                const projectileDirection = direction.normalize();
+                const projectilePosition = this.model.position
+                    .clone()
+                    .addScaledVector(projectileDirection, length);
+
+                // Criar o projétil na posição calculada e com a direção correta
+                let projectile = new Projectile(
+                    projectilePosition,
+                    projectileDirection,
+                    this._bulletSpeed,
+                    this._damage
+                );
+                this._projectiles.push(projectile);
+            }
+        }
 
         var audio = new Audio("audio/shot.mp3"); // Áudio do tiro
         audio.play();

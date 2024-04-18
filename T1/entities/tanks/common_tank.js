@@ -9,9 +9,15 @@ export class CommonTank extends Tank {
     let moveSpeed = 1;
     let rotationSpeed = 0.15;
     let maxHealth = 10;
-    let bulletSpeed = 2;
-    let damage = 1;
-    super(tankColor, amogColor, moveSpeed, rotationSpeed, damage, bulletSpeed, maxHealth);
+
+    let shootingOpitions = {
+      bulletSpeed : 2,
+      spreadShots : 1,
+      semiAutoShots : 1,
+      cooldown : 250,
+      damage : 1,
+    }
+    super(tankColor, amogColor, moveSpeed, rotationSpeed, maxHealth, shootingOpitions);
 
     this.model = createCommonTank(this.tankColor, this.amogColor);
   }
