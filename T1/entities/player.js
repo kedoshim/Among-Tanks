@@ -86,7 +86,7 @@ export class Player extends Entity {
     let controllerKeys = playerConfig.defaultPlayerControls[Player.playerNumber];
     this._controller = new PlayerController(this._tank, controllerKeys, "", config);
     
-    console.info("creating player " + this._name);
+    // console.info("creating player " + this._name);
     Player.playerNumber++;
   }
 }

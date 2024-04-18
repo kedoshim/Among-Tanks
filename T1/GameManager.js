@@ -60,7 +60,7 @@ export class GameManager {
     for (let i = 0; i < this.numberOfPlayers; i++) {
       this.createPlayer();
     }
-    console.log(this.players);
+    // console.log(this.players);
     this.players.forEach((entity) => {
       console.log("loading player " + entity.name);
       entity.load(this.scene);
