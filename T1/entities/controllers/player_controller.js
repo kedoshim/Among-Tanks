@@ -1,4 +1,4 @@
-import { Controller } from "./controller.js";
+  import { Controller } from "./controller.js";
 import KeyboardState from "../../../libs/util/KeyboardState.js";
 import { Tank } from "../tanks/tank.js";
 
@@ -31,6 +31,8 @@ export class PlayerController extends Controller {
     this._directionalMovementEnabled = config.directionalMovementEnabled;
     this._deadzone = gamepadConfig.deadzone;
     this._stickMultiplier = gamepadConfig.stickMultiplier
+
+    this.config = getConfig();
   }
 
   set upKey(key) {
@@ -93,24 +95,6 @@ export class PlayerController extends Controller {
     return this._buttons;
   }
 
-  /**
-   * Reads the config.json file and returns if the directional movement is enabled   *
-   * @async
-   * @returns {boolean}
-   */
-  async isDirectionalMovement() {
-    if (this._readConfig == true) {
-      return this._directionalMovementEnabled;
-    }
-
-    const config = await fetch("./config.json");
-    const json = await config.json();
-
-    this._directionalMovementEnabled = json.directionalMovementEnabled;
-
-    this._readConfig = true;
-    return this._directionalMovementEnabled;
-  }
   /**
    * Movement mode where the movement is based on the input direction
    * Called when "directionalMovement" is enabled in the config.json
@@ -252,7 +236,7 @@ export class PlayerController extends Controller {
    * @param {Gamepad} [gamepad=null] The gamepad assigned to the player
    */
   async control(keyboard, gamepad = null) {
-    if (await this.isDirectionalMovement()) {
+    if (this.config.directionalMovementEnabled) {
       this._directionalMovement(keyboard, gamepad);
     } else {
       this._rotatingMovement(keyboard, gamepad);
