@@ -79,9 +79,6 @@ export class Tank {
     return this._inMovement;
   }
 
-  /**
-   * Description placeholder
-   */
   get model() {
     return this._model;
   }

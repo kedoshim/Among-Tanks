@@ -133,11 +133,6 @@ export class CameraControls {
     return [mediumX, mediumZ];
   }
 
-  /**
-   * Description placeholder
-   *
-   * @param {Array.<Entity>} players
-   */
   calculatePosition(players) {
     if (this._orbit.enabled) {
       return;
