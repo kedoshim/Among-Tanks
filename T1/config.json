@@ -24,7 +24,7 @@
         "down": "down",
         "right": "right",
         "left": "left",
-        "shoot": ["/", ","]
+        "shoot": ["/","Á", ","]
       },
       {
         "up": "I",
