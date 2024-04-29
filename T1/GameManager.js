@@ -296,7 +296,7 @@ export class GameManager {
         this.scene.remove(player.tank.healthBar.model);
 
         player.tank.projectiles.forEach((projectile) => {
-            this.scene.remove(projectile);
+            this.scene.remove(projectile.projectile);
         });
 
         this.deadPlayers[key] = player;
@@ -306,7 +306,7 @@ export class GameManager {
     }
 
     displayUpdate() {
-        let info = "Tiros Recebidos: ";
+        let info = "Vida Perdida: ";
         for (const key in this.players) {
             const player = this.players[key];
             let shotsTaken = player.tank.lostHealth;
@@ -330,32 +330,39 @@ export class GameManager {
             for (let index = playerProjectiles.length - 1; index >= 0; index--) {
                 this.projectiles.push(playerProjectiles[index]);
             }
+            
+
+            // console.log(player.tank.projectiles);
             player.tank.projectiles = [];
         }
     }
 
     updateProjectiles() {
-        this.insertNewProjectiles();
+    this.insertNewProjectiles();
 
-        let indicesToRemove = [];
+    let indicesToRemove = [];
 
-        this.projectiles.forEach((projectile, index) => {
-            if (!projectile.isAlreadyInScene()) {
-                this.scene.add(projectile.projectile);
-                projectile.setAlreadyInScene(true);
-            }
-            if (projectile.hitAnyTank || projectile.ricochetsLeft < 0) {
-                this.scene.remove(projectile.projectile);
-                indicesToRemove.push(index);
-            } else {
-                projectile.moveStep();
-            }
-        });
+    // Iterate over projectiles in reverse order
+    for (let index = this.projectiles.length - 1; index >= 0; index--) {
+        const projectile = this.projectiles[index];
+        if (!projectile.isAlreadyInScene()) {
+            this.scene.add(projectile.projectile);
+            projectile.setAlreadyInScene(true);
+        }
+        if (projectile.hitAnyTank || projectile.ricochetsLeft < 0) {
+            this.scene.remove(projectile.projectile);
+            indicesToRemove.push(index);
+        } else {
+            projectile.moveStep();
+        }
+    }
 
-        // Remove elements using indicesToRemove
-        indicesToRemove.forEach((index) => {
-            this.projectiles.splice(index, 1);
-        });
+    // Remove elements using indicesToRemove
+    indicesToRemove.forEach((index) => {
+        this.projectiles.splice(index, 1);
+    });
+
+        // console.log(this.projectiles);
     }
 
     updateHealthBars() {
@@ -394,8 +401,8 @@ export class GameManager {
             this.checkCollision();
             this.displayUpdate();
             //this.render();
-            this.updateProjectiles();
             this.updateHealthBars();
+            this.updateProjectiles();
             // this.updateHitBoxDisplay();
         }
     }
