@@ -31,6 +31,7 @@ export default class Game {
 
   set levelMap(level) {
     this._gamestate.currentLevelMap = level;
+    this.playerSpawnPoint = level.spawn;
   }
 
   setState(state) {
@@ -40,9 +41,15 @@ export default class Game {
   createPlayers(players) {
     for (const playerId in players) {
       const newPlayer = new Player(playerId);
-      newPlayer.spawnPoint = this.playerSpawnPoint[newPlayer.playerNumber - 1];
+      const spawnIndex = (Player.playerNumber - 1) % 4;
+      newPlayer.tank.model.position.x = this.playerSpawnPoint[spawnIndex][0]*17;
+      newPlayer.tank.model.position.z =
+      this.playerSpawnPoint[spawnIndex][1] * 17;
+      // console.log(this.playerSpawnPoint[spawnIndex]);
+      // console.log(newPlayer._tank._model.position);
       this._gamestate.players[playerId] = newPlayer;
     }
+
   }
 
   removeDevice(command) {
@@ -63,6 +70,7 @@ export default class Game {
     players.forEach((player) => {
       console.log("> Loading player " + player.name);
       player.load(scene);
+      console.log(player.spawnPoint);
     });
   }
 

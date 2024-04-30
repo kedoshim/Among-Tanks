@@ -61,10 +61,10 @@ export class CameraControls {
    */
   _getExtremes(players) {
     let extremes = {
-      maxX: 0,
-      minX: 0,
-      maxZ: 0,
-      minZ: 0,
+        maxX: -Infinity,
+        minX: Infinity,
+        maxZ: -Infinity,
+        minZ: Infinity,
     };
 
     for (const playerId in players) {
