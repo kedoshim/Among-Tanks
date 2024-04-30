@@ -75,27 +75,6 @@ socket.on("update", (state) => {
   game.updateGamestate(state);
 })
 
-socket.on("add-player", (command) => {
-  console.log(`Receiving ${command.type} -> ${command.playerId}`);
-  game.addPlayer(command);
-});
-
-socket.on("remove-player", (command) => {
-  console.log(`Receiving ${command.type} -> ${command.playerId}`);
-  game.removePlayer(command);
-});
-
-socket.on("move-player", (command) => {
-  console.log(`Receiving ${command.type} -> ${command.playerId}`);
-
-  const playerId = socket.id;
-
-  if (playerId !== command.playerId) {
-    game.movePlayer(command);
-  }
-});
-
-
 
 function manageOrbitControls() {
   if (keyboard.down("O")) {

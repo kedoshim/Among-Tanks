@@ -1,4 +1,6 @@
-# Among Tanks
+# Among Tanks Online
+This is a version of Among Tanks which has been modifyied to be played online, using socket.io and node.js
+
 Among Tanks is a 'Tiny Tanks' like game developed with Three.js as a project foor the Computer Graphics class at UFJF, Brazil (2024.1)
 
 ## First Delivery To Do List

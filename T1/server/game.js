@@ -1,10 +1,5 @@
 import * as THREE from "three";
 
-import {
-  initDefaultBasicLight,
-  createGroundPlaneXZ,
-} from "../../libs/util/util.js";
-
 import { Player } from "./entities/player.js";
 
 import { getConfig, loadConfig } from "./config.js";
@@ -32,6 +27,10 @@ export default class Game {
   start() {
     this.updateDevices();
     this.updateMovements();
+  }
+
+  set levelMap(level) {
+    this._gamestate.currentLevelMap = level;
   }
 
   setState(state) {

@@ -14,6 +14,7 @@ import { CameraControls } from "./camera.js";
 import { Player } from "./entities/player.js";
 
 import { getConfig, loadConfig } from "./config.js";
+import { loadLevel } from "./levelLoader.js";
 
 export default class Game {
   constructor() {
@@ -112,6 +113,7 @@ export default class Game {
     if (state) {
       this.gameState.currentLevelMap = state.currentLevelMap;
       this.createPlayers(state.players);
+      loadLevel(this.gameState.currentLevelMap, this.gameState.scene);
     }
   }
 

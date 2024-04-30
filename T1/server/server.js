@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import path from "path";
 
 import Game from "./game.js";
+import { getNextLevel, loadLevels } from "./levels.js";
 
 const app = express();
 const server = http.createServer(app);
@@ -19,7 +20,10 @@ const sockets = new Server(server);
 const __dirname = path.resolve();
 app.use(express.static(path.join(__dirname, "./T1/client")));
 
+await loadLevels();
+
 const game = new Game();
+game.levelMap = getNextLevel();
 game.start();
 
 // game.start();
