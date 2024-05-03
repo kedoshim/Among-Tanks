@@ -48,7 +48,7 @@ sockets.on("connection", (socket) => {
     console.log(`> Creating players of device ${playerId}`)
     game.createPlayers(command.players);
 
-    socket.emit("setup", game.gameState);
+    socket.emit("setup", game.encodedGamestate);
   });
 
   socket.on("disconnect", () => {
