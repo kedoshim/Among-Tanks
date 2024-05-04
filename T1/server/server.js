@@ -24,7 +24,7 @@ await loadLevels();
 
 const game = new Game();
 game.levelMap = getNextLevel();
-game.start();
+game.run();
 
 // game.start();
 

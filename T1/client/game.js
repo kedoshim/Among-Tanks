@@ -121,7 +121,7 @@ export default class Game {
             let player = this.gameState.players[playerId];
             this.gameState.scene.remove(player.tank.model);
             delete this.gameState.players[playerId];
-            console.log(`> Removing player ${playerId}`)
+            console.log(`> Removing player ${playerId}`);
         }
     }
 
@@ -158,6 +158,20 @@ export default class Game {
     }
 
     updateProjectiles(projectilesState) {
+        // Iterate over the projectiles in the client's state
+        for (const key in this.gameState.projectiles) {
+            // Check if the projectile exists in the updated projectilesState
+            if (!(key in projectilesState)) {
+                // If the projectile doesn't exist in the updated state, remove its model from the scene
+                this.gameState.scene.remove(
+                    this.gameState.projectiles[key].model
+                );
+                // Optionally, you might want to clean up resources associated with the projectile
+                delete this.gameState.projectiles[key];
+            }
+        }
+
+        // Iterate over the projectiles in the updated projectilesState
         for (const key in projectilesState) {
             const projectile = projectilesState[key];
             const position = new THREE.Vector3(
@@ -170,12 +184,19 @@ export default class Game {
                 projectile.direction.y,
                 projectile.direction.z
             );
+
+            // Check if the projectile exists in the client's state
             if (this.gameState.projectiles[key]) {
+                // If the projectile exists, update its position and direction
                 this.gameState.projectiles[key].model.position.copy(position);
-                this.gameState.projectiles[key].direction = direction;                
-            }
-            else {
-                let newProjectile = new Projectile(position, direction , projectile.speed);
+                this.gameState.projectiles[key].direction = direction;
+            } else {
+                // If the projectile doesn't exist, create a new projectile and add it to the scene
+                let newProjectile = new Projectile(
+                    position,
+                    direction,
+                    projectile.speed
+                );
                 this.gameState.scene.add(newProjectile.model);
                 this.gameState.projectiles[key] = newProjectile;
             }

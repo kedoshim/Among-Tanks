@@ -3,12 +3,16 @@ import * as THREE from "three";
 import { Player } from "./entities/player.js";
 
 import { getConfig, loadConfig } from "./config.js";
+import * as CollisionSystem from "./collision.js";
+import { CollisionBlock } from "./blocks.js";
 
 export default class Game {
     constructor() {
         this._gamestate = {
             currentLevelMap: null,
             players: {},
+            projectiles: [],
+            walls: [],
             // entities: {},
         };
 
@@ -22,10 +26,9 @@ export default class Game {
         this.observers = [];
         this.lastMovementTime = {}; // Map to store the timestamp of the last movement command for each player
         this.bufferedMovement = [];
-        this.projectiles = [];
     }
 
-    start() {
+    run() {
         this.updateMovements();
         this.updateProjectiles();
         this.updateDevices();
@@ -34,6 +37,59 @@ export default class Game {
     set levelMap(level) {
         this._gamestate.currentLevelMap = level;
         this.playerSpawnPoint = level.spawn;
+
+        const getWalls = (level) => {
+            const walls = [];
+            const levelHeight = 5;
+            const data = level.blocks;
+            let { x, y } = level.offset;
+
+            const BLOCK_SIZE = 17;
+
+            const getTranslation = (i, j, yTranslation) => {
+                return {
+                    x: BLOCK_SIZE * i + 1 - x,
+                    y: yTranslation,
+                    z: BLOCK_SIZE * j + 1 - y,
+                };
+            };
+
+            const createBlock = (i, j, yTranslation) => {
+                const geometry = new THREE.BoxGeometry(
+                    BLOCK_SIZE,
+                    BLOCK_SIZE,
+                    BLOCK_SIZE
+                );
+                const material = new THREE.MeshBasicMaterial();
+                const cube = new THREE.Mesh(geometry, material);
+                const translation = getTranslation(i, j, yTranslation);
+                cube.translateX(translation.x);
+                cube.translateY(translation.y);
+                cube.translateZ(translation.z);
+
+                let wall = new CollisionBlock();
+                wall.setBlockSize(BLOCK_SIZE);
+                wall.setModel(cube);
+                wall.createCollisionShape();
+                walls.push(wall);
+            };
+
+            for (let i = 0; i < data.length; i++) {
+                for (let j = 0; j < data[i].length; j++) {
+                    switch (data[i][j].type) {
+                        case "WallBlock":
+                            createBlock(
+                                i,
+                                j,
+                                BLOCK_SIZE / 2 + levelHeight
+                            );
+                            break;
+                    }
+                }
+            }
+            return walls;
+        };
+        this._gamestate.walls = getWalls(level);
     }
 
     setState(state) {
@@ -67,15 +123,6 @@ export default class Game {
         updateCommand.players = removePlayersCommand;
         this.notifyAll(updateCommand);
         console.log(`> Removing players from device: ${id}`);
-    }
-
-    loadPlayers() {
-        const { scene, players } = this._gamestate;
-        players.forEach((player) => {
-            console.log("> Loading player " + player.name);
-            player.load(scene);
-            console.log(player.spawnPoint);
-        });
     }
 
     insertMovement(commands) {
@@ -128,12 +175,12 @@ export default class Game {
     get encodedProjectiles() {
         let encodedProjectiles = {};
 
-        this.projectiles.forEach((projectile) => {
+        this._gamestate.projectiles.forEach((projectile) => {
             let encodedProjectile = {};
 
             encodedProjectile.position = projectile.model.position;
             encodedProjectile.direction = projectile.direction;
-            encodedProjectile.speed = projectile.speed
+            encodedProjectile.speed = projectile.speed;
 
             encodedProjectiles[projectile.id] = encodedProjectile;
         });
@@ -206,7 +253,7 @@ export default class Game {
                 index >= 0;
                 index--
             ) {
-                this.projectiles.push(playerProjectiles[index]);
+                this._gamestate.projectiles.push(playerProjectiles[index]);
             }
 
             // console.log(player.tank.projectiles);
@@ -214,33 +261,61 @@ export default class Game {
         }
     }
 
-  updateProjectiles() {
-    const processProjectiles = () => {
-      this.insertNewProjectiles();
+    updateProjectiles() {
+        const checkCollision = () => {
+            CollisionSystem.checkProjectilePlayerCollison(
+                this._gamestate.projectiles,
+                this._gamestate.players
+            );
 
-        let indicesToRemove = [];
-        
-        // console.log(this.projectiles);
+            for (const key in this.players) {
+                const player = this.players[key];
+                if (player._tank.died) {
+                    this.removeDeadPlayer(player, key);
+                }
+            }
 
-      // Iterate over projectiles in reverse order
-      for (let index = this.projectiles.length - 1; index >= 0; index--) {
-        const projectile = this.projectiles[index];
-        if (!projectile.isAlreadyInScene()) {
-          projectile.setAlreadyInScene(true);
-        }
-        if (projectile.hitAnyTank || projectile.ricochetsLeft < 0) {
-          indicesToRemove.push(index);
-        } else {
-          projectile.moveStep();
-        }
-      }
+            CollisionSystem.checkProjectileWallCollison(
+                this._gamestate.projectiles,
+                this._gamestate.walls
+            );
+            CollisionSystem.checkPlayerWallCollision(
+                this._gamestate.players,
+                this._gamestate.walls
+            );
+        };
+        const processProjectiles = () => {
+            this.insertNewProjectiles();
+            
+            checkCollision();
 
-      // Remove elements using indicesToRemove
-      indicesToRemove.forEach((index) => {
-        this.projectiles.splice(index, 1);
-      });
-    };
+            let indicesToRemove = [];
 
-    setInterval(processProjectiles, 10);
-  }
+            // console.log(this._gamestate.projectiles);
+
+            // Iterate over projectiles in reverse order
+            for (
+                let index = this._gamestate.projectiles.length - 1;
+                index >= 0;
+                index--
+            ) {
+                const projectile = this._gamestate.projectiles[index];
+                if (!projectile.isAlreadyInScene()) {
+                    projectile.setAlreadyInScene(true);
+                }
+                if (projectile.hitAnyTank || projectile.ricochetsLeft < 0) {
+                    indicesToRemove.push(index);
+                } else {
+                    projectile.moveStep();
+                }
+            }
+
+            // Remove elements using indicesToRemove
+            indicesToRemove.forEach((index) => {
+                this._gamestate.projectiles.splice(index, 1);
+            });
+        };
+
+        setInterval(processProjectiles, 10);
+    }
 }
