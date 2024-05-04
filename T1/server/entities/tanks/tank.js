@@ -219,42 +219,78 @@ export class Tank {
      * @param {number} moveZ The amount and direction of movement in the X axis [-1,1]
      */
     moveDirectional(moveX, moveZ) {
-        this.lastMovement = { x: moveX, z: moveZ };
+        // if (moveX !== 0 || moveZ !== 0) console.log("moving ["+moveX+","+moveZ+"]");
 
+        // Calculate diagonal movement direction
         let moveMagnitude = Math.sqrt(moveX * moveX + moveZ * moveZ);
         if (moveMagnitude > 0) {
             moveX /= moveMagnitude;
             moveZ /= moveMagnitude;
         }
 
+        // If there's movement input, calculate the target angle
         let targetAngle = null;
         if (moveX !== 0 || moveZ !== 0) {
             targetAngle = Math.atan2(moveZ, moveX);
-            targetAngle += Math.PI / 2;
+            targetAngle += Math.PI / 2; // Adjust rotation since lookAt is rotated 90 degrees
         }
 
+        // If there's no movement input, use the last valid target angle
+        // Makes it so the rotation animation only stops at the last inputed direction
         if (targetAngle === null) {
             targetAngle = this.lastValidTargetAngle;
         } else {
+            // Update last valid target angle
             this.lastValidTargetAngle = targetAngle;
         }
 
+        // Calculate the difference between current rotation and target angle
         let rotationDifference = targetAngle - this.model.rotation.y;
+        // Wrap the difference into range [-π, π]
         rotationDifference =
             THREE.MathUtils.euclideanModulo(
                 rotationDifference + Math.PI,
                 2 * Math.PI
             ) - Math.PI;
 
+        if (!this.collidedWithWalls) {
+            // Movimento normal se não houver colisão com as paredes
+            this.model.position.x += this._moveSpeed * moveX;
+            this.model.position.z += this._moveSpeed * moveZ;
+        } else {
+            if (this.inMovement && forwardForce !== 0) {
+                // Deslizar enquanto estiver em contato com a parede
+                this.model.position.add(this.slideVector);
+            }
+        }
+
+        // Resetar a flag de colisão com as paredes
+        this.collidedWithWalls = false;
+
+        // Resetar o movimento
+        this._inMovement = false;
+
+        // Smoothly rotate this.model towards the target angle
         this.model.rotation.y +=
             rotationDifference * this._animationRotationSpeed;
+        // Move this.model
 
-        this.model.position.x += this._moveSpeed * moveX;
-        this.model.position.z += this._moveSpeed * moveZ;
+        console.log(moveX, moveZ);
 
-        this.x = this.model.position.x;
-        this.z = this.model.position.z;
-        this.rotation = this.model.rotation;
+        this.collisionShape = null;
+        if (!this.died) {
+            const p1 = new THREE.Vector3(
+                this.position.x - this._hitboxSize,
+                this.position.y - 9,
+                this.position.z - this._hitboxSize
+            );
+            const p2 = new THREE.Vector3(
+                this.position.x + this._hitboxSize,
+                this.position.y + 5,
+                this.position.z + this._hitboxSize
+            );
+            this.collisionShape = new THREE.Box3(p1, p2);
+        }
     }
 
     /**
@@ -264,8 +300,6 @@ export class Tank {
      * @param {number} rotationDirection Varies from -1 (left) to 1 (right)
      */
     moveRotating(forwardForce, rotationDirection) {
-        this.lastMovement = { x: rotationDirection, z: forwardForce };
-
         if (Math.abs(forwardForce) > 1) {
             forwardForce = forwardForce >= 0 ? 1 : -1;
         }
@@ -273,13 +307,49 @@ export class Tank {
             rotationDirection = rotationDirection >= 0 ? 1 : -1;
         }
 
-        this.model.translateZ(forwardForce * this._moveSpeed);
-        this.model.rotateY(this._rotationSpeed * rotationDirection);
+        if (!this.collidedWithWalls) {
+            // Movimento normal se não houver colisão com as paredes
+            this.model.translateZ(forwardForce * this._moveSpeed);
+        } else {
+            if (this.inMovement && forwardForce !== 0) {
+                // Deslizar enquanto estiver em contato com a parede
+                this.model.position.add(this.slideVector);
+            }
+        }
 
+        // Resetar a flag de colisão com as paredes
+        this.collidedWithWalls = false;
+
+        // Resetar o movimento
+        this._inMovement = false;
+
+        // Rodar o tanque
+        if (forwardForce == 0)
+            this.model.rotateY(this._rotationSpeed * 0.5 * rotationDirection);
+        else this.model.rotateY(this._rotationSpeed * rotationDirection);
+
+        // Atualizar a última angulação válida
         this._lastValidTargetAngle = this._model.rotation.y;
-        this.x = this.model.position.x;
-        this.z = this.model.position.z;
-        this._rotation = this.model.rotation;
+
+        // Atualizar a forma de colisão do tanque
+        this.collisionShape = null;
+        if (!this.died) {
+            const p1 = new THREE.Vector3(
+                this.position.x - this._hitboxSize,
+                this.position.y - 9,
+                this.position.z - this._hitboxSize
+            );
+            const p2 = new THREE.Vector3(
+                this.position.x + this._hitboxSize,
+                this.position.y + 5,
+                this.position.z + this._hitboxSize
+            );
+            this.collisionShape = new THREE.Box3(p1, p2);
+        }
+
+        // if (forwardForce != 0) {
+        //   this._playWalkingSound();
+        // }
     }
 
     /**
