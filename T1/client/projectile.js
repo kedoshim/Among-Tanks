@@ -1,5 +1,5 @@
-import * as THREE from "three";
-import { setDefaultMaterial } from "../../libs/util/util.js";
+import * as THREE from "./public/three/build/three.module.js";
+import { setDefaultMaterial } from "./public/util/util.js";
 
 export class Projectile {
     constructor(
@@ -10,7 +10,6 @@ export class Projectile {
         ricochetsAmount = 2,
         color = "white"
     ) {
-        this.id = Date.now() + Math.floor(Math.random() * 9);
         this.damage = damage;
         this.speed = speed;
         this.ricochetsAmount = ricochetsAmount;

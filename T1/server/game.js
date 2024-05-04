@@ -26,9 +26,9 @@ export default class Game {
     }
 
     start() {
-        this.updateDevices();
         this.updateMovements();
         this.updateProjectiles();
+        this.updateDevices();
     }
 
     set levelMap(level) {
@@ -123,6 +123,21 @@ export default class Game {
         return encodedPlayers;
     }
 
+    get encodedProjectiles() {
+        let encodedProjectiles = {};
+
+        this.projectiles.forEach((projectile) => {
+            let encodedProjectile = {};
+
+            encodedProjectile.position = projectile.model.position;
+            encodedProjectile.direction = projectile.direction;
+            encodedProjectile.speed = projectile.speed
+
+            encodedProjectiles[projectile.id] = encodedProjectile;
+        });
+        return encodedProjectiles;
+    }
+
     get encodedGamestate() {
         let encodedGamestate = {
             currentLevelMap: this._gamestate.currentLevelMap,
@@ -149,6 +164,7 @@ export default class Game {
         let update = {
             type: "regular-update",
             players: this.encodedPlayers,
+            projectiles: this.encodedProjectiles,
         };
         return update;
     }
