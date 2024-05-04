@@ -120,7 +120,8 @@ export default class Game {
         for (const playerId in players) {
             let player = this.gameState.players[playerId];
             this.gameState.scene.remove(player.tank.model);
-            this.gameState.players[playerId] = null;
+            delete this.gameState.players[playerId];
+            console.log(`> Removing player ${playerId}`)
         }
     }
 
@@ -187,7 +188,6 @@ export default class Game {
             if (state.projectiles) this.updateProjectiles(state.projectiles);
         }
         if (state.type == "remove-player") {
-            console.log(state);
             if (state.players) this.removePlayers(state.players);
         }
     }

@@ -55,6 +55,7 @@ export default class Game {
     }
 
     removeDevice(command) {
+        let updateCommand = {};
         let removePlayersCommand = {};
         const id = command.playerId;
         for (let i = 1; i < 5; i++) {
@@ -62,8 +63,9 @@ export default class Game {
                 this._gamestate.players[id + "." + i];
             delete this._gamestate.players[id + "." + i];
         }
-        removePlayersCommand.type = "remove-players";
-        this.notifyAll(removePlayersCommand);
+        updateCommand.type = "remove-player";
+        updateCommand.players = removePlayersCommand;
+        this.notifyAll(updateCommand);
         console.log(`> Removing players from device: ${id}`);
     }
 
