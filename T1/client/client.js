@@ -25,12 +25,12 @@ await configSetup();
 
 let connectedGamepads = [null, null, null, null];
 
-const socket = io();
+const socket = geckos({ port: 3001 });
 
 let game = new Game()
 let inputListener = new InputListener(document,config);
 
-socket.on("connect", () => {
+socket.onConnect(() => {
   try {
     let command = {};
     command.players = {};
@@ -53,27 +53,29 @@ socket.on("connect", () => {
     const end = Date.now();
     // console.log(`Client Ping: ${ping}ms`);
   });
-});
 
-socket.on("setup", (state) => {
-  // console.log(state);
-  game.createGame(state);
-  game.render()
-
-  for (let i; i < config.numberOfPlayers; i++) {
-    const playerId = socket.id + "." + i;
-    // keyboardListener.registerPlayerId(playerId);
-  }
-
-  // inputListener.subscribe(game.movePlayer);
-  inputListener.subscribe((command) => {
-    socket.emit("move-player", command);
+  socket.on("setup", (state) => {
+    // console.log(state);
+    game.createGame(state);
+    game.render()
+  
+    for (let i; i < config.numberOfPlayers; i++) {
+      const playerId = socket.id + "." + i;
+      // keyboardListener.registerPlayerId(playerId);
+    }
+  
+    // inputListener.subscribe(game.movePlayer);
+    inputListener.subscribe((command) => {
+      socket.emit("move-player", command);
+    });
   });
+  
+  socket.on("update", (state) => {
+    game.updateGamestate(state);
+  })
 });
 
-socket.on("update", (state) => {
-  game.updateGamestate(state);
-})
+
 
 
 function manageOrbitControls() {

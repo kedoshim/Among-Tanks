@@ -5,10 +5,13 @@ import path from "path";
 
 import Game from "./game.js";
 import { getNextLevel, loadLevels } from "./levels.js";
+import geckos from "@geckos.io/server"
 
 const app = express();
 const server = http.createServer(app);
-const sockets = new Server(server);
+const sockets = geckos()
+
+sockets.listen(3001)
 
 // // Middleware to log incoming requests
 // app.use((req, res, next) => {
@@ -33,7 +36,7 @@ game.run();
 //   sockets.emit(command.type, command);
 // });
 
-sockets.on("connection", (socket) => {
+sockets.onConnection((socket) => {
   const playerId = socket.id;
   console.log(`> Device connected: ${playerId}`);
   let ping = 0;
@@ -51,7 +54,7 @@ sockets.on("connection", (socket) => {
     socket.emit("setup", game.encodedGamestate);
   });
 
-  socket.on("disconnect", () => {
+  socket.onDisconnect(() => {
     game.removeDevice({ playerId: playerId });
     console.log(`> Player disconnected: ${playerId}`);
   });
