@@ -112,8 +112,8 @@ export class CameraControls {
         xVirtualDistance /
         (Math.tan(THREE.MathUtils.degToRad(halfCameraAngle)) * 2);
     }
-    // console.log(height);
-    return height;
+    const minHeight = 200;
+    return Math.max(height, minHeight);
   }
 
   /**

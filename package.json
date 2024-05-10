@@ -3,6 +3,7 @@
   "type": "module",
   "dependencies": {
     "@geckos.io/client": "^3.0.0",
+    "@geckos.io/common": "^3.0.0",
     "@geckos.io/server": "^3.0.0",
     "express": "^4.19.2",
     "node-fetch": "^3.3.2",

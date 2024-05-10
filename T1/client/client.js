@@ -34,11 +34,14 @@ socket.onConnect(() => {
   try {
     let command = {};
     command.players = {};
+    let players = [];
     for (let i = 1; i < config.numberOfPlayers + 1; i++) {
       const playerId = socket.id + "." + i;
       console.log(`Player connected on Client with id: ${playerId}`);
       command.players[playerId] = playerId;
+      players.push(playerId);
     }
+    game.mainPlayers = players;
     socket.emit("create-players", command);
   } catch (error) {
     console.log(`Error on connect: ${error}`);

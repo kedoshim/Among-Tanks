@@ -41,6 +41,7 @@ export default class Game {
         this.updateCamera = this.updateCamera.bind(this);
         this.showInformation = this.showInformation.bind(this);
         this.render = this.render.bind(this);
+        this.mainPlayersIds = [];
     }
 
     async createGame(state) {
@@ -73,6 +74,10 @@ export default class Game {
             },
             false
         );
+    }
+
+    set mainPlayers(players) {
+        this.mainPlayersIds = players;
     }
 
     createPlayers(players) {
@@ -214,8 +219,14 @@ export default class Game {
     }
 
     updateCamera() {
-        if (Object.keys(this.gameState.players).length > 0)
-            this.cameraController.calculatePosition(this.gameState.players);
+        if (Object.keys(this.gameState.players).length > 0) {
+            let mainPlayers = {};
+            for (const key of this.mainPlayersIds) {
+                mainPlayers[key] = this.gameState.players[key];
+            }
+            this.cameraController.calculatePosition(mainPlayers);
+            
+        }
     }
 
     showInformation() {
