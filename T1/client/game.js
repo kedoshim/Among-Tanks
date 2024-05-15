@@ -7,6 +7,7 @@ import {
     SecondaryBox,
     onWindowResize,
     createGroundPlaneXZ,
+    initRenderer2d,
 } from "./public/util/util.js";
 
 import { CameraControls } from "./camera.js";
@@ -50,6 +51,7 @@ export default class Game {
         this.setState(state);
 
         this.renderer = initRenderer(); // Init a basic renderer
+        this.renderer2d = initRenderer2d(); // Init a basic renderer
         this.material = setDefaultMaterial(); // create a basic material
         this.cameraController = new CameraControls(this.renderer);
         this.camera = this.cameraController.camera;
@@ -67,10 +69,12 @@ export default class Game {
         // Listen window size changes
         const cam = this.camera;
         const rend = this.renderer;
+        const rend2d = this.renderer2d;
         window.addEventListener(
             "resize",
             function () {
                 onWindowResize(cam, rend);
+                onWindowResize(cam, rend2d);
             },
             false
         );
@@ -139,8 +143,8 @@ export default class Game {
             let player = this.gameState.players[playerId];
             if (!player) uncreatedPlayers[playerId] = playerInfo;
             else {
-                player.tank.model.position.x = playerInfo.x;
-                player.tank.model.position.z = playerInfo.z;
+                player.tank.display.position.x = playerInfo.x;
+                player.tank.display.position.z = playerInfo.z;
                 if (playerInfo.rotation) {
                     player.tank.model.rotation.x = playerInfo.rotation._x;
                     player.tank.model.rotation.y = playerInfo.rotation._y;
@@ -246,5 +250,6 @@ export default class Game {
         this.updateCamera();
         requestAnimationFrame(this.render); // Show events
         this.renderer.render(this.gameState.scene, this.camera); // Render scene
+        this.renderer2d.render(this.gameState.scene, this.camera); // Render scene
     }
 }

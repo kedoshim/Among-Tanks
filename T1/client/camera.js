@@ -69,9 +69,9 @@ export class CameraControls {
 
     for (const playerId in players) {
       const player = players[playerId];
-      let positionX = player.tank.model.position.x;
+      let positionX = player.tank.display.position.x;
 
-      let positionZ = player.tank.model.position.z;
+      let positionZ = player.tank.display.position.z;
 
       if (positionX > extremes.maxX) extremes.maxX = positionX;
       if (positionX < extremes.minX) extremes.minX = positionX;
