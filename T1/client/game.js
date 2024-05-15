@@ -1,4 +1,5 @@
 import * as THREE from "./public/three/build/three.module.js";
+import KeyboardState from "./public/util/KeyboardState.js";
 import {
     initRenderer,
     initDefaultBasicLight,
@@ -8,6 +9,8 @@ import {
     onWindowResize,
     createGroundPlaneXZ,
 } from "./public/util/util.js";
+
+import { loadFont } from "./preload.js";
 
 import { CameraControls } from "./camera.js";
 
@@ -42,6 +45,14 @@ export default class Game {
         this.showInformation = this.showInformation.bind(this);
         this.render = this.render.bind(this);
         this.mainPlayersIds = [];
+
+        loadFont()
+            .then(() => {
+                console.log("Font loaded successfully.");
+            })
+            .catch((error) => {
+                console.error("Error loading font:", error);
+            });
     }
 
     async createGame(state) {
@@ -74,6 +85,8 @@ export default class Game {
             },
             false
         );
+
+        
     }
 
     set mainPlayers(players) {
@@ -124,7 +137,7 @@ export default class Game {
     removePlayers(players) {
         for (const playerId in players) {
             let player = this.gameState.players[playerId];
-            this.gameState.scene.remove(player.tank.model);
+            this.gameState.scene.remove(player.tank.display);
             delete this.gameState.players[playerId];
             console.log(`> Removing player ${playerId}`);
         }
@@ -139,8 +152,8 @@ export default class Game {
             let player = this.gameState.players[playerId];
             if (!player) uncreatedPlayers[playerId] = playerInfo;
             else {
-                player.tank.model.position.x = playerInfo.x;
-                player.tank.model.position.z = playerInfo.z;
+                player.tank.display.position.x = playerInfo.x;
+                player.tank.display.position.z = playerInfo.z;
                 if (playerInfo.rotation) {
                     player.tank.model.rotation.x = playerInfo.rotation._x;
                     player.tank.model.rotation.y = playerInfo.rotation._y;
@@ -225,7 +238,6 @@ export default class Game {
                 mainPlayers[key] = this.gameState.players[key];
             }
             this.cameraController.calculatePosition(mainPlayers);
-            
         }
     }
 

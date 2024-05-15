@@ -61,13 +61,13 @@ export class Entity {
       );
       return;
     }
-
-    scene.add(this._tank._model);
-
+    
     let [x, z] = this._spawnPoint;
-
-    this._tank._model.position.x = x;
-    this._tank._model.position.z = z;
+    this._tank._display.position.x = x;
+    this._tank._display.position.z = z;
+    
+    
+    scene.add(this._tank._display);
   }
 
   // Getters

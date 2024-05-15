@@ -1,5 +1,5 @@
 import * as THREE from "./public/three/build/three.module.js";
-import { OrbitControls } from "./public/jsm/controls/OrbitControls.js";
+import { OrbitControls } from "./public/three/examples/jsm/controls/OrbitControls.js";
 import { Entity } from "./entities/entity.js";
 import { getConfig } from "./config.js";
 
@@ -48,6 +48,7 @@ export class CameraControls {
    * Activates or deactivates Orbit controls
    */
   changeCameraMode() {
+    console.log("Changing camera mode");
     if (this._orbit.enabled == false) this.enableOrbitControls();
     else this.disableOrbitControls();
   }
@@ -69,9 +70,9 @@ export class CameraControls {
 
     for (const playerId in players) {
       const player = players[playerId];
-      let positionX = player.tank.model.position.x;
+      let positionX = player.tank.display.position.x;
 
-      let positionZ = player.tank.model.position.z;
+      let positionZ = player.tank.display.position.z;
 
       if (positionX > extremes.maxX) extremes.maxX = positionX;
       if (positionX < extremes.minX) extremes.minX = positionX;
