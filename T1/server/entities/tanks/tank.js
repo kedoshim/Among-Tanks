@@ -352,6 +352,26 @@ export class Tank {
         // }
     }
 
+    takeDamage(damage) {
+        this.health -= damage;
+
+        if (this.health <= 0) {
+            this.die();
+        }
+        
+    }
+
+    die() {
+        this.died = true;
+    }
+
+    reset() {
+        this.died = false;
+        this._health = this._maxHealth;
+        this._healthBar = new HealthBar(this._maxHealth);
+        this._projectiles = [];
+    }
+
     /**
      * Makes the tank shoot
      */

@@ -42,10 +42,7 @@ export function checkProjectilePlayerCollison(projectiles, players) {
              */
             if (hitTank) {
                 projectiles[projectileIndex].hitTank();
-                player.health -= projectiles[projectileIndex].damage;
-                if (player.health <= 0) {
-                    player._tank.die();
-                }
+                player.tank.takeDamage(projectiles[projectileIndex].damage);
             }
         }
     }

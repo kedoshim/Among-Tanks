@@ -7,7 +7,7 @@ export class HealthBar {
       this.createLifeBar();
     }
 
-    createLifeBar(width = 13, height = 2) {
+    createLifeBar(width = 5, height = 2) {
         let geometry = new THREE.BoxGeometry(width, height, 2);
         let materialBar = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
         let healthBar = new THREE.Mesh(geometry, materialBar);

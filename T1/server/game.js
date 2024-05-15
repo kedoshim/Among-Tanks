@@ -154,6 +154,8 @@ export default class Game {
                 encodedPlayer.name = player.name;
                 encodedPlayer.type = "player";
 
+                encodedPlayer.health = player.tank.health;
+
                 encodedPlayer.x = player.tank.model.position.x;
                 encodedPlayer.z = player.tank.model.position.z;
                 encodedPlayer.rotation = player.tank.rotation;

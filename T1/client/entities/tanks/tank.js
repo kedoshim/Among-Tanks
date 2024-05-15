@@ -120,6 +120,10 @@ export class Tank {
         return this._z;
     }
 
+    get health() {
+        return this._health;
+    }
+
     /**
      * Gets the tank's rotation.
      *
@@ -206,6 +210,11 @@ export class Tank {
      */
     set rotation(rotation) {
         this._rotation = rotation;
+    }
+
+    set health(health) {
+        this._health = health;
+        this._healthBar.updateHealthBar(this.health);
     }
 
     /**

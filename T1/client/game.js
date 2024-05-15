@@ -45,7 +45,7 @@ export default class Game {
         this.mainPlayersIds = [];
     }
 
-    async createGame(state) {
+    createGame(state) {
         this.config = getConfig();
 
         this.setState(state);
@@ -150,7 +150,7 @@ export default class Game {
                     player.tank.model.rotation.y = playerInfo.rotation._y;
                     player.tank.model.rotation.z = playerInfo.rotation._z;
                 }
-                // player.tank.health = playerInfo.health;
+                player.tank.health = playerInfo.health;
             }
         }
         if (Object.keys(uncreatedPlayers).length > 0) {
