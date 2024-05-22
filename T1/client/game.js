@@ -128,7 +128,8 @@ export default class Game {
     removePlayers(players) {
         for (const playerId in players) {
             let player = this.gameState.players[playerId];
-            this.gameState.scene.remove(player.tank.model);
+            this.gameState.scene.remove(player.tank.display);
+            player.tank._display.remove(player.tank._nickBar);
             delete this.gameState.players[playerId];
             console.log(`> Removing player ${playerId}`);
         }

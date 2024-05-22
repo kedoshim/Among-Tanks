@@ -67,6 +67,20 @@ export class Tank {
         this.died = false;
     }
 
+    setHitbox() {
+        const p1 = new THREE.Vector3(
+            this.position.x - this._hitboxSize,
+            this.position.y - 9,
+            this.position.z - this._hitboxSize
+        );
+        const p2 = new THREE.Vector3(
+            this.position.x + this._hitboxSize,
+            this.position.y + 5,
+            this.position.z + this._hitboxSize
+        );
+        this.collisionShape = new THREE.Box3(p1, p2);
+    }
+
     // Getters
 
     get tankColor() {
@@ -279,17 +293,7 @@ export class Tank {
 
         this.collisionShape = null;
         if (!this.died) {
-            const p1 = new THREE.Vector3(
-                this.position.x - this._hitboxSize,
-                this.position.y - 9,
-                this.position.z - this._hitboxSize
-            );
-            const p2 = new THREE.Vector3(
-                this.position.x + this._hitboxSize,
-                this.position.y + 5,
-                this.position.z + this._hitboxSize
-            );
-            this.collisionShape = new THREE.Box3(p1, p2);
+            this.setHitbox();
         }
     }
 
@@ -334,17 +338,7 @@ export class Tank {
         // Atualizar a forma de colisão do tanque
         this.collisionShape = null;
         if (!this.died) {
-            const p1 = new THREE.Vector3(
-                this.position.x - this._hitboxSize,
-                this.position.y - 9,
-                this.position.z - this._hitboxSize
-            );
-            const p2 = new THREE.Vector3(
-                this.position.x + this._hitboxSize,
-                this.position.y + 5,
-                this.position.z + this._hitboxSize
-            );
-            this.collisionShape = new THREE.Box3(p1, p2);
+            this.setHitbox();
         }
 
         // if (forwardForce != 0) {
@@ -358,7 +352,6 @@ export class Tank {
         if (this.health <= 0) {
             this.die();
         }
-        
     }
 
     die() {

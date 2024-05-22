@@ -34,7 +34,7 @@ export class Player extends Entity {
 
     super(name, spawnPoint, null, null);
 
-    this._tank = new tankTypes[modelName](tankColor, amogColor);
+    this._tank = new tankTypes[modelName](name,tankColor, amogColor);
     if (rotation) {
       this._tank.model.rotation.x = rotation._x;
       this._tank.model.rotation.y = rotation._y;

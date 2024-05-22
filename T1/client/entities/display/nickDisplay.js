@@ -12,7 +12,8 @@ export class NickDisplay {
         div.innerHTML = nick;
         div.style.color = color;
         div.style.fontSize = "2vw";
-        div.style.font = "bold 1vw arial,serif";;
+        div.style.font = "bold 1vw arial,serif";
+        div.id = "#" + nick;
         const model = new CSS2DObject(div);
 
         return model;

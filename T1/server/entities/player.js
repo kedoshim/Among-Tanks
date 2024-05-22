@@ -51,6 +51,11 @@ export class Player extends Entity {
         super(name, spawnPoint, null, null);
 
         this._tank = new CommonTank(tankColor, amogColor);
+        
+        console.log(this._spawnPoint);
+        this._tank.position.x = this._spawnPoint[0];
+        this._tank.position.z = this._spawnPoint[1];
+        this._tank.setHitbox();
 
         this._controller = new PlayerController(this._tank);
 

@@ -29,6 +29,7 @@ export function checkProjectilePlayerCollison(projectiles, players) {
             projectileIndex++
         ) {
             if (!player._tank.collisionShape) return;
+            console.log(player._tank.collisionShape);
             hitTank = checkCollisionBetwennCollisionShapes(
                 // Verifica se o projétil selecionado atual colidiu com o tanque atual
                 player._tank.collisionShape,

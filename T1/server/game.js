@@ -31,6 +31,7 @@ export default class Game {
     run() {
         this.updateMovements();
         this.updateProjectiles();
+        this.updatePlayersStatus();
         this.updateDevices();
     }
 
@@ -78,11 +79,7 @@ export default class Game {
                 for (let j = 0; j < data[i].length; j++) {
                     switch (data[i][j].type) {
                         case "WallBlock":
-                            createBlock(
-                                i,
-                                j,
-                                BLOCK_SIZE / 2 + levelHeight
-                            );
+                            createBlock(i, j, BLOCK_SIZE / 2 + levelHeight);
                             break;
                     }
                 }
@@ -98,13 +95,9 @@ export default class Game {
 
     createPlayers(players) {
         for (const playerId in players) {
-            const newPlayer = new Player(playerId);
-            const spawnIndex = (Player.playerNumber - 1) % 4;
-            newPlayer.tank.model.position.x =
-                this.playerSpawnPoint[spawnIndex][0] * 17;
-            newPlayer.tank.model.position.z =
-                this.playerSpawnPoint[spawnIndex][1] * 17;
-            // console.log(this.playerSpawnPoint[spawnIndex]);
+            const spawnIndex = (Player.playerNumber) % 4;
+            const spawnPoint = [this.playerSpawnPoint[spawnIndex][0] * 17,this.playerSpawnPoint[spawnIndex][1] * 17]
+            const newPlayer = new Player(playerId,spawnPoint);
             // console.log(newPlayer._tank._model.position);
             this._gamestate.players[playerId] = newPlayer;
         }
@@ -123,6 +116,18 @@ export default class Game {
         updateCommand.players = removePlayersCommand;
         this.notifyAll(updateCommand);
         console.log(`> Removing players from device: ${id}`);
+    }
+
+    removePlayer(id) {
+        let updateCommand = {};
+        let removePlayersCommand = {};
+        removePlayersCommand[id] = this._gamestate.players[id];
+        delete this._gamestate.players[id];
+
+        updateCommand.type = "remove-player";
+        updateCommand.players = removePlayersCommand;
+        this.notifyAll(updateCommand);
+        console.log(`> Removing dead player: ${id}`);
     }
 
     insertMovement(commands) {
@@ -270,13 +275,6 @@ export default class Game {
                 this._gamestate.players
             );
 
-            for (const key in this.players) {
-                const player = this.players[key];
-                if (player._tank.died) {
-                    this.removeDeadPlayer(player, key);
-                }
-            }
-
             CollisionSystem.checkProjectileWallCollison(
                 this._gamestate.projectiles,
                 this._gamestate.walls
@@ -288,7 +286,7 @@ export default class Game {
         };
         const processProjectiles = () => {
             this.insertNewProjectiles();
-            
+
             checkCollision();
 
             let indicesToRemove = [];
@@ -319,5 +317,19 @@ export default class Game {
         };
 
         setInterval(processProjectiles, 10);
+    }
+
+    updatePlayersStatus() {
+        const checkDeath = () => {
+            const players = this._gamestate.players;
+            for (const key in players) {
+                const player = players[key];
+                if (player.tank.died) {
+                    this.removePlayer(key);
+                }
+            }
+        };
+
+        setInterval(checkDeath, 10);
     }
 }

@@ -16,7 +16,7 @@ export class Tank {
      * @param {number} [moveSpeed=1]
      * @param {number} [rotationSpeed=0.15]
      */
-    constructor(tankColor, amogColor, moveSpeed = 1, rotationSpeed = 0.15) {
+    constructor(nick="player",tankColor, amogColor, moveSpeed = 1, rotationSpeed = 0.15) {
         this._tankColor = tankColor;
         this._amogColor = amogColor;
         this._moveSpeed = moveSpeed;
@@ -36,7 +36,7 @@ export class Tank {
         this._health = this._maxHealth;
         this._healthBar = new HealthBar(this._maxHealth);
 
-        this._nickBar = new NickDisplay("jabulani 2000");
+        this._nickBar = new NickDisplay(nick);
         let nickModel = this._nickBar.model;
         console.log(nickModel);
 
