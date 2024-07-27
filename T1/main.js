@@ -2,7 +2,7 @@ import {
   initRenderer
 } from "../libs/util/util.js";
 
-import { GameManager } from "./gameManager.js";
+import { GameManager } from "./GameManager.js";
 
 import { loadConfig } from "./config.js";
 import { loadLevels, getNextLevel } from "./levels.js";
