@@ -1,5 +1,79 @@
 import {Projectile} from '../T1/projectile.js';
 
+
+
+export class Node {
+    constructor(player, walls, bots, turrets, parentNode=null) {
+        this.player = player;
+        this.walls = walls;
+        this.bots = bots
+        this.turrets = turrets;
+
+        this.parentNode = parentNode;
+    }
+
+    nextAction(botIndex) {
+        if (this.thereIsObjectsBetweenPlayerAndBot(botIndex)) {
+            this.evadeTheProjectiles(botIndex);
+        }
+        else if (this.isPlayerInFrontOfBot(botIndex)) {
+            this.shoot(botIndex);
+        }
+        else {
+            this.trackPlayer(botIndex);
+        }
+    }
+
+    //-------------- States --------------
+
+    thereIsObjectsBetweenPlayerAndBot(botIndex) {
+        // check if there is an wall between a bot and a player
+    }
+
+    isPlayerInFrontOfBot(botIndex) {
+        
+    }
+
+    // Check the turret state for 
+    checkTurretState(botIndex) {
+
+    }
+
+    // -------------- Complex Actions --------------
+
+    trackPlayer(botIndex) {
+
+    }
+
+    evadeTheProjectiles(botIndex) {
+
+    }
+    
+    // -------------- Actions --------------
+    rotateLeft(botIndex) {
+        // rotate
+    }
+
+    rotateRight(botIndex) {
+        // rotate
+    }
+
+    forward(botIndex) {
+        // go forward
+    }
+
+    reverse(botIndex) {
+        // go reverse
+    }
+
+    shoot(botIndex) {
+        // shoot
+    }
+}
+
+
+
+
 class Bot {
     /**
      * @param {Three.js Object} model 
@@ -8,11 +82,8 @@ class Bot {
      * @param {list} walls
      * @param {Object} shootParams 
      */
-    constructor(model, players, bots, walls, shootParams=null) {
+    constructor(model, shootParams=null) {
         self.model = model;
-        self.players = players;
-        self.bots = bots;
-        this.walls = walls;
 
         if (!shootParams) {
             shootParams = {
@@ -25,6 +96,33 @@ class Bot {
         self.shootParams = shootParams;
         this._lastShootTime = 0;
         this._projectiles = [];
+    }
+}
+
+export class Turret {
+    constructor(model, players, bots, shootParams=null) {
+        this.model = model;
+        this.players = players;
+        this.bots = bots;
+
+        if (!shootParams) {
+            shootParams = {
+                bulletSpeed: 2,
+                damage: 1,
+                shootCooldown: 3000
+            }
+        }
+
+        self.shootParams = shootParams;
+        this._bulletSpeed = this.shootParams.bulletSpeed;
+        TouchList._damage = this.shootParams.damage;
+
+        this._shootCooldown = this.shootParams.shootCooldown;
+        this._lastShootTime = 0;
+    }
+
+    trackNearestTank() {
+        // perseguir o tanque mais próximo
     }
 
     shoot() {
@@ -56,45 +154,5 @@ class Bot {
             ricochetsAmount=0
         );
         this._projectiles.push(projectile);
-    }
-}
-
-//--------------------------------------------------------------------------------------------
-// Escreva o Seu bot aqui, seguindo este modelo (renomei a sua classe como quiser):
-export class Nome1 extends Bot {
-    constructor(model, players, bots, walls, shootParams=null) {
-        super(model, players, bots, walls, shootParams);
-    }
-
-    nextAction() {
-        // Escreva a lógica do seu bot aqui
-    }
-}
-
-
-// Bot do Yan:
-export class Tracker extends Bot {
-    constructor(model, players, bots, walls, shootParams=null) {
-        super(model, players, bots, walls, shootParams);
-    }
-
-    nextAction() {
-        // Escreva a lógica do seu bot aqui
-    }
-}
-//--------------------------------------------------------------------------------------------
-
-export class Turret extends Bot {
-    constructor(model, players, bots, walls, shootParams=null) {
-        super(model,players,bots, walls, shootParams);
-
-        this._bulletSpeed = this.shootParams.bulletSpeed;
-        TouchList._damage = this.shootParams.damage;
-
-        this._shootCooldown = this.shootParams.shootCooldown;
-    }
-
-    trackNearestTank() {
-        // perseguir o tanque mais próximo
     }
 }
