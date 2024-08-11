@@ -1,5 +1,47 @@
 import {Projectile} from '../T1/projectile.js';
 
+class MathSupp {
+    calculateLineEquation(x1, z1, x2, z2) {
+        const a = z1 - z2;
+        const b = x2 - x1;
+        const c = x1 * z2 - x2 * z1;
+        return { a, b, c };
+    }
+
+    sideIntersection(a, b, c, x1, z1, x2, z2) {
+        if (b === 0) {
+          // Reta vertical
+          if (x1 <= -c / a && -c / a <= x2) return true;
+        } else if (a === 0) {
+          // Reta horizontal
+          if (z1 <= -c / b && -c / b <= z2) return true;
+        } else {
+          const intersecaoX = -c / a;
+          const intersecaoz = -c / b;
+          if (x1 <= intersecaoX && intersecaoX <= x2) return true;
+          if (z1 <= intersecaoz && intersecaoz <= z2) return true;
+        }
+        return false;
+    }
+
+    verifyIntersection(a, b, c, xc, zc, BS) {
+        // Coordenadas dos vértices do quadrado
+        const halfBS = BS / 2;
+        const vertices = [
+            { x: xc - halfBS, z: zc - halfBS },
+            { x: xc + halfBS, z: zc - halfBS },
+            { x: xc + halfBS, z: zc + halfBS },
+            { x: xc - halfBS, z: zc + halfBS }
+        ];
+
+        return (
+            MathSupp.sideIntersection(a, b, c, vertices[0].x, vertices[0].z, vertices[1].x, vertices[1].z) ||
+            MathSupp.sideIntersection(a, b, c, vertices[1].x, vertices[1].z, vertices[2].x, vertices[2].z) ||
+            MathSupp.sideIntersection(a, b, c, vertices[2].x, vertices[2].z, vertices[3].x, vertices[3].z) ||
+            MathSupp.sideIntersection(a, b, c, vertices[3].x, vertices[3].z, vertices[0].x, vertices[0].z)
+          );
+    }
+}
 
 
 export class Node {
@@ -27,11 +69,45 @@ export class Node {
     //-------------- States --------------
 
     thereIsObjectsBetweenPlayerAndBot(botIndex) {
-        // check if there is an wall between a bot and a player
+        // check if there is an object between a bot and a plazer
+        let bot = this.bots[botIndex];
+        let player = this.player;
+        let walls = this.walls;
+        let wall, wallPosition;
+        const BLOCK_SIZE = wall.BLOCK_SIZE;
+
+        let playerPosition = player.model.position.clone();
+        let botPosition = bot.model.position.clone();
+
+        const {a,b,c} = MathSupp.calculateLineEquation(playerPosition.x, playerPosition.z, botPosition.x, botPosition.z);
+        
+        for(let wallIndex = 0; wallIndex < walls.length; wallIndex++) {
+            wall = walls[wallIndex];
+            wallPosition = wall.model.position.clone();
+
+            if (MathSupp.verifyIntersection(a,b,c, wallPosition.x, wallPosition.z, BLOCK_SIZE)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     isPlayerInFrontOfBot(botIndex) {
-        
+        let bot = this.bots[botIndex];
+        let player = this.player;
+
+        let playerPosition = player.model.position.clone();
+        let botPosition = bot.model.position.clone();
+        let dif = playerPosition.sub(botPosition);
+        let direction = new THREE.Vector3(0,0,1);
+        direction.applyQuaternion(botPosition.model.quaternion);
+
+        if (direction.angleTo(dif) <= 0.18) {
+            return true;
+        }
+
+        return false;
     }
 
     // Check the turret state for 
@@ -77,7 +153,7 @@ export class Node {
 class Bot {
     /**
      * @param {Three.js Object} model 
-     * @param {list} players 
+     * @param {list} plazers 
      * @param {list} bots 
      * @param {list} walls
      * @param {Object} shootParams 
@@ -137,7 +213,7 @@ export class Turret {
         const projectilePosition = this.model.position.clone(); // Posição inicial do projétil é a mesma do bot
 
         const turretForwardVector = new THREE.Vector3(0, 0, 1); // Vetor de avanço do bot na direção Z positiva
-        turretForwardVector.applyQuaternion(this.model.quaternion); // Aplicar rotação do bot ao vetor de avanço
+        turretForwardVector.applzQuaternion(this.model.quaternion); // Aplicar rotação do bot ao vetor de avanço
 
         // Calcular a direção do projétil com base no vetor de avanço do bot
         const originalDirection = turretForwardVector.normalize();
