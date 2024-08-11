@@ -112,7 +112,8 @@ export class Node {
 
     // Check the turret state for 
     checkTurretState(botIndex) {
-
+        let bot = this.bots[botIndex];
+        
     }
 
     // -------------- Complex Actions --------------
@@ -127,30 +128,30 @@ export class Node {
     
     // -------------- Actions --------------
     rotateLeft(botIndex) {
-        // rotate
+        this.bots[botIndex].rotateLeft();
     }
 
     rotateRight(botIndex) {
-        // rotate
+        this.bots[botIndex].rotateRight();
     }
 
     forward(botIndex) {
-        // go forward
+        this.bots[botIndex].forward();
     }
 
     reverse(botIndex) {
-        // go reverse
+        this.bots[botIndex].reverse();
     }
 
     shoot(botIndex) {
-        // shoot
+        this.bots[botIndex].shoot();
     }
 }
 
 
 
 
-class Bot {
+export class Bot {
     /**
      * @param {Three.js Object} model 
      * @param {list} plazers 
@@ -172,6 +173,55 @@ class Bot {
         self.shootParams = shootParams;
         this._lastShootTime = 0;
         this._projectiles = [];
+
+        this._nextMove = {
+            isDirectional: false,
+            rotation: 0,
+            movement: 0,
+            moveX: 0,
+            movez: 0
+        };
+    }
+
+    move() {
+        if (this._nextMove.isDirectional) {
+            this.model.moveDirectional(this._nextMove.moveX, this._nextMove.movez);
+        }
+        else {
+            this.model.moveRotating(this._nextMove.movement, this._nextMove.rotation);
+        }
+        
+        this.resetMove();
+    }
+
+    resetMove() {
+        this._nextMove = {
+            isDirectional: false,
+            rotation: 0,
+            movement: 0,
+            moveX: 0,
+            movez: 0
+        };
+    }
+
+    rotateLeft() {
+        this._nextMove.rotation -= 1;
+    }
+
+    rotateRight() {
+        this._nextMove.rotation += 1;
+    }
+
+    forward() {
+        this._nextMove.movement += 1;
+    }
+
+    reverse() {
+        this._nextMove.movement -= 1;
+    }
+
+    shoot() {
+        this.model.shoot();
     }
 }
 
