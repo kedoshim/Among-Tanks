@@ -39,7 +39,7 @@ export class Tank {
                 damage: 1,
                 spreadShots: 1,
                 semiAutoShots: 1,
-                cooldown: 250,
+                cooldown: 500,
             };
         }
 

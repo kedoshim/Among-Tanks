@@ -16,6 +16,7 @@ import { ProjectileCollisionSystem, TankCollisionSystem } from "./collision.js";
 import { Entity } from "./entities/entity.js";
 import { getConfig } from "./config.js";
 import { CollisionBlock } from "./blocks.js";
+import { AISystem, Bot } from "./bot.js";
 
 export class GameManager {
     constructor(level, renderer = null) {
@@ -30,6 +31,7 @@ export class GameManager {
         this.loadLevel(this.levelData);
         this.createPlayers();
         this.createCollisionSystem();
+        this.createAISystem();
     }
 
     listening() {
@@ -99,6 +101,8 @@ export class GameManager {
         this.entities = [];
         this.previousHitBox = [];
 
+        this.bots = [];
+
         this.projectileCollisionSystem = null;
         this.tankCollisionSystem = null;
         this.walls = [];
@@ -110,6 +114,11 @@ export class GameManager {
         let new_player = new Player("", [0, 0], "", "", this.config);
 
         new_player.spawnPoint = this.playerSpawnPoint[Player.playerNumber - 1];
+
+        if (index == 2) {
+            let bot1 = new Bot(new_player);
+            this.bots.push(bot1);
+        }
 
         this.players[index] = new_player;
     }
@@ -235,6 +244,10 @@ export class GameManager {
         );
     }
 
+    createAISystem() {
+        this.ai_system = new AISystem(this.players[1], this.walls, this.bots);
+    }
+
     showInformation() {
         // Use this to show information onscreen
         this.controls.add("Controls");
@@ -323,6 +336,13 @@ export class GameManager {
         this.cameraController.calculatePosition(this.players);
     }
 
+    updateAiAction() {
+        this.ai_system.nextAction(0);
+        for (let index = 0; index < this.bots.length; index++) {
+            this.bots[index].move();            
+        }
+    }
+
     insertNewProjectiles() {
         for (const key in this.players) {
             const player = this.players[key];
@@ -390,6 +410,7 @@ export class GameManager {
     frame() {
         if (!this.checkEnd()) {
             this.keyboardUpdate();
+            this.updateAiAction();
             this.cameraUpdate();
             this.checkCollision();
             this.displayUpdate();

@@ -1,51 +1,9 @@
 import {Projectile} from '../T1/projectile.js';
-
-class MathSupp {
-    calculateLineEquation(x1, z1, x2, z2) {
-        const a = z1 - z2;
-        const b = x2 - x1;
-        const c = x1 * z2 - x2 * z1;
-        return { a, b, c };
-    }
-
-    sideIntersection(a, b, c, x1, z1, x2, z2) {
-        if (b === 0) {
-          // Reta vertical
-          if (x1 <= -c / a && -c / a <= x2) return true;
-        } else if (a === 0) {
-          // Reta horizontal
-          if (z1 <= -c / b && -c / b <= z2) return true;
-        } else {
-          const intersecaoX = -c / a;
-          const intersecaoz = -c / b;
-          if (x1 <= intersecaoX && intersecaoX <= x2) return true;
-          if (z1 <= intersecaoz && intersecaoz <= z2) return true;
-        }
-        return false;
-    }
-
-    verifyIntersection(a, b, c, xc, zc, BS) {
-        // Coordenadas dos vértices do quadrado
-        const halfBS = BS / 2;
-        const vertices = [
-            { x: xc - halfBS, z: zc - halfBS },
-            { x: xc + halfBS, z: zc - halfBS },
-            { x: xc + halfBS, z: zc + halfBS },
-            { x: xc - halfBS, z: zc + halfBS }
-        ];
-
-        return (
-            MathSupp.sideIntersection(a, b, c, vertices[0].x, vertices[0].z, vertices[1].x, vertices[1].z) ||
-            MathSupp.sideIntersection(a, b, c, vertices[1].x, vertices[1].z, vertices[2].x, vertices[2].z) ||
-            MathSupp.sideIntersection(a, b, c, vertices[2].x, vertices[2].z, vertices[3].x, vertices[3].z) ||
-            MathSupp.sideIntersection(a, b, c, vertices[3].x, vertices[3].z, vertices[0].x, vertices[0].z)
-          );
-    }
-}
+import * as THREE from 'three';
 
 
-export class Node {
-    constructor(player, walls, bots, turrets, parentNode=null) {
+export class AISystem {
+    constructor(player, walls, bots, turrets=null, parentNode=null) {
         this.player = player;
         this.walls = walls;
         this.bots = bots
@@ -55,7 +13,9 @@ export class Node {
     }
 
     nextAction(botIndex) {
-        if (this.thereIsObjectsBetweenPlayerAndBot(botIndex)) {
+        let test = this.thereIsObjectsBetweenPlayerAndBot(botIndex);
+        console.log(test)
+        if (test) {
             this.evadeTheProjectiles(botIndex);
         }
         else if (this.isPlayerInFrontOfBot(botIndex)) {
@@ -69,41 +29,43 @@ export class Node {
     //-------------- States --------------
 
     thereIsObjectsBetweenPlayerAndBot(botIndex) {
-        // check if there is an object between a bot and a plazer
-        let bot = this.bots[botIndex];
+        let bot = this.bots[botIndex].player_tank;
         let player = this.player;
         let walls = this.walls;
-        let wall, wallPosition;
-        const BLOCK_SIZE = wall.BLOCK_SIZE;
 
-        let playerPosition = player.model.position.clone();
-        let botPosition = bot.model.position.clone();
+        let playerPosition = player._tank._model.position.clone();
+        let botPosition = bot._tank._model.position.clone();
 
-        const {a,b,c} = MathSupp.calculateLineEquation(playerPosition.x, playerPosition.z, botPosition.x, botPosition.z);
-        
-        for(let wallIndex = 0; wallIndex < walls.length; wallIndex++) {
-            wall = walls[wallIndex];
-            wallPosition = wall.model.position.clone();
+        // Create a Raycaster
+        let direction = new THREE.Vector3().subVectors(botPosition, playerPosition).normalize();
+        let raycaster = new THREE.Raycaster(playerPosition, direction);
 
-            if (MathSupp.verifyIntersection(a,b,c, wallPosition.x, wallPosition.z, BLOCK_SIZE)) {
+        // Verify intersections with walls
+        let intersects = raycaster.intersectObjects(walls.map(wall => wall.model), true);
+
+        // Verify if some intersections is betwenn the player and the bot
+        for (let i = 0; i < intersects.length; i++) {
+            let intersect = intersects[i];
+            if (intersect.distance <= playerPosition.distanceTo(botPosition)) {
                 return true;
             }
         }
 
         return false;
     }
+    
 
     isPlayerInFrontOfBot(botIndex) {
-        let bot = this.bots[botIndex];
+        let bot = this.bots[botIndex].player_tank;
         let player = this.player;
 
-        let playerPosition = player.model.position.clone();
-        let botPosition = bot.model.position.clone();
+        let playerPosition = player._tank._model.position.clone();
+        let botPosition = bot._tank._model.position.clone();
         let dif = playerPosition.sub(botPosition);
         let direction = new THREE.Vector3(0,0,1);
-        direction.applyQuaternion(botPosition.model.quaternion);
+        direction.applyQuaternion(bot.tank._model.quaternion);
 
-        if (direction.angleTo(dif) <= 0.18) {
+        if (direction.angleTo(dif) <= 0.03) {
             return true;
         }
 
@@ -112,14 +74,47 @@ export class Node {
 
     // Check the turret state for 
     checkTurretState(botIndex) {
-        let bot = this.bots[botIndex];
         
     }
 
     // -------------- Complex Actions --------------
 
     trackPlayer(botIndex) {
+        let bot = this.bots[botIndex].player_tank;
+        let player = this.player;
+        let nextMove = {
+            isDirectional: false,
+            rotation: 0,
+            movement: 0,
+            moveX: 0,
+            movez: 0
+        };
 
+        let playerPosition = player._tank._model.position.clone();
+        let botPosition = bot._tank._model.position.clone();
+        let dif = playerPosition.sub(botPosition);
+        let direction = new THREE.Vector3(0,0,1);
+        direction.applyQuaternion(bot._tank._model.quaternion);
+
+        let y_axis = new THREE.Vector3(0,1,0);
+        let actualAngle = direction.angleTo(dif);
+
+        // rotate right
+        let rotationAngle = Math.PI / 32;
+        let imaginary_vector_rotation = direction.clone();
+
+        imaginary_vector_rotation.applyAxisAngle(y_axis, rotationAngle);
+
+        let new_angle = imaginary_vector_rotation.angleTo(dif);
+
+        if (new_angle < actualAngle) {
+            nextMove["rotation"] = 1;
+        }
+        else {
+            nextMove["rotation"] = -1;
+        }
+
+        this.bots[botIndex].setNextMove(nextMove);
     }
 
     evadeTheProjectiles(botIndex) {
@@ -153,14 +148,15 @@ export class Node {
 
 export class Bot {
     /**
-     * @param {Three.js Object} model 
+     * @param {THREE.js Object} model 
      * @param {list} plazers 
      * @param {list} bots 
      * @param {list} walls
      * @param {Object} shootParams 
      */
-    constructor(model, shootParams=null) {
-        self.model = model;
+    constructor(player_tank, shootParams=null) {
+        this.player_tank = player_tank;
+        console.log(player_tank)
 
         if (!shootParams) {
             shootParams = {
@@ -183,12 +179,19 @@ export class Bot {
         };
     }
 
+    setNextMove(nextMove) {
+        this._nextMove = nextMove;
+    }
+
     move() {
+        if (this.player_tank.health == 0) {
+            return;
+        }
         if (this._nextMove.isDirectional) {
-            this.model.moveDirectional(this._nextMove.moveX, this._nextMove.movez);
+            this.player_tank._tank.moveDirectional(this._nextMove.moveX, this._nextMove.movez);
         }
         else {
-            this.model.moveRotating(this._nextMove.movement, this._nextMove.rotation);
+            this.player_tank._tank.moveRotating(this._nextMove.movement, this._nextMove.rotation);
         }
         
         this.resetMove();
@@ -221,7 +224,9 @@ export class Bot {
     }
 
     shoot() {
-        this.model.shoot();
+        if (this.player_tank.health > 0) {
+            this.player_tank._tank.shoot();
+        }
     }
 }
 
