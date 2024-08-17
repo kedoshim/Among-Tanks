@@ -14,9 +14,8 @@ export class AISystem {
 
     nextAction(botIndex) {
         let test = this.thereIsObjectsBetweenPlayerAndBot(botIndex);
-        console.log(test)
         if (test) {
-            this.evadeTheProjectiles(botIndex);
+            this.moveTank(botIndex);
         }
         else if (this.isPlayerInFrontOfBot(botIndex)) {
             this.shoot(botIndex);
@@ -32,6 +31,10 @@ export class AISystem {
         let bot = this.bots[botIndex].player_tank;
         let player = this.player;
         let walls = this.walls;
+
+        if (player._tank.health <= 0) {
+            return true;
+        }
 
         let playerPosition = player._tank._model.position.clone();
         let botPosition = bot._tank._model.position.clone();
@@ -65,7 +68,7 @@ export class AISystem {
         let direction = new THREE.Vector3(0,0,1);
         direction.applyQuaternion(bot.tank._model.quaternion);
 
-        if (direction.angleTo(dif) <= 0.03) {
+        if (direction.angleTo(dif) <= 0.05) {
             return true;
         }
 
@@ -117,10 +120,111 @@ export class AISystem {
         this.bots[botIndex].setNextMove(nextMove);
     }
 
-    evadeTheProjectiles(botIndex) {
+    moveTank(botIndex) {
+        let bot = this.bots[botIndex];
+        bot.resetMove();
+
+        let direction = new THREE.Vector3(0, 0, 1);
+        direction.applyQuaternion(bot.player_tank._tank._model.quaternion);
+
+        let botPosition = bot.player_tank._tank._model.position.clone();
+
+        // rotate right
+        let rotationAngle = Math.PI / 32;
+        let imaginary_vector_rotation = direction.clone();
+        let y_axis = new THREE.Vector3(0,1,0);
+
+        imaginary_vector_rotation.applyAxisAngle(y_axis, rotationAngle);
+
+        let chosenDirection = this.decideTankMovement(botPosition, direction);
+        
+        console.log(direction.angleTo(chosenDirection))
+        if (direction.angleTo(chosenDirection) < 0.03) {
+            this.bots[botIndex]._nextMove.movement = 1;
+        }
+        else {
+            if (imaginary_vector_rotation.angleTo(chosenDirection) < direction.angleTo(chosenDirection)) {
+                this.bots[botIndex]._nextMove.rotation = 1;
+            }
+            else {
+                this.bots[botIndex]._nextMove.rotation = -1;
+            }
+
+            if (direction.angleTo(chosenDirection) < 0.09) {
+                this.bots[botIndex]._nextMove.movement = 1;
+            }
+        }
 
     }
+
+    decideTankMovement(botPosition, botDirection) {
+        const wallsDirections = this.checkClosestsWalls(botPosition);
     
+        // Vetores de direção possíveis
+        const directions = {
+            up: new THREE.Vector3(0, 0, -1),
+            right: new THREE.Vector3(1, 0, 0),
+            down: new THREE.Vector3(0, 0, 1),
+            left: new THREE.Vector3(-1, 0, 0)
+        };
+    
+        // Filtra direções viáveis (sem paredes)
+        const viableDirections = Object.keys(wallsDirections).filter(direction => !wallsDirections[direction]);
+    
+        // Calcula o menor ângulo de rotação
+        let minAngle = Infinity;
+        let chosenDirection = null;
+    
+        viableDirections.forEach(direction => {
+            const targetDirection = directions[direction];
+            const angle = botDirection.angleTo(targetDirection);
+    
+            if (angle < minAngle) {
+                minAngle = angle;
+                chosenDirection = direction;
+            }
+        });
+    
+        return directions[chosenDirection];
+    }
+
+    checkClosestsWalls(botPosition) {
+        let wallsDirections = {
+            up: false,
+            right: false,
+            down: false,
+            left: false
+        };
+
+        let walls = this.walls;
+        const BLOCK_SIZE = walls[0].BLOCK_SIZE;
+        const margin = BLOCK_SIZE / 2;
+
+        walls.forEach(wall => {
+            let dx = wall.model.position.x - botPosition.x;
+            let dz = wall.model.position.z - botPosition.z;
+
+            // Verifica se a parede está diretamente acima (cima) do bot
+            if (Math.abs(dx) <= margin && Math.abs(dz + BLOCK_SIZE) <= margin) {
+                wallsDirections.up = true;
+            }
+            // Verifica se a parede está diretamente à direita do bot
+            if (Math.abs(dx - BLOCK_SIZE) <= margin && Math.abs(dz) <= margin) {
+                wallsDirections.right = true;
+            }
+            // Verifica se a parede está diretamente abaixo (baixo) do bot
+            if (Math.abs(dx) <= margin && Math.abs(dz - BLOCK_SIZE) <= margin) {
+                wallsDirections.down = true;
+            }
+            // Verifica se a parede está diretamente à esquerda do bot
+            if (Math.abs(dx + BLOCK_SIZE) <= margin && Math.abs(dz) <= margin) {
+                wallsDirections.left = true;
+            }
+        });
+
+        return wallsDirections;
+    }
+
     // -------------- Actions --------------
     rotateLeft(botIndex) {
         this.bots[botIndex].rotateLeft();
@@ -156,7 +260,6 @@ export class Bot {
      */
     constructor(player_tank, shootParams=null) {
         this.player_tank = player_tank;
-        console.log(player_tank)
 
         if (!shootParams) {
             shootParams = {
@@ -175,7 +278,7 @@ export class Bot {
             rotation: 0,
             movement: 0,
             moveX: 0,
-            movez: 0
+            moveZ: 0
         };
     }
 
@@ -188,7 +291,7 @@ export class Bot {
             return;
         }
         if (this._nextMove.isDirectional) {
-            this.player_tank._tank.moveDirectional(this._nextMove.moveX, this._nextMove.movez);
+            this.player_tank._tank.moveDirectional(this._nextMove.moveX, this._nextMove.moveZ);
         }
         else {
             this.player_tank._tank.moveRotating(this._nextMove.movement, this._nextMove.rotation);

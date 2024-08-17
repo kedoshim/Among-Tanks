@@ -278,7 +278,7 @@ export class Tank {
             rotationDifference * this._animationRotationSpeed;
         // Move this.model
 
-        console.log(moveX, moveZ);
+        //console.log(moveX, moveZ);
 
         this.collisionShape = null;
         if (!this.died) {
