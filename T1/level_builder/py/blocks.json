@@ -5,7 +5,7 @@
             "g": 196,
             "b": 196
         },
-        "description": "Ground"
+        "description": "GroundBlock"
     },
     "collisor": {
         "color": {
@@ -13,7 +13,7 @@
             "g": 124,
             "b": 236
         },
-        "description": "Collisor"
+        "description": "WallBlock"
     }, 
     "spawn": {
         "color": {

@@ -4,6 +4,7 @@ import LevelBuilder
 import constraints
 import utils
 from TriangularButton import TriangularButton
+import math
 
 class ResizableScreen:
     def __init__(self, grid_size=32):
@@ -42,6 +43,23 @@ class ResizableScreen:
             manager=self.manager,
             window_display_title="Selected Block"
             
+        )
+
+        self.generate_json_container = pygame_gui.elements.UIWindow(
+            pygame.Rect((constraints.SCREEN_WIDTH-constraints.BLOCK_SELECTOR_WIDTH, constraints.BLOCK_SELECTOR_HEIGHT+constraints.SELECTED_BLOCK_CONTAINER_HEIGHT), 
+                        (constraints.BLOCK_SELECTOR_WIDTH, constraints.SELECTED_BLOCK_CONTAINER_HEIGHT)),
+            manager=self.manager,
+            window_display_title="Generate JSON"
+            
+        )
+
+        self.generate_json_button = pygame_gui.elements.UIButton(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH//2 - 40, 15), 
+                                    (80,40)),
+            manager=self.manager,
+            text='Gerar JSON',
+            container=self.generate_json_container,
+            object_id="generate_json"
         )
         
         
@@ -163,11 +181,48 @@ class ResizableScreen:
         pos_y = y // self.grid_size
         return pos_x, pos_y
     
+    def get_triangle_points(self, angle=0):
+        mouse_pos = pygame.mouse.get_pos()
+        _x, _y = self.get_tile_mouse_position(mouse_pos)
+        x = _x * self.grid_size
+        y = _y * self.grid_size
+        first_vertex = (x, y + self.grid_size)
+        second_vertex = (x + self.grid_size//2, y)
+        third_vertex = (x + self.grid_size, y + self.grid_size)
+
+        center_x = x + self.grid_size // 2
+        center_y = y + self.grid_size // 2
+
+        def rotate_point(px, py, cx, cy, angle):
+            # Converte o ângulo para radianos
+            rad = math.radians(angle)
+            # Translaciona o ponto para a origem
+            translated_x = px - cx
+            translated_y = py - cy
+            # Aplica a rotação
+            rotated_x = translated_x * math.cos(rad) - translated_y * math.sin(rad)
+            rotated_y = translated_x * math.sin(rad) + translated_y * math.cos(rad)
+            # Translaciona de volta para a posição original
+            final_x = rotated_x + cx
+            final_y = rotated_y + cy
+            return final_x, final_y
+
+        first_vertex = rotate_point(*first_vertex, center_x, center_y, angle)
+        second_vertex = rotate_point(*second_vertex, center_x, center_y, angle)
+        third_vertex = rotate_point(*third_vertex, center_x, center_y, angle)
+
+        return first_vertex, second_vertex, third_vertex
+
+
+    
+    
     def draw_square_on_tile(self):
         key = self.selected_block
         if key != None:
             if "render_type" in self.level.blocks[key]:
-                pass
+                color = (self.level.blocks[self.selected_block]["color"]["r"], self.level.blocks[self.selected_block]["color"]["g"], 
+                            self.level.blocks[self.selected_block]["color"]["b"])
+                pygame.draw.polygon(self.screen, color, self.get_triangle_points(315))
             else:
                 temp_surface = pygame.Surface((self.grid_size, self.grid_size), pygame.SRCALPHA)
                 # Initializing Color
@@ -207,6 +262,8 @@ class ResizableScreen:
                             tile_x, tile_y = self.get_tile_mouse_position((x,y))
                             key = self.selected_block
                             self.level.representation[tile_x][tile_y].color = (self.level.blocks[key]["color"]["r"], self.level.blocks[key]["color"]["g"], self.level.blocks[key]["color"]["b"])
+                            self.level.representation[tile_x][tile_y].type = self.level.blocks[key]["description"]
+
 
 
                 # Verifique o tipo de evento e o ID
@@ -223,6 +280,10 @@ class ResizableScreen:
                             pygame.Color(utils.rgb_to_hex(color["r"], color["g"], color["b"])),  # Cor ao passar o mouse (verde)
                             pygame.Color(utils.rgb_to_hex(color["r"], color["g"], color["b"]))   # Cor ao clicar (azul)
                         )
+
+                    if clicked_button == self.generate_json_button:
+                        print("Gerando json")
+                        self.level.save_json()
 
             # Atualize o gerenciador de interface
             self.manager.update(time_delta)
