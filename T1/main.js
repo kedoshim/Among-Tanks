@@ -5,7 +5,7 @@ import {
 import { GameManager } from "./GameManager.js";
 
 import { loadConfig } from "./config.js";
-import { loadLevels, getNextLevel } from "./levels.js";
+import { loadLevels, getNextLevel, loadLights, getLights } from "./levels.js";
 
 
 
@@ -14,8 +14,10 @@ async function main() {
   const renderer = initRenderer();
 
   let level = getNextLevel();
+  let lightning = getLights()
+  
 
-  let manager = new GameManager(level,renderer);
+  let manager = new GameManager(level, lightning,renderer);
   manager.start()
 
   
@@ -23,8 +25,8 @@ async function main() {
     console.log("restarting game");
 
     level = getNextLevel();
-    
-    manager = new GameManager(level, renderer);
+    lightning = getLights()
+    manager = new GameManager(level, lightning, renderer);
     manager.start();
     
     manager.setResetFunction(resetFunction);
@@ -43,6 +45,8 @@ async function main() {
 async function initialize() {
   await loadConfig();
   await loadLevels();
+  await loadLights()
+  
 }
 
 await initialize();

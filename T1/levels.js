@@ -1,9 +1,9 @@
 const levelPaths = {
   1: "./levels/level1.json",
-  2: "./levels/level2.json",
 };
 
 const levels = {};
+const lightning = {}
 
 let index = 0;
 
@@ -16,8 +16,19 @@ export async function loadLevels() {
     const path = levelPaths[index];
     const loaded_level = await fetch(path);
     const level_json = await loaded_level.json();
-    const level_data = decode(level_json);
+    const level_data = decode(level_json.blocks);
     levels[index] = level_data;
+  }
+}
+
+export async function loadLights() {
+  console.log("Loading lights")
+  for (const index in levelPaths) {
+    const path = levelPaths[index];
+    const loaded_level = await fetch(path);
+    const level_json = await loaded_level.json();
+    const level_data = level_json.lightning
+    lightning[index] = level_data;
   }
 }
 
@@ -31,6 +42,10 @@ export function getNextLevel() {
     console.log(levels, index);
     return levels[index];
   }
+}
+
+export function getLights() {
+  return lightning[index]
 }
 
 

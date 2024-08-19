@@ -23,13 +23,22 @@
         },
         "description": "Spawn"
     },
-    "directional_light": {
+    "spotlight": {
         "color": {
             "r": 0,
             "g": 255,
             "b": 0
         },
-        "description": "D-Light",
+        "description": "S-Light",
         "render_type": "triangle"
+    },
+    "eraser": {
+        "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0
+        },
+        "description": "S-Light",
+        "render_type": "eraser"
     }
 }
