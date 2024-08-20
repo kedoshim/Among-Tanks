@@ -116,9 +116,15 @@ export class GameManager {
         new_player.spawnPoint = this.playerSpawnPoint[Player.playerNumber - 1];
 
         if (index == 2) {
+            new_player._controller.isBot = true;
             let bot1 = new Bot(new_player);
             this.bots.push(bot1);
         }
+        // if (index == 3) {
+        //     new_player._controller.isBot = true;
+        //     let bot2 = new Bot(new_player);
+        //     this.bots.push(bot2);
+        // }
 
         this.players[index] = new_player;
     }
@@ -337,8 +343,8 @@ export class GameManager {
     }
 
     updateAiAction() {
-        this.ai_system.nextAction(0);
         for (let index = 0; index < this.bots.length; index++) {
+            this.ai_system.nextAction(index);
             this.bots[index].move();            
         }
     }

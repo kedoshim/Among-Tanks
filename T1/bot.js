@@ -2,14 +2,155 @@ import {Projectile} from '../T1/projectile.js';
 import * as THREE from 'three';
 
 
+class SceneMap {
+    constructor(walls, blockSize) {
+        this.blockSize = blockSize;
+        this.walls = walls;
+
+        // Determine the size of the grid
+        this.minX = Math.min(...walls.map(wall => wall.model.position.x));
+        this.minZ = Math.min(...walls.map(wall => wall.model.position.z));
+        this.maxX = Math.max(...walls.map(wall => wall.model.position.x));
+        this.maxZ = Math.max(...walls.map(wall => wall.model.position.z));
+
+        this.rows = Math.round((this.maxZ - this.minZ) / blockSize) + 1;
+        this.cols = Math.round((this.maxX - this.minX) / blockSize) + 1;
+
+        // Create and fill the grid
+        this.sceneMap = Array.from({ length: this.rows }, () => Array(this.cols).fill(1)); // Fill with 1s
+        this.fillSceneMap();
+    }
+
+    fillSceneMap() {
+        this.walls.forEach(wall => {
+            let x = Math.round((wall.model.position.x - this.minX) / this.blockSize);
+            let z = Math.round((wall.model.position.z - this.minZ) / this.blockSize);
+            this.sceneMap[z][x] = 0; // 0 represents a wall
+        });
+    }
+
+    spatialToIndex(position) {
+        let x = Math.round((position.x - this.minX) / this.blockSize);
+        let z = Math.round((position.z - this.minZ) / this.blockSize);
+        return { row: z, col: x };
+    }
+
+    indexToSpatial(row, col) {
+        let x = col * this.blockSize + this.minX;
+        let z = row * this.blockSize + this.minZ;
+        return { x: x, z: z };
+    }
+}
+
+class Node {
+    constructor(position, startNodeDistance, heuristicDistanceToEndNode, parentNode=null) {
+        this.position = position;
+        this.startNodeDistance = startNodeDistance;
+        this.heuristicDistanceToEndNode = heuristicDistanceToEndNode;
+        this.cost = startNodeDistance + heuristicDistanceToEndNode;
+
+        this.parentNode = parentNode;
+    }
+}
+
+class AStar {
+    constructor(sceneMap) {
+        this.sceneMap = sceneMap;
+    }
+
+    findPath(botPosition, playerPosition) {
+        let startNode = this.sceneMap.spatialToIndex(botPosition);
+        let endNode = this.sceneMap.spatialToIndex(playerPosition);
+
+        let openList = [];
+        let closedList = [];
+
+        openList.push(new Node(startNode, 0, this.heuristic(startNode, endNode)));
+
+        //console.log("=================== NEW ===================")
+        while (openList.length > 0) {
+            let currentNode = openList.reduce((lowest,node) => (node.cost < lowest.cost ? node : lowest));
+
+            //console.log(openList)
+
+            if (currentNode.position.row === endNode.row && currentNode.position.col === endNode.col) {
+                // Path found
+                let path = [];
+                while (currentNode) {
+                    path.push(currentNode.position);
+                    currentNode = currentNode.parentNode;
+                }
+
+                return path.reverse();
+            }
+            
+            // Remove currentNode from openList and add to closedList
+            openList = openList.filter(node => node !== currentNode);
+            closedList.push(currentNode);
+
+            // Get neighbors
+            let neighbors = this.getNeighbors(currentNode.position);
+
+            neighbors.forEach(neighbor => {
+                if (this.sceneMap.sceneMap[neighbor.row][neighbor.col] === 0 || closedList.find(node => node.position.row === neighbor.row && node.position.col === neighbor.col)) {
+                    return; // Ignore walls and already evaluated nodes
+                }
+
+                let g = currentNode.startNodeDistance + 1;
+                let h = this.heuristic(neighbor, endNode);
+                let neighborNode = new Node(neighbor, g, h, currentNode);
+
+                if (!openList.find(node => node.position.row === neighbor.row && node.position.col === neighbor.col && node.startNodeDistance <= g)) {
+                    openList.push(neighborNode);
+                }
+            });
+        }
+
+        return [];
+    }
+
+    heuristic(nodeA, nodeB) {
+        return Math.abs(nodeA.row - nodeB.row) + Math.abs(nodeA.col - nodeB.col);
+    }
+
+    getNeighbors(position) {
+        let neighbors = [];
+        let directions = [
+            { row: -1, col: 0 },
+            { row: 1, col: 0 },
+            { row: 0, col: -1 },
+            { row: 0, col: 1 }
+        ];
+        
+        directions.forEach(direction => {
+            let newRow = position.row + direction.row;
+            let newCol = position.col + direction.col;
+
+            if (newRow >= 0 && newRow < this.sceneMap.rows && newCol >= 0 && newCol < this.sceneMap.cols) {
+                neighbors.push({ row: newRow, col: newCol });
+            }
+        });
+
+        return neighbors;
+    }
+}
+
+
 export class AISystem {
-    constructor(player, walls, bots, turrets=null, parentNode=null) {
+    constructor(player, walls, bots, turrets=null) {
         this.player = player;
         this.walls = walls;
         this.bots = bots
         this.turrets = turrets;
 
-        this.parentNode = parentNode;
+        this.sceneMap = new SceneMap(walls, walls[0].BLOCK_SIZE);
+        this.sceneMap.fillSceneMap();
+
+        this.aStar = new AStar(this.sceneMap);
+
+        this.lastPosition = null;
+        this.lastNextPosition = null;
+
     }
 
     nextAction(botIndex) {
@@ -18,7 +159,13 @@ export class AISystem {
             this.moveTank(botIndex);
         }
         else if (this.isPlayerInFrontOfBot(botIndex)) {
-            this.shoot(botIndex);
+            if (this.bots[botIndex].player_tank._tank.model.position.distanceTo(this.player._tank.model.position) >= 5 * this.walls[0].BLOCK_SIZE) {
+                this.shoot(botIndex);
+            }
+            else {
+                this.bots[botIndex]._nextMove.movement = -1;
+                this.shoot(botIndex);
+            }
         }
         else {
             this.trackPlayer(botIndex);
@@ -124,34 +271,90 @@ export class AISystem {
         let bot = this.bots[botIndex];
         bot.resetMove();
 
-        let direction = new THREE.Vector3(0, 0, 1);
-        direction.applyQuaternion(bot.player_tank._tank._model.quaternion);
+        let block_size = this.walls[0].BLOCK_SIZE;
 
         let botPosition = bot.player_tank._tank._model.position.clone();
+        let player = this.player;
 
-        // rotate right
-        let rotationAngle = Math.PI / 32;
-        let imaginary_vector_rotation = direction.clone();
-        let y_axis = new THREE.Vector3(0,1,0);
-
-        imaginary_vector_rotation.applyAxisAngle(y_axis, rotationAngle);
-
-        let chosenDirection = this.decideTankMovement(botPosition, direction);
         
-        console.log(direction.angleTo(chosenDirection))
-        if (direction.angleTo(chosenDirection) < 0.03) {
-            this.bots[botIndex]._nextMove.movement = 1;
+        if (botIndex % 2 == 0) {
+            let path = this.aStar.findPath(bot.player_tank._tank._model.position, player._tank._model.position);
+
+            if (path.length > 1) {
+                
+                let actualPosition = this.sceneMap.indexToSpatial(path[0].row, path[0].col);
+
+                if (this.lastPosition && this.lastNextPosition && path.length > 2) {
+                    this.lastPosition = path[0];
+                    this.lastNextPosition = path[1];
+                }
+
+                actualPosition = new THREE.Vector3(actualPosition.x, botPosition.y, actualPosition.z);
+
+                let nextPosition = this.sceneMap.indexToSpatial(path[1].row, path[1].col);
+                nextPosition = new THREE.Vector3(nextPosition.x, botPosition.y, nextPosition.z);
+
+                let direction = new THREE.Vector3(0, 0, 1);
+                direction.applyQuaternion(bot.player_tank._tank._model.quaternion);
+
+                // rotate right
+                let rotationAngle = Math.PI / 32;
+                let imaginary_vector_rotation = direction.clone();
+                let y_axis = new THREE.Vector3(0,1,0);
+
+                imaginary_vector_rotation.applyAxisAngle(y_axis, rotationAngle);
+
+                let chosenDirection = nextPosition.sub(botPosition);
+                let actualDirection = actualPosition.sub(botPosition);
+                
+                if (direction.angleTo(actualDirection) < 0.03 && botPosition.distanceTo(actualPosition) > block_size / 100) {
+                    this.bots[botIndex]._nextMove.movement = 1;
+                    this.bots[botIndex].isMoving = true;
+                }
+                else {
+                    if (imaginary_vector_rotation.angleTo(chosenDirection) < direction.angleTo(chosenDirection)) {
+                        this.bots[botIndex]._nextMove.rotation = 1;
+                    }
+                    else {
+                        this.bots[botIndex]._nextMove.rotation = -1;
+                    }
+        
+                    if (direction.angleTo(chosenDirection) < 0.09) {
+                        this.bots[botIndex]._nextMove.movement = 1;
+                        this.bots[botIndex].isMoving = true;
+                    }
+                }
+            }
         }
         else {
-            if (imaginary_vector_rotation.angleTo(chosenDirection) < direction.angleTo(chosenDirection)) {
-                this.bots[botIndex]._nextMove.rotation = 1;
+            let direction = new THREE.Vector3(0, 0, 1);
+            direction.applyQuaternion(bot.player_tank._tank._model.quaternion);
+    
+            let botPosition = bot.player_tank._tank._model.position.clone();
+    
+            // rotate right
+            let rotationAngle = Math.PI / 32;
+            let imaginary_vector_rotation = direction.clone();
+            let y_axis = new THREE.Vector3(0,1,0);
+    
+            imaginary_vector_rotation.applyAxisAngle(y_axis, rotationAngle);
+    
+            let chosenDirection = this.decideTankMovement(botPosition, direction);
+            
+            if (direction.angleTo(chosenDirection) < 0.03) {
+                this.bots[botIndex]._nextMove.movement = 1;
             }
             else {
-                this.bots[botIndex]._nextMove.rotation = -1;
-            }
-
-            if (direction.angleTo(chosenDirection) < 0.09) {
-                this.bots[botIndex]._nextMove.movement = 1;
+                if (imaginary_vector_rotation.angleTo(chosenDirection) < direction.angleTo(chosenDirection)) {
+                    this.bots[botIndex]._nextMove.rotation = 1;
+                }
+                else {
+                    this.bots[botIndex]._nextMove.rotation = -1;
+                }
+    
+                if (direction.angleTo(chosenDirection) < 0.09) {
+                    this.bots[botIndex]._nextMove.movement = 1;
+                }
             }
         }
 
@@ -198,7 +401,7 @@ export class AISystem {
 
         let walls = this.walls;
         const BLOCK_SIZE = walls[0].BLOCK_SIZE;
-        const margin = BLOCK_SIZE / 2;
+        const margin = BLOCK_SIZE;
 
         walls.forEach(wall => {
             let dx = wall.model.position.x - botPosition.x;
@@ -221,6 +424,8 @@ export class AISystem {
                 wallsDirections.left = true;
             }
         });
+
+        console.log(wallsDirections);
 
         return wallsDirections;
     }
@@ -280,6 +485,8 @@ export class Bot {
             moveX: 0,
             moveZ: 0
         };
+
+        this.isMoving = false;
     }
 
     setNextMove(nextMove) {
@@ -294,7 +501,7 @@ export class Bot {
             this.player_tank._tank.moveDirectional(this._nextMove.moveX, this._nextMove.moveZ);
         }
         else {
-            this.player_tank._tank.moveRotating(this._nextMove.movement, this._nextMove.rotation);
+            this.player_tank._tank.moveRotating(this._nextMove.movement, this._nextMove.rotation, this.isMoving);
         }
         
         this.resetMove();
@@ -343,7 +550,8 @@ export class Turret {
             shootParams = {
                 bulletSpeed: 2,
                 damage: 1,
-                shootCooldown: 3000
+                shootCooldown: 3000,
+                ricochetsAmount: 0
             }
         }
 

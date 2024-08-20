@@ -22,6 +22,7 @@ export class PlayerController extends Controller {
     super(target);
 
     this._keys = keyboardKeys;
+    this.isBot = false;
 
     if (gamepadButtons === "") {
       this._buttons = gamepadConfig.defaultGamepadButtons;
@@ -103,6 +104,9 @@ export class PlayerController extends Controller {
     var moveX = 0;
     var moveZ = 0;
 
+    if (this.isBot) {
+      return;
+    }
     // Check movement direction based on pressed keys
     if (keyboard.pressed(this._keys.up)) {
       moveZ--;
@@ -167,6 +171,9 @@ export class PlayerController extends Controller {
     var rotation = 0;
     var movement = 0;
 
+    if (this.isBot) {
+      return;
+    }
     // Check rotation direction based on pressed keys
     if (keyboard.pressed(this._keys.up)) {
       movement++;

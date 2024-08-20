@@ -47,7 +47,7 @@ export class Tank {
         this._damage = shootingOpitions.damage;
         this._spreadShots = shootingOpitions.spreadShots;
         this._semiAutoShots = shootingOpitions.semiAutoShots;
-        this._shootCooldown = shootingOpitions.cooldown
+        this._shootCooldown = 1000//shootingOpitions.cooldown
         
 
         // Cria a barra de vida
@@ -302,7 +302,7 @@ export class Tank {
      * @param {number} forwardForce Varies from -1 (moves backwards) to 1 (moves frontwards)
      * @param {number} rotationDirection Varies from -1 (left) to 1 (right)
      */
-    moveRotating(forwardForce, rotationDirection) {
+    moveRotating(forwardForce, rotationDirection, isMoving=false) {
         if (Math.abs(forwardForce) > 1) {
             forwardForce = forwardForce >= 0 ? 1 : -1;
         }
@@ -314,7 +314,7 @@ export class Tank {
             // Movimento normal se não houver colisão com as paredes
             this.model.translateZ(forwardForce * this._moveSpeed);
         } else {
-            if (this.inMovement && forwardForce !== 0) {
+            if ((this.inMovement || isMoving) && forwardForce !== 0) {
                 // Deslizar enquanto estiver em contato com a parede
                 this.model.position.add(this.slideVector);
             }
