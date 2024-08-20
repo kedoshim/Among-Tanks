@@ -1,5 +1,6 @@
 import { Tank } from "./tank.js";
 import { createCommonTank } from "./models/common_tank_model.js";
+// import { createOldTank } from "./models/old_tank_model.js";
 
 /**
  * Represent the basic starter tank

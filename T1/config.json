@@ -1,6 +1,6 @@
 {
   "directionalMovementEnabled": false ,
-  "numberOfPlayers" : 4,
+  "numberOfPlayers" : 3,
   "playerSpawnPoint" : [
     [-20, -20],
     [20, -20],

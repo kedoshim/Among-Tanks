@@ -56,7 +56,9 @@ export class Projectile {
     build_projectile(radius, color) {
         let projectile_sphere = new THREE.SphereGeometry(radius);
         let material = setDefaultMaterial(color);
-        return new THREE.Mesh(projectile_sphere, material);
+        const model = new THREE.Mesh(projectile_sphere, material);
+        model.castShadow = true;
+        return model;
     }
 
     moveStep() {
