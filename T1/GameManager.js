@@ -16,6 +16,7 @@ import { ProjectileCollisionSystem, TankCollisionSystem } from "./collision.js";
 import { Entity } from "./entities/entity.js";
 import { getConfig } from "./config.js";
 import { CollisionBlock } from "./blocks.js";
+import { preloadCommonTankModel } from "./entities/tanks/models/common_tank_model.js";
 
 export class GameManager {
     constructor(level, renderer = null) {
@@ -24,12 +25,19 @@ export class GameManager {
         this.config = getConfig();
     }
 
-    start() {
+    async start() {
         this.setup();
         this.defineLevelColors();
         this.loadLevel(this.levelData);
+        await this.loadModels();
         this.createPlayers();
         this.createCollisionSystem();
+    }
+
+    async loadModels() {
+        await preloadCommonTankModel().catch((error) =>
+            console.error("Error preloading tank model:", error)
+        );
     }
 
     listening() {

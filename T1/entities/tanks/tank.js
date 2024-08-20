@@ -165,7 +165,7 @@ export class Tank {
     set model(model) {
         this._model = model;
         const boxSize = 6;
-        const position = this.model.position;
+        const position = this._model.position;
         let p1 = new THREE.Vector3(
             position.x - boxSize,
             position.y - 9,

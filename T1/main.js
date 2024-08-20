@@ -16,7 +16,7 @@ async function main() {
   let level = getNextLevel();
 
   let manager = new GameManager(level,renderer);
-  manager.start()
+  await manager.start();
 
   
   const resetFunction = () => {
