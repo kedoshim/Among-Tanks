@@ -75,6 +75,23 @@ class ResizableScreen:
             object_id="selected_block"
         )
 
+        self.properties_container = pygame_gui.elements.UIWindow(
+            pygame.Rect((constraints.SCREEN_WIDTH-constraints.BLOCK_SELECTOR_WIDTH, constraints.BLOCK_SELECTOR_HEIGHT+constraints.SELECTED_BLOCK_CONTAINER_HEIGHT+constraints.SELECTED_BLOCK_CONTAINER_HEIGHT), 
+                        (constraints.BLOCK_SELECTOR_WIDTH, constraints.SELECTED_BLOCK_CONTAINER_HEIGHT*2)),
+            manager=self.manager,
+            window_display_title="Change properties"
+            
+        )
+
+        self.set_properties_button = pygame_gui.elements.UIButton(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH//2 - constraints.SELECTED_BLOCK_WEIGHT//2*2, constraints.SELECTED_BLOCK_CONTAINER_HEIGHT*2 - 70), 
+                                    (constraints.SELECTED_BLOCK_WEIGHT*2,30)),
+            manager=self.manager,
+            text='Submeter',
+            container=self.properties_container,
+            object_id="set_properties"
+        )
+
         self.block_buttons = []
         self.draw_block_selector()
 
@@ -95,6 +112,215 @@ class ResizableScreen:
 
         # Tamanho do grid
         self.grid_size = grid_size
+        self.create_wall_properties()
+        self.create_ground_properties()
+        self.create_light_properties()
+        
+
+    def create_wall_properties(self):
+        self.wall_r_color = pygame_gui.elements.UITextEntryLine(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 50, 5), (100, 20)),
+            manager=self.manager,
+            container=self.properties_container
+        )
+        self.wall_r_label = pygame_gui.elements.UILabel(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 70, 5), (20, 20)),
+            text="R:",
+            manager=self.manager,
+            container=self.properties_container
+        )
+
+        # Entrada e rótulo para a cor G
+        self.wall_g_color = pygame_gui.elements.UITextEntryLine(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 50, 30), (100, 20)),  # Ajuste no y para 30
+            manager=self.manager,
+            container=self.properties_container
+        )
+        self.wall_g_label = pygame_gui.elements.UILabel(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 70, 30), (20, 20)),  # Ajuste no y para 30
+            text="G:",
+            manager=self.manager,
+            container=self.properties_container
+        )
+
+        # Entrada e rótulo para a cor B
+        self.wall_b_color = pygame_gui.elements.UITextEntryLine(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 50, 55), (100, 20)),  # Ajuste no y para 55
+            manager=self.manager,
+            container=self.properties_container
+        )
+        self.wall_b_label = pygame_gui.elements.UILabel(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 70, 55), (20, 20)),  # Ajuste no y para 55
+            text="B:",
+            manager=self.manager,
+            container=self.properties_container
+        )
+
+        self.wall_r_color.hide()
+        self.wall_g_color.hide()
+        self.wall_b_color.hide()
+        self.wall_r_label.hide()
+        self.wall_g_label.hide()
+        self.wall_b_label.hide()
+
+        self.wall_properties = {
+            "r": {
+                "value": self.wall_r_color, "label": self.wall_r_label
+            },
+            "g": {
+                "value": self.wall_g_color, "label": self.wall_g_label
+            },
+            "b": {
+                "value": self.wall_b_color, "label": self.wall_b_label
+            }
+        }
+
+    def create_ground_properties(self):
+        self.ground_r_color = pygame_gui.elements.UITextEntryLine(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 50, 5), (100, 20)),
+            manager=self.manager,
+            container=self.properties_container
+        )
+        self.ground_r_label = pygame_gui.elements.UILabel(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 70, 5), (20, 20)),
+            text="R:",
+            manager=self.manager,
+            container=self.properties_container
+        )
+
+        # Entrada e rótulo para a cor G
+        self.ground_g_color = pygame_gui.elements.UITextEntryLine(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 50, 30), (100, 20)),  # Ajuste no y para 30
+            manager=self.manager,
+            container=self.properties_container
+        )
+        self.ground_g_label = pygame_gui.elements.UILabel(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 70, 30), (20, 20)),  # Ajuste no y para 30
+            text="G:",
+            manager=self.manager,
+            container=self.properties_container
+        )
+
+        # Entrada e rótulo para a cor B
+        self.ground_b_color = pygame_gui.elements.UITextEntryLine(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 50, 55), (100, 20)),  # Ajuste no y para 55
+            manager=self.manager,
+            container=self.properties_container
+        )
+        self.ground_b_label = pygame_gui.elements.UILabel(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 70, 55), (20, 20)),  # Ajuste no y para 55
+            text="B:",
+            manager=self.manager,
+            container=self.properties_container
+        )
+
+        self.ground_r_color.hide()
+        self.ground_g_color.hide()
+        self.ground_b_color.hide()
+        self.ground_r_label.hide()
+        self.ground_g_label.hide()
+        self.ground_b_label.hide()
+
+        self.ground_properties = {
+            "r": {
+                "value": self.ground_r_color, "label": self.ground_r_label
+            },
+            "g": {
+                "value": self.ground_g_color, "label": self.ground_g_label
+            },
+            "b": {
+                "value": self.ground_b_color, "label": self.ground_b_label
+            }
+        }
+
+    def create_light_properties(self):
+        self.light_r_color = pygame_gui.elements.UITextEntryLine(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 50, 5), (100, 20)),
+            manager=self.manager,
+            container=self.properties_container
+        )
+        self.light_r_label = pygame_gui.elements.UILabel(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 70, 5), (20, 20)),
+            text="R:",
+            manager=self.manager,
+            container=self.properties_container
+        )
+
+        # Entrada e rótulo para a cor G
+        self.light_g_color = pygame_gui.elements.UITextEntryLine(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 50, 30), (100, 20)),  # Ajuste no y para 30
+            manager=self.manager,
+            container=self.properties_container
+        )
+        self.light_g_label = pygame_gui.elements.UILabel(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 70, 30), (20, 20)),  # Ajuste no y para 30
+            text="G:",
+            manager=self.manager,
+            container=self.properties_container
+        )
+
+        # Entrada e rótulo para a cor B
+        self.light_b_color = pygame_gui.elements.UITextEntryLine(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 50, 55), (100, 20)),  # Ajuste no y para 55
+            manager=self.manager,
+            container=self.properties_container
+        )
+        self.light_b_label = pygame_gui.elements.UILabel(
+            relative_rect=pygame.Rect((constraints.BLOCK_SELECTOR_WIDTH/2 - 70, 55), (20, 20)),  # Ajuste no y para 55
+            text="B:",
+            manager=self.manager,
+            container=self.properties_container
+        )
+
+        self.light_r_color.hide()
+        self.light_g_color.hide()
+        self.light_b_color.hide()
+        self.light_r_label.hide()
+        self.light_g_label.hide()
+        self.light_b_label.hide()
+
+        self.light_properties = {
+            "r": {
+                "value": self.light_r_color, "label": self.light_r_label
+            },
+            "g": {
+                "value": self.light_g_color, "label": self.light_g_label
+            },
+            "b": {
+                "value": self.light_b_color, "label": self.light_b_label
+            }
+        }
+
+
+    def propagate_color(self, color, block_type):
+        if block_type == "Lightning":
+            for i in range(len(self.level.lightning)):
+                for j in range(len(self.level.lightning[i])):
+                    if "color" in self.level.lightning[i][j]:
+                        self.level.lightning[i][j]["color"] = color
+        else:
+            for i in range(len(self.level.representation)):
+                for j in range(len(self.level.representation[i])):
+                    if self.level.representation[i][j].type == block_type:
+                        self.level.representation[i][j].color = color
+
+    def set_properties(self):
+        if self.properties_type == "Lightning":
+            r = int(self.light_properties["r"]["value"].get_text())
+            g = int(self.light_properties["g"]["value"].get_text())
+            b = int(self.light_properties["b"]["value"].get_text())
+            self.propagate_color((r,g,b), self.properties_type)
+        if self.properties_type == "WallBlock":
+            r = int(self.wall_properties["r"]["value"].get_text())
+            g = int(self.wall_properties["g"]["value"].get_text())
+            b = int(self.wall_properties["b"]["value"].get_text())
+            self.propagate_color((r,g,b), self.properties_type)
+        
+        if self.properties_type == "GroundBlock":
+            r = int(self.ground_properties["r"]["value"].get_text())
+            g = int(self.ground_properties["g"]["value"].get_text())
+            b = int(self.ground_properties["b"]["value"].get_text())
+            self.propagate_color((r,g,b), self.properties_type)
 
     def create_triangular_button(self, manager, position, size, color, hover_color=None, text=''):
     # Cria uma superfície triangular
@@ -134,7 +360,43 @@ class ResizableScreen:
         button.update_button_image = update_button_image
 
         return button
+    
+    def hide_all(self):
+        print("Hide all")
+        for key in self.wall_properties:
+                keys = self.wall_properties[key]
+                for k in keys:
+                    self.wall_properties[key][k].hide()
 
+        for key in self.ground_properties:
+                    keys = self.ground_properties[key]
+                    for k in keys:
+                        self.ground_properties[key][k].hide()
+
+    def open_properties_window(self, pos):
+        x, y = pos
+        if not self.level.representation[x][y].type == "EmptyBlock" or "color" in self.level.lightning[x][y]:
+            self.hide_all()
+
+        if "color" in self.level.lightning[x][y]:
+            self.properties_type = "Lightning"
+            for key in self.light_properties:
+                keys = self.light_properties[key]
+                for k in keys:
+                    self.light_properties[key][k].show()
+        elif self.level.representation[x][y].type == "WallBlock":
+            self.properties_type = "WallBlock"
+            for key in self.wall_properties:
+                keys = self.wall_properties[key]
+                for k in keys:
+                    self.wall_properties[key][k].show()
+            
+        elif self.level.representation[x][y].type == "GroundBlock":
+            self.properties_type = "GroundBlock"
+            for key in self.ground_properties:
+                keys = self.ground_properties[key]
+                for k in keys:
+                    self.ground_properties[key][k].show()
 
     def draw_block_selector(self):
         i = False
@@ -229,7 +491,7 @@ class ResizableScreen:
                     mouse_pos = pygame.mouse.get_pos()
                     _x, _y = self.get_tile_mouse_position(mouse_pos)
                     pygame.draw.polygon(self.screen, color, self.get_triangle_points((_x, _y), self.angle))
-                if self.level.blocks[key]["render_type"] == "eraser":
+                if self.level.blocks[key]["render_type"] == "eraser" or self.level.blocks[key]["render_type"] == "selector":
                     temp_surface = pygame.Surface((self.grid_size, self.grid_size), pygame.SRCALPHA)
                     # Initializing Color
                     color = (255,0,0)
@@ -292,7 +554,8 @@ class ResizableScreen:
                                 self.level.lightning[tile_x][tile_y]['color'] = (self.level.blocks[key]["color"]["r"], self.level.blocks[key]["color"]["g"], self.level.blocks[key]["color"]["b"])
                             elif self.level.blocks[key]["render_type"] == "eraser":
                                 self.level.erase(tile_x, tile_y)
-
+                            elif self.level.blocks[key]["render_type"] == "selector":
+                                self.open_properties_window((tile_x, tile_y))
 
                 if event.type == pygame.MOUSEWHEEL:
                     if event.y > 0:
@@ -322,6 +585,10 @@ class ResizableScreen:
                     if clicked_button == self.generate_json_button:
                         print("Gerando json")
                         self.level.save_json()
+
+                    if clicked_button == self.set_properties_button:
+                        print("MADDOG")
+                        self.set_properties()
 
             # Atualize o gerenciador de interface
             self.manager.update(time_delta)

@@ -11,6 +11,7 @@ import {
     SecondaryBox,
     onWindowResize,
     createGroundPlaneXZ,
+    getMaxSize
 } from "../libs/util/util.js";
 
 import { CameraControls } from "./camera.js";
@@ -20,6 +21,8 @@ import { Entity } from "./entities/entity.js";
 import { getConfig } from "./config.js";
 import { CollisionBlock } from "./blocks.js";
 import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
+import {loadGLBFile} from './models.js'
+
 
 export class GameManager {
     constructor(level, lighting, renderer = null) {
@@ -165,6 +168,12 @@ export class GameManager {
     }
 
     drawLights(x, y, z, objective_angle = 0) {
+        let asset = {
+            object: null,
+            loaded: false,
+            bb: new THREE.Box3()
+         }
+        loadGLBFile(asset, "./models/LampPost.glb", 46, this.scene, {x, y: y - 42, z})
         
         let lightPosition = new THREE.Vector3(x, y, z);
 
@@ -174,27 +183,30 @@ export class GameManager {
 
         //---------------------------------------------------------
         // Create and set the spotlight
-        let spotLight = new THREE.SpotLight("rgb(255,0,0)");
+        let spotLight = new THREE.SpotLight(`rgb(255,0,0)`);
         spotLight.position.copy(lightPosition);
-        spotLight.target.position.set(x, -50, z+(objective_angle > 180 ? 40 : -40))
+        const directionalZ = 60*Math.cos(this.degrees_to_radians(objective_angle))*-1
+        const directionalX = 60*Math.sin(this.degrees_to_radians(objective_angle))
+        spotLight.target.position.set(x+directionalX, -50, z+(directionalZ))
         spotLight.distance = 0;
         spotLight.castShadow = true;
         spotLight.decay = 0.1;
         spotLight.penumbra = 2.0;
-        spotLight.intensity = 80;
-        spotLight.angle= THREE.MathUtils.degToRad(30);
+        spotLight.intensity = 30;
+        spotLight.angle= THREE.MathUtils.degToRad(20);
         // Shadow Parameters
         spotLight.shadow.mapSize.width = 1024;
         spotLight.shadow.mapSize.height = 1024;
         spotLight.shadow.camera.fov = radiansToDegrees(spotLight.angle);
-        spotLight.shadow.camera.near = 17*1;    
-        spotLight.shadow.camera.far = 17*16;    
+        spotLight.shadow.camera.near = 17;    
+        spotLight.shadow.camera.far = 17;    
         this.scene.add(spotLight)  
+        spotLight.target.updateMatrixWorld();
         // Create helper for the spotlight
-        const spotHelper = new THREE.SpotLightHelper(spotLight, 0xFF8C00);
-        this.scene.add(spotHelper);  
-        const shadowHelper = new THREE.CameraHelper(spotLight.shadow.camera);
-        this.scene.add(shadowHelper);
+        // const spotHelper = new THREE.SpotLightHelper(spotLight, 0xFF8C00);
+        // this.scene.add(spotHelper);  
+        // const shadowHelper = new THREE.CameraHelper(spotLight.shadow.camera);
+        // this.scene.add(shadowHelper);
 
     }
 
@@ -262,7 +274,7 @@ export class GameManager {
                         createBlock(
                             i,
                             j,
-                            this.groundColor,
+                            data[i][j].color,
                             -BLOCK_SIZE / 2 + levelHeight
                         );
                         break;
@@ -270,7 +282,7 @@ export class GameManager {
                         createBlock(
                             i,
                             j,
-                            this.wallColor,
+                            data[i][j].color,
                             BLOCK_SIZE / 2 + levelHeight
                         );
                         break;
