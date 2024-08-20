@@ -551,7 +551,8 @@ export class Turret {
                 bulletSpeed: 2,
                 damage: 1,
                 shootCooldown: 3000,
-                ricochetsAmount: 0
+                ricochetsAmount: 0,
+                rotationSpeed: 0.15
             }
         }
 
@@ -564,7 +565,51 @@ export class Turret {
     }
 
     trackNearestTank() {
-        // perseguir o tanque mais próximo
+        let playerPosition = this.players._tank.model.position;
+        let bots = this.bots;
+        let turretPosition = this.model.position.clone();
+
+        let positions = [];
+
+        positions.push(playerPosition);
+        bots.forEach(bot => {
+            positions.push(bot.player_tank._tank.model.position);
+        });
+
+
+        let shortestDistance = Infinity;
+        let nearestPosition;
+
+        positions.forEach(pos => {
+            const actualDistance = pos.distanceTo(turretPosition);
+            if (actualDistance < shortestDistance) {
+                shortestDistance = actualDistance;
+                nearestPosition = pos;
+            }
+        });
+
+        let turretDirection = new THREE.Vector3(0, 0, 1);
+        turretDirection.applyQuaternion(this.model.quaternion);
+
+        let target = nearestPosition.sub(turretPosition);
+
+        // rotate right
+        let rotationAngle = Math.PI / 32;
+        let imaginary_vector_rotation = turretDirection.clone();
+        let y_axis = new THREE.Vector3(0,1,0);
+
+        imaginary_vector_rotation.applyAxisAngle(y_axis, rotationAngle);
+
+        let rotationDirection;
+
+        if (imaginary_vector_rotation.angleTo(target) < turretDirection.angleTo(target)) {
+            rotationDirection = 1;
+        }
+        else {
+            rotationDirection = -1;
+        }
+        
+        this.model.rotateY(this.shootParams.rotationSpeed * 0.25 * rotationDirection);
     }
 
     shoot() {
