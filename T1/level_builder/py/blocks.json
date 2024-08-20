@@ -5,7 +5,7 @@
             "g": 196,
             "b": 196
         },
-        "description": "Ground"
+        "description": "GroundBlock"
     },
     "collisor": {
         "color": {
@@ -13,7 +13,7 @@
             "g": 124,
             "b": 236
         },
-        "description": "Collisor"
+        "description": "WallBlock"
     }, 
     "spawn": {
         "color": {
@@ -23,13 +23,31 @@
         },
         "description": "Spawn"
     },
-    "directional_light": {
+    "spotlight": {
         "color": {
             "r": 0,
             "g": 255,
             "b": 0
         },
-        "description": "D-Light",
+        "description": "S-Light",
         "render_type": "triangle"
+    },
+    "eraser": {
+        "color": {
+            "r": 0,
+            "g": 0,
+            "b": 0
+        },
+        "description": "Eraser",
+        "render_type": "eraser"
+    },
+    "selector": {
+        "color": {
+            "r": 0,
+            "g": 255,
+            "b": 255
+        },
+        "description": "Selector",
+        "render_type": "selector"
     }
 }

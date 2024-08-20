@@ -57,6 +57,15 @@ class LevelBuilder extends Phaser.Scene {
         );
         return block;
       },
+      directionalLight: () => {
+        const block = new DirectionalLight();
+        block.convertColors(
+          this.colorsData["directional_light"].r,
+          this.colorsData["directional_light"].g,
+          this.colorsData["directional_light"].b
+        )
+        return block;
+      }
     };
   }
 
@@ -64,6 +73,63 @@ class LevelBuilder extends Phaser.Scene {
     const i = Math.floor(mouseX / tileSize);
     const j = Math.floor(mouseY / tileSize);
     return { i, j };
+  }
+
+  createModal() {
+      const modal = this.rexUI.add.dialog({
+          x: this.cameras.main.width / 2,
+          y: this.cameras.main.height / 2,
+          width: 300,
+
+          background: this.add.rectangle(0, 0, 300, 200, 0x4e342e),
+
+          title: this.rexUI.add.label({
+              text: this.add.text(0, 0, 'Título do Modal', {
+                  fontSize: '20px'
+              }),
+              space: { left: 10, right: 10, top: 10, bottom: 10 }
+          }),
+
+          content: this.add.text(0, 0, 'Este é o conteúdo do modal.', {
+              fontSize: '16px'
+          }),
+
+          actions: [
+              this.rexUI.add.label({
+                  text: this.add.text(0, 0, 'OK', {
+                      fontSize: '16px'
+                  }),
+                  space: { left: 10, right: 10, top: 10, bottom: 10 }
+              }),
+              this.rexUI.add.label({
+                  text: this.add.text(0, 0, 'Cancel', {
+                      fontSize: '16px'
+                  }),
+                  space: { left: 10, right: 10, top: 10, bottom: 10 }
+              })
+          ],
+
+          space: {
+              title: 25,
+              content: 25,
+              action: 15,
+              left: 10,
+              right: 10,
+              top: 10,
+              bottom: 10
+          },
+
+          align: {
+              actions: 'right'
+          }
+      })
+      .layout()
+      .popUp(500);
+
+      modal.on('button.click', (button, groupName, index) => {
+          console.log(`Button ${button.text} clicked`);
+          modal.scaleDownDestroy(100);
+      });
   }
 
   createGrid(tileSize) {
@@ -81,6 +147,7 @@ class LevelBuilder extends Phaser.Scene {
         // Calcular as coordenadas x e y do tile atual
         const x = i * tileSize;
         const y = j * tileSize;
+
 
         // Criar um retângulo para representar o tile
         const tile = this.add.rectangle(x, y, tileSize, tileSize, 0xffffff);
@@ -133,9 +200,13 @@ class LevelBuilder extends Phaser.Scene {
     return (r << 16) | (g << 8) | b;
   }
 
+  toCamelCase(str) {
+      return str.replace(/_./g, (match) => match.charAt(1).toUpperCase());
+  }
+
   setSelectedBlock(color, key) {
     this.selectedColor = color;
-    this.selectedBlock = this.availableBlocks[key]();
+    this.selectedBlock = this.availableBlocks[this.toCamelCase(key)]();
     console.log(this.selectedBlock);
   }
 
@@ -155,24 +226,79 @@ class LevelBuilder extends Phaser.Scene {
     }
   }
 
-  async createBlocksSelector() {
-    let rectangle = this.add.rectangle(
-      window.innerWidth * 0.9,
-      350,
-      300,
-      600,
-      0xcccccc,
-      0.5
-    );
+  drawTriangle(startX, startY, x1, y1, x2, y2, x3, y3, r, g, b, key, index) {
+    let graphics = this.add.graphics();
 
-    // Add text in the center of the rectangle
-    const text = this.add.text(rectangle.x, 100, "Seletor de blocos", {
-      fontSize: "22px",
-      fill: "#000000",
-      align: "center",
+    // Defina o estilo do triângulo (opcional)
+    graphics.fillStyle(0x00FF00, 1); // Cor verde com opacidade 1
+    graphics.lineStyle(2, 0x000000, 1); // Linha preta com espessura de 2
+
+    // Comece um novo caminho
+    graphics.beginPath();
+
+    // Mova-se para o ponto inicial do triângulo
+    graphics.moveTo(startX, startY); // Ponto A (topo do triângulo)
+
+    // Desenhe linhas para os outros pontos
+    graphics.lineTo(x1, y1); // Ponto B (canto inferior direito)
+    graphics.lineTo(x2, y2); // Ponto C (canto inferior esquerdo)
+    graphics.lineTo(x3, y3); // Volte ao ponto A
+
+    // Preencha o triângulo
+    graphics.fillPath();
+
+    // Desenhe o contorno do triângulo
+    graphics.strokePath();
+
+    // Tornar o triângulo interativo
+    const hitArea = new Phaser.Geom.Polygon([
+        { x: startX, y: startY },
+        { x: x1, y: y1 },
+        { x: x2, y: y2 },
+        { x: x3, y: y3 }
+    ]);
+    graphics.setInteractive(hitArea, Phaser.Geom.Polygon.Contains);
+
+    // Adicionar eventos de interação
+    graphics.on('pointerdown', (pointer) =>  {
+        this.setSelectedBlock(this.rgbToHex(r, g, b), key);
+        this.clearNotSelectedBlocks(index);
+        
     });
 
-    // Center the text in the middle of the rectangle
+    graphics.on('pointerover', function (pointer) {
+        console.log('Pointer sobre o triângulo!');
+        graphics.lineStyle(2, 0x00FF00, 1);
+        graphics.fillPath();
+        graphics.strokePath();
+    });
+
+    graphics.on('pointerout', function (pointer) {
+        console.log('Pointer saiu do triângulo!');
+        graphics.lineStyle(2, 0x000000, 1);
+        graphics.fillPath();
+        graphics.strokePath();
+    });
+  }
+
+  async createBlocksSelector() {
+    let rectangle = this.add.rectangle(
+        window.innerWidth * 0.9,
+        350,
+        300,
+        600,
+        0xcccccc,
+        0.5
+    );
+
+    // Adiciona o texto no centro do retângulo
+    const text = this.add.text(rectangle.x, 100, "Seletor de blocos", {
+        fontSize: "22px",
+        fill: "#000000",
+        align: "center",
+    });
+
+    // Centraliza o texto no meio do retângulo
     text.setOrigin(0.5);
     const block = await fetch("blocks.json");
     const data = await block.json();
@@ -180,65 +306,130 @@ class LevelBuilder extends Phaser.Scene {
     let offset_y = 0;
     let offset_x = 0;
     keys.forEach((key, index) => {
-      const blockInfo = data[key];
-      const r = blockInfo["color"]["r"];
-      const g = blockInfo["color"]["g"];
-      const b = blockInfo["color"]["b"];
-      let rect = this.add.rectangle(
-        rectangle.x - 10 + offset_x,
-        220 + offset_y,
-        100,
-        100,
-        this.rgbToHex(r, g, b),
-        1
-      );
-      rect.setOrigin(1.0);
-      rect.setStrokeStyle(1, 0x000000);
+        const blockInfo = data[key];
+        const r = blockInfo["color"]["r"];
+        const g = blockInfo["color"]["g"];
+        const b = blockInfo["color"]["b"];
+        let shape = null;
+        let shapeX = rectangle.x - 60 + offset_x;
+        let shapeY = 220 + offset_y;
 
-      rect.setInteractive();
-
-      // Adicionar ouvintes de eventos para o retângulo
-      rect.on("pointerover", function () {
-        // Este código será executado quando o mouse estiver sobre o retângulo
-        rect.setStrokeStyle(1, 0x77ec65);
-      });
-
-      rect.on("pointerout", function () {
-        // Este código será executado quando o mouse sair do retângulo
-
-        const strokeColor = rect.strokeColor;
-        if (strokeColor !== 0xec8065) rect.setStrokeStyle(1, 0x000000);
-      });
-
-      let selected = false;
-
-      rect.on("pointerdown", () => {
-        // Este código será executado quando o retângulo for clicado
-        selected = true;
-        rect.setStrokeStyle(1, 0xec8065);
-        this.setSelectedBlock(this.rgbToHex(r, g, b), key);
-        this.clearNotSelectedBlocks(index);
-      });
-
-      const blockDescription = this.add.text(
-        rectangle.x - 10 - rect.width / 2 + offset_x,
-        rect.y + rect.height / 2 - 20,
-        blockInfo["description"],
-        {
-          fontSize: "22px",
-          fill: "#000000",
-          align: "center",
+        if(blockInfo["render_type"] == "triangle") {
+          this.drawTriangle(shapeX, shapeY - 50, shapeX - 50, shapeY + 50, shapeX + 50, shapeY + 50, shapeX, shapeY - 50, r, g, b, key, index);
         }
-      );
+        
+        else if (blockInfo["render_type"] == "circle") {
+            shape = this.add.graphics();
+            
+            // Define o estilo da linha (largura, cor, opacidade)
+            shape.lineStyle(2, 0x000000, 1.0);
+    
+            // Define a cor de preenchimento do círculo (cor, opacidade)
+            shape.fillStyle(this.rgbToHex(r, g, b), 1.0);
+    
+            // Desenha o círculo (x, y, raio)
+            shape.fillCircle(shapeX, shapeY, 50);
+            shape.strokeCircle(shapeX, shapeY, 50); // Adiciona a borda preta ao círculo
+        } else {
+            shape = this.add.rectangle(
+                shapeX,
+                shapeY,
+                100,
+                100,
+                this.rgbToHex(r, g, b),
+                1
+            );
+            shape.setOrigin(0.5); // Ajusta a origem para o centro do retângulo
+            shape.setStrokeStyle(2, 0x000000);
+        }
+        
+        if(blockInfo["render_type"] != "circle" && blockInfo["render_type"] != "triangle")
+        {
+          shape.setInteractive();
 
-      // Center the text vertically in the middle of the rectangle
-      blockDescription.setOrigin(0.5);
-      this.blocksSelection.push(rect);
+        // Adiciona ouvintes de eventos para o retângulo
+        shape.on("pointerover", () => {
+          
+          if (blockInfo["render_type"] == "circle") {
+              shape.clear();
+              shape.lineStyle(2, 0x77ec65, 1.0);
+              shape.fillStyle(this.rgbToHex(r, g, b), 1.0);
+              shape.fillCircle(shapeX, shapeY, 50);
+              shape.strokeCircle(shapeX, shapeY, 50); // Redesenha a borda com a nova cor
+          } else {
+              shape.setStrokeStyle(2, 0x77ec65);
+          }
+        });
 
-      if (index % 2 === 1) offset_y += 160;
-      offset_x = offset_x === 0 ? 120 : 0;
+        shape.on("pointerout", () => {
+          if (blockInfo["render_type"] == "circle") {
+              shape.clear();
+              shape.lineStyle(2, 0x000000, 1.0);
+              shape.fillStyle(this.rgbToHex(r, g, b), 1.0);
+              shape.fillCircle(shapeX, shapeY, 50);
+              shape.strokeCircle(shapeX, shapeY, 50); // Redesenha a borda com a cor original
+          } else {
+              const strokeColor = shape.strokeColor;
+              if (strokeColor !== 0xec8065) shape.setStrokeStyle(2, 0x000000);
+          }
+        });
+
+        let selected = false;
+
+        shape.on("pointerdown", () => {
+            selected = true;
+            if (blockInfo["render_type"] == "circle") {
+                shape.clear();
+                shape.lineStyle(2, 0xec8065, 1.0);
+                shape.fillStyle(this.rgbToHex(r, g, b), 1.0);
+                shape.fillCircle(shapeX, shapeY, 50);
+                shape.strokeCircle(shapeX, shapeY, 50); // Redesenha a borda com a cor de seleção
+            } else {
+                shape.setStrokeStyle(2, 0xec8065);
+            }
+            this.setSelectedBlock(this.rgbToHex(r, g, b), key);
+            this.clearNotSelectedBlocks(index);
+        });
+        }
+        
+
+        let blockDescription;
+        if (blockInfo["render_type"] == "circle" || blockInfo["render_type"] == "triangle") {
+            console.log(shapeX)
+            console.log(shapeY + 70)
+            blockDescription = this.add.text(
+                shapeX,
+                shapeY + 70, // Ajuste a posição vertical do texto para aparecer abaixo do círculo
+                blockInfo["description"],
+                {
+                    fontSize: "22px",
+                    fill: "#000000",
+                    align: "center",
+                }
+            );
+        } else {
+            blockDescription = this.add.text(
+                shapeX,
+                shapeY + shape.height / 2 + 20,
+                blockInfo["description"],
+                {
+                    fontSize: "22px",
+                    fill: "#000000",
+                    align: "center",
+                }
+            );
+        }
+
+        // Centraliza o texto verticalmente no meio do retângulo
+        blockDescription.setOrigin(0.5);
+        this.blocksSelection.push(shape);
+
+        if (index % 2 === 1) offset_y += 160;
+        offset_x = offset_x === 0 ? 120 : 0;
     });
   }
+
+
 
   findFirstNotEmpty() {
     let block = null;
@@ -463,6 +654,7 @@ class LevelBuilder extends Phaser.Scene {
         this.rightButtonIsPressed = !this.rightButtonIsPressed;
       }
     });
+    this.createModal()
   }
 
   update() {
@@ -503,6 +695,13 @@ const config = {
       gravity: { y: 200 },
     },
   },
+  plugins: {
+    scene: [{
+        key: 'rexUI',
+        plugin: window.rexUIPlugin,
+        mapping: 'rexUI'
+    }]
+  }
 };
 
 const game = new Phaser.Game(config);

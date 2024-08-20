@@ -43,7 +43,7 @@ let lightSphere = createLightSphere(scene, 0.05, 10, 10, lightPosition);
 
 //---------------------------------------------------------
 // Create and set the spotlight
-let spotLight = new THREE.SpotLight("rgb(255,255,255)");
+let spotLight = new THREE.SpotLight("rgb(255,0,0)");
   spotLight.position.copy(lightPosition);
   spotLight.distance = 0;
   spotLight.castShadow = true;
