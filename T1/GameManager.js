@@ -4,10 +4,14 @@ import {
     initRenderer,
     initDefaultBasicLight,
     setDefaultMaterial,
+    createGroundPlane,
+    createLightSphere,
+    radiansToDegrees,
     InfoBox,
     SecondaryBox,
     onWindowResize,
     createGroundPlaneXZ,
+    getMaxSize,
 } from "../libs/util/util.js";
 
 import { CameraControls } from "./camera.js";
@@ -17,21 +21,39 @@ import { Entity } from "./entities/entity.js";
 import { getConfig } from "./config.js";
 import { CollisionBlock } from "./blocks.js";
 import { AISystem, Bot } from "./bot.js";
+import { preloadCommonTankModel } from "./entities/tanks/models/common_tank_model.js";
+import { TeapotGeometry } from "../build/jsm/geometries/TeapotGeometry.js";
+import { loadGLBFile } from "./models.js";
+import { getTexture, loadTexture } from "./textures.js";
 
 export class GameManager {
-    constructor(level, renderer = null) {
+    constructor(level, lighting, renderer = null) {
         this.levelData = level;
         this.renderer = renderer;
         this.config = getConfig();
+        this.lighting = lighting;
     }
 
-    start() {
+    async start() {
         this.setup();
         this.defineLevelColors();
+        await this.loadModels();
+        await this.loadTextures();
         this.loadLevel(this.levelData);
         this.createPlayers();
         this.createCollisionSystem();
         this.createAISystem();
+    }
+
+    async loadModels() {
+        await preloadCommonTankModel().catch((error) =>
+            console.error("Error preloading tank model:", error)
+        );
+    }
+
+    async loadTextures() {
+        loadTexture("./assets/textures/basic_wall.jpg", "basic_wall");
+        loadTexture("./assets/textures/basic_floor.jpg", "basic_floor");
     }
 
     listening() {
@@ -82,8 +104,12 @@ export class GameManager {
         ); //min = 2, max = 4
         this.scene = new THREE.Scene(); // Create main scene
         if (this.renderer === null) this.renderer = initRenderer(); // Init a basic renderer
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.material = setDefaultMaterial(); // create a basic material
-        this.light = initDefaultBasicLight(this.scene);
+        // this.light = initDefaultBasicLight(this.scene);
+        const AmbientLight = new THREE.AmbientLight(0xffffff, 0.1); // soft white light
+        this.scene.add(AmbientLight);
         this.controls = new InfoBox();
         this.shotInfo = new SecondaryBox();
         this.keyboard = new KeyboardState();
@@ -135,6 +161,116 @@ export class GameManager {
         this.spawnColor = 0xff0000;
     }
 
+    createLightSphere(scene, radius, widthSegments, heightSegments, position) {
+        var geometry = new THREE.SphereGeometry(
+            radius,
+            widthSegments,
+            heightSegments,
+            0,
+            Math.PI * 2,
+            0,
+            Math.PI
+        );
+        var material = new THREE.MeshBasicMaterial({
+            color: "rgb(255,255,50)",
+        });
+        var object = new THREE.Mesh(geometry, material);
+        object.visible = true;
+        object.position.copy(position);
+        scene.add(object);
+
+        return object;
+    }
+
+    createTeapot(x, y, z, color) {
+        let geometry = new TeapotGeometry(17);
+        let material = new THREE.MeshPhongMaterial({
+            color,
+            shininess: "100",
+            specular: "white",
+        });
+        material.side = THREE.DoubleSide;
+        let obj = new THREE.Mesh(geometry, material);
+        obj.castShadow = true;
+        obj.position.set(x, y, z);
+        this.scene.add(obj);
+    }
+
+    degrees_to_radians(degrees) {
+        // Store the value of pi.
+        let pi = Math.PI;
+        // Multiply degrees by pi divided by 180 to convert to radians.
+        return degrees * (pi / 180);
+    }
+
+    normalizeDegrees(degress) {
+        if (degress > 180) {
+            return degress - 180;
+        }
+        return degress;
+    }
+
+    drawLights(x, y, z, objective_angle = 0) {
+        let asset = {
+            object: null,
+            loaded: false,
+            bb: new THREE.Box3(),
+        };
+        loadGLBFile(asset, "./assets/models/LampPost.glb", 46, this.scene, {
+            x,
+            y: y - 42,
+            z,
+        });
+
+        let lightPosition = new THREE.Vector3(x, y, z);
+
+        // Sphere to represent the light
+        let lightSphere = this.createLightSphere(
+            this.scene,
+            1,
+            10,
+            10,
+            lightPosition
+        );
+        //this.createTeapot( 320,  18.5,  180, 0xffffff);
+
+        //---------------------------------------------------------
+        // Create and set the spotlight
+        let spotLight = new THREE.SpotLight(`rgb(240,240,136)`);
+        spotLight.position.copy(lightPosition);
+        const directionalZ =
+            60 * Math.cos(this.degrees_to_radians(objective_angle)) * -1;
+        const directionalX =
+            60 * Math.sin(this.degrees_to_radians(objective_angle));
+        spotLight.target.position.set(x + directionalX, -50, z + directionalZ);
+        spotLight.distance = 100;
+        spotLight.castShadow = true;
+        spotLight.decay = 0.4;
+        spotLight.penumbra = 0.8;
+        spotLight.intensity = 30;
+        spotLight.angle = THREE.MathUtils.degToRad(33);
+        // Shadow Parameters
+        spotLight.shadow.mapSize.width = 1024;
+        spotLight.shadow.mapSize.height = 1024;
+        spotLight.shadow.camera.fov = radiansToDegrees(spotLight.angle);
+        spotLight.shadow.camera.near = 10;
+        spotLight.shadow.camera.far = 200;
+        // Enable shadows for the spotlight
+        spotLight.castShadow = true;
+
+        // Adjust shadow properties for quality
+        spotLight.shadow.mapSize.width = 1024;
+        spotLight.shadow.mapSize.height = 1024;
+        spotLight.shadow.camera.fov = 30; // Field of view for the shadow camera
+        this.scene.add(spotLight);
+        spotLight.target.updateMatrixWorld();
+        // Create helper for the spotlight
+        // const spotHelper = new THREE.SpotLightHelper(spotLight, 0xFF8C00);
+        // this.scene.add(spotHelper);
+        // const shadowHelper = new THREE.CameraHelper(spotLight.shadow.camera);
+        // this.scene.add(shadowHelper);
+    }
+
     loadLevel(level) {
         const levelHeight = 5;
         const data = level.blocks;
@@ -150,30 +286,40 @@ export class GameManager {
             };
         };
 
-        const createBlock = (i, j, color, yTranslation) => {
+        const createBlock = (
+            i,
+            j,
+            yTranslation,
+            materialParameters,
+            hasCollision = false,
+        ) => {
             const geometry = new THREE.BoxGeometry(
                 BLOCK_SIZE,
                 BLOCK_SIZE,
                 BLOCK_SIZE
             );
-            const material = new THREE.MeshBasicMaterial({ color });
+            let material = new THREE.MeshLambertMaterial(materialParameters);
             const cube = new THREE.Mesh(geometry, material);
+            cube.receiveShadow = true;
+
             const translation = getTranslation(i, j, yTranslation);
+            //console.log(translation)
             cube.translateX(translation.x);
             cube.translateY(translation.y);
             cube.translateZ(translation.z);
+            cube.castShadow = true;
 
-            if (color === this.wallColor) {
+            if (hasCollision) {
                 let wall = new CollisionBlock();
                 wall.setBlockSize(BLOCK_SIZE);
                 wall.setModel(cube);
                 wall.createCollisionShape();
                 this.walls.push(wall);
-                let helper = new THREE.Box3Helper(
-                    wall.collisionShape,
-                    0x000000
-                );
-                this.scene.add(helper);
+                // let helper = new THREE.Box3Helper(
+                //     wall.collisionShape,
+                //     0x000000
+                // );
+                // this.scene.add(helper);
             }
 
             this.scene.add(cube);
@@ -197,25 +343,32 @@ export class GameManager {
                         createBlock(
                             i,
                             j,
-                            this.groundColor,
-                            -BLOCK_SIZE / 2 + levelHeight
+                            -BLOCK_SIZE / 2 + levelHeight,
+                            {
+                                color: data[i][j].color,
+                                map: getTexture("basic_floor")
+                            },
+                            false
+                            
                         );
                         break;
                     case "WallBlock":
                         createBlock(
                             i,
                             j,
-                            this.wallColor,
-                            BLOCK_SIZE / 2 + levelHeight
+                            BLOCK_SIZE / 2 + levelHeight,
+                            {
+                                color: data[i][j].color,
+                                map: getTexture("basic_wall"),
+                            },
+                            true,
                         );
                         break;
                     case "Spawn":
-                        createBlock(
-                            i,
-                            j,
-                            this.spawnColor,
-                            -BLOCK_SIZE / 2 + levelHeight
-                        );
+                        createBlock(i, j, -BLOCK_SIZE / 2 + levelHeight, {
+                            color: this.spawnColor,
+                            map: getTexture("basic_wall"),
+                        });
                         const translation = getTranslation(i, j, -13);
                         const spawn = [translation.x, translation.z];
                         this.playerSpawnPoint[spawnIndex] = spawn;
@@ -227,7 +380,6 @@ export class GameManager {
             }
         }
         if (spawnIndex < this.numberOfPlayers) {
-            console.log(spawnIndex);
             for (let i = spawnIndex; i < this.numberOfPlayers; i++) {
                 if (this.playerSpawnPoint[i - spawnIndex])
                     this.playerSpawnPoint.push(
@@ -236,6 +388,41 @@ export class GameManager {
                 else this.playerSpawnPoint.push([2, 2]);
             }
         }
+
+        for (let i = 0; i < this.lighting.length; i++) {
+            for (let j = 0; j < this.lighting[i].length; j++) {
+                if ("angle" in this.lighting[i][j]) {
+                    let translated = getTranslation(
+                        i,
+                        j,
+                        BLOCK_SIZE / 2 + levelHeight
+                    );
+
+                    let lightPosition = new THREE.Vector3(
+                        translated.x,
+                        translated.y + 50,
+                        translated.z
+                    );
+
+                    // Sphere to represent the light
+                    let lightSphere = this.createLightSphere(
+                        this.scene,
+                        1,
+                        10,
+                        10,
+                        lightPosition
+                    );
+                    this.drawLights(
+                        translated.x,
+                        translated.y + 50,
+                        translated.z,
+                        this.lighting[i][j]["angle"]
+                    );
+                }
+            }
+        }
+
+        //
     }
 
     createCollisionSystem() {
@@ -315,7 +502,7 @@ export class GameManager {
         this.scene.remove(player.tank.healthBar.model);
 
         player.tank.projectiles.forEach((projectile) => {
-            this.scene.remove(projectile);
+            this.scene.remove(projectile.projectile);
         });
 
         this.deadPlayers[key] = player;
@@ -325,7 +512,7 @@ export class GameManager {
     }
 
     displayUpdate() {
-        let info = "Tiros Recebidos: ";
+        let info = "Vida Perdida: ";
         for (const key in this.players) {
             const player = this.players[key];
             let shotsTaken = player.tank.lostHealth;
@@ -353,9 +540,15 @@ export class GameManager {
         for (const key in this.players) {
             const player = this.players[key];
             let playerProjectiles = player.tank.projectiles;
-            for (let index = playerProjectiles.length - 1; index >= 0; index--) {
+            for (
+                let index = playerProjectiles.length - 1;
+                index >= 0;
+                index--
+            ) {
                 this.projectiles.push(playerProjectiles[index]);
             }
+
+            // console.log(player.tank.projectiles);
             player.tank.projectiles = [];
         }
     }
@@ -365,7 +558,9 @@ export class GameManager {
 
         let indicesToRemove = [];
 
-        this.projectiles.forEach((projectile, index) => {
+        // Iterate over projectiles in reverse order
+        for (let index = this.projectiles.length - 1; index >= 0; index--) {
+            const projectile = this.projectiles[index];
             if (!projectile.isAlreadyInScene()) {
                 this.scene.add(projectile.projectile);
                 projectile.setAlreadyInScene(true);
@@ -376,12 +571,14 @@ export class GameManager {
             } else {
                 projectile.moveStep();
             }
-        });
+        }
 
         // Remove elements using indicesToRemove
         indicesToRemove.forEach((index) => {
             this.projectiles.splice(index, 1);
         });
+
+        // console.log(this.projectiles);
     }
 
     updateHealthBars() {
@@ -421,8 +618,8 @@ export class GameManager {
             this.checkCollision();
             this.displayUpdate();
             //this.render();
-            this.updateProjectiles();
             this.updateHealthBars();
+            this.updateProjectiles();
             // this.updateHitBoxDisplay();
         }
     }

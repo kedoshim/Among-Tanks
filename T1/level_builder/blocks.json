@@ -22,5 +22,14 @@
             "b": 0
         },
         "description": "Spawn"
+    },
+    "directional_light": {
+        "color": {
+            "r": 0,
+            "g": 255,
+            "b": 0
+        },
+        "description": "D-Light",
+        "render_type": "triangle"
     }
 }
