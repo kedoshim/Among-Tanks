@@ -414,6 +414,14 @@ class ResizableScreen:
                 container=self.container,
                 object_id=key
             )
+
+            pygame_gui.elements.UILabel(
+                relative_rect=pygame.Rect((30 if i == False else constraints.BLOCK_SELECTOR_WIDTH-50-constraints.BLOCK_SIZE, 
+                                        (int(index // 2) + 1) * constraints.BLOCK_SELECTOR_GAP_Y + 42), (60, 15)),  # Ajuste no y para 55
+                text=block["description"],
+                manager=self.manager,
+                container=self.container
+            )
             
             utils.change_button_color(
                 button,
@@ -478,7 +486,11 @@ class ResizableScreen:
         return first_vertex, second_vertex, third_vertex
 
 
-    
+    def add_turret(self, x, y):
+        self.level.turret.append({
+            "x": x,
+            "y": y,
+        })
     
     def draw_square_on_tile(self):
         key = self.selected_block
@@ -492,6 +504,24 @@ class ResizableScreen:
                     _x, _y = self.get_tile_mouse_position(mouse_pos)
                     pygame.draw.polygon(self.screen, color, self.get_triangle_points((_x, _y), self.angle))
                 if self.level.blocks[key]["render_type"] == "eraser" or self.level.blocks[key]["render_type"] == "selector":
+                    temp_surface = pygame.Surface((self.grid_size, self.grid_size), pygame.SRCALPHA)
+                    # Initializing Color
+                    color = (255,0,0)
+                    mouse_pos = pygame.mouse.get_pos()
+                    x, y = self.get_tile_mouse_position(mouse_pos)
+                    if self.selected_block == None:
+                        temp_surface.set_alpha(48)
+                    else:
+                        color = (self.level.blocks[self.selected_block]["color"]["r"], self.level.blocks[self.selected_block]["color"]["g"], 
+                                self.level.blocks[self.selected_block]["color"]["b"])
+                        temp_surface.set_alpha(255)
+                    # Drawing Rectangle
+                    pygame.draw.rect(temp_surface, color, pygame.Rect(0, 0, self.grid_size, self.grid_size))
+
+                    # Blite a superfície temporária na tela
+                    self.screen.blit(temp_surface, (x*self.grid_size, y*self.grid_size))
+
+                if self.level.blocks[key]["render_type"] == "eraser" or self.level.blocks[key]["render_type"] == "turret" or self.level.blocks[key]["render_type"] == "selector":
                     temp_surface = pygame.Surface((self.grid_size, self.grid_size), pygame.SRCALPHA)
                     # Initializing Color
                     color = (255,0,0)
@@ -543,7 +573,16 @@ class ResizableScreen:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:  # Botão esquerdo do mouse
                         x, y = event.pos
-                        if self.selected_block != None:
+                        mouse_pos = (x,y)
+                        if self.container.rect.collidepoint(mouse_pos):
+                            print("Clique no Block Selector container")
+                        elif self.selected_block_container.rect.collidepoint(mouse_pos):
+                            print("Clique no Selected Block container")
+                        elif self.generate_json_container.rect.collidepoint(mouse_pos):
+                            print("Clique no Generate JSON container")
+                        elif self.properties_container.rect.collidepoint(mouse_pos):
+                            print("Clique no Properties container")
+                        elif self.selected_block != None:
                             tile_x, tile_y = self.get_tile_mouse_position((x,y))
                             key = self.selected_block
                             if not "render_type" in self.level.blocks[key]:
@@ -556,14 +595,16 @@ class ResizableScreen:
                                 self.level.erase(tile_x, tile_y)
                             elif self.level.blocks[key]["render_type"] == "selector":
                                 self.open_properties_window((tile_x, tile_y))
+                            elif self.level.blocks[key]["render_type"] == "turret":
+                                self.add_turret(tile_x, tile_y)
 
                 if event.type == pygame.MOUSEWHEEL:
                     if event.y > 0:
                         if self.angle > 0:
-                            self.angle -= 1
+                            self.angle -= 5
                     elif event.y < 0:
                         if self.angle < 360:
-                            self.angle += 1
+                            self.angle += 5
 
 
 
@@ -618,6 +659,22 @@ class ResizableScreen:
                         
                         color = self.level.lightning[i][j]["color"]
                         pygame.draw.polygon(self.screen, color, self.get_triangle_points((i, j), self.level.lightning[i][j]["angle"]))
+
+            for i in range(len(self.level.turret)):
+                turret = self.level.turret[i]
+                x = turret["x"]
+                y = turret["y"]
+                temp_surface = pygame.Surface((self.grid_size, self.grid_size), pygame.SRCALPHA)
+                # Initializing Color
+                color = self.level.blocks["turret"]["color"]
+                _color = (color["r"], color["g"], color["b"])
+                temp_surface.set_alpha(255)
+                # Drawing Rectangle
+                pygame.draw.rect(temp_surface, _color, pygame.Rect(0, 0, self.grid_size, self.grid_size))
+
+                # Blite a superfície temporária na tela
+                self.screen.blit(temp_surface, (x*self.grid_size, y*self.grid_size))
+
             self.draw_grid()
             self.draw_square_on_tile()
 

@@ -8,6 +8,7 @@ class LevelBuilder:
         self.representation = self.create_array(x, y)
         self.size = (x, y)
         self.lightning = [[{} for _ in range(y)] for _ in range(x)]
+        self.turret = []
 
 
     def create_array(self, x, y) -> list[Block]:
@@ -33,7 +34,7 @@ class LevelBuilder:
                 level_arr[i][j] = block_d
 
         with open('level.json', 'w+') as f:
-            json.dump({"blocks": level_arr, "lightning": self.lightning}, f, indent=4)
+            json.dump({"blocks": level_arr, "lightning": self.lightning, "turrets": self.turret}, f, indent=4)
 
     def hex_to_rgb(self, hex_value):
         # Converte o valor inteiro em uma string hexadecimal, removendo o prefixo '0x'
@@ -59,6 +60,7 @@ class LevelBuilder:
                 self.representation[i][j] = b
         # self.representation = decoded["blocks"]
         self.lightning = decoded["lightning"]
+        self.turret = decoded["turrets"]
 
     def erase(self, tile_x, tile_y):
         if "color" in self.lightning[tile_x][tile_y]:
