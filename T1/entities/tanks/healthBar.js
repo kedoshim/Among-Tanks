@@ -21,7 +21,7 @@ export class HealthBar {
     }
 
   setHealthBarPosition(tankPosition) {
-    this.model.position.set(tankPosition.x, tankPosition.y - 9, tankPosition.z + 10);
+    this.model.position.set(tankPosition.x, tankPosition.y, tankPosition.z + 15);
     // console.log(this.model.position)
     }
 
