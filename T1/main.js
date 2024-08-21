@@ -5,7 +5,7 @@ import {
 import { GameManager } from "./GameManager.js";
 
 import { loadConfig } from "./config.js";
-import { loadLevels, getNextLevel, loadLights, getLights } from "./levels.js";
+import { loadLevels, getNextLevel, loadLights, getLights, getLevel } from "./levels.js";
 
 
 
@@ -30,7 +30,20 @@ await manager.start();
     manager.start();
     
     manager.setResetFunction(resetFunction);
+    manager.setChangeLevelFunction(changeLevelFunction);
   };
+
+  const changeLevelFunction = (index) => {
+    console.log("restarting game");
+
+    level = getLevel(index);
+    lightning = getLights(index);
+    manager = new GameManager(level, lightning, renderer);
+    manager.start();
+
+    manager.setResetFunction(resetFunction);
+    manager.setChangeLevelFunction(changeLevelFunction);
+  }
   
   function render() {
     manager.frame();
@@ -39,6 +52,7 @@ await manager.start();
   }
   
   manager.setResetFunction(resetFunction);
+  manager.setChangeLevelFunction(changeLevelFunction);
   render();
 }
 
