@@ -49,5 +49,14 @@
         },
         "description": "Selector",
         "render_type": "selector"
+    },
+    "turret": {
+        "color": {
+            "r": 0,
+            "g": 190,
+            "b": 60
+        },
+        "description": "Turret",
+        "render_type": "turret"
     }
 }
