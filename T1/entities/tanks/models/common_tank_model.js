@@ -37,8 +37,8 @@ export function preloadCommonTankModel() {
 }
 
 export function createCommonTank(tankColor, amogColor) {
-    if (cachedTank) {
-        console.log("Using cached tank model");
+    // if (cachedTank) {
+    //     console.log("Using cached tank model");
 
         // Clone the cached tank model
         const tankClone = cachedTank.clone();
