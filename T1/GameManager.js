@@ -283,7 +283,7 @@ export class GameManager {
                 BLOCK_SIZE,
                 BLOCK_SIZE
             );
-            let material = new THREE.MeshStandardMaterial(materialParameters);
+            let material = new THREE.MeshLambertMaterial(materialParameters);
             const cube = new THREE.Mesh(geometry, material);
             cube.receiveShadow = true;
 
@@ -345,8 +345,6 @@ export class GameManager {
                             {
                                 color: data[i][j].color,
                                 map: getTexture("basic_wall"),
-                                metalness: 1,
-                                roughness: 0.6
                             },
                             true,
                         );
@@ -355,8 +353,6 @@ export class GameManager {
                         createBlock(i, j, -BLOCK_SIZE / 2 + levelHeight, {
                             color: this.spawnColor,
                             map: getTexture("basic_wall"),
-                            metalness: 1,
-                            roughness: 0.3,
                         });
                         const translation = getTranslation(i, j, -13);
                         const spawn = [translation.x, translation.z];
