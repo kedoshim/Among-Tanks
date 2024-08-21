@@ -51,7 +51,7 @@ export class GameManager {
 
     async loadTextures() {
         loadTexture("./assets/textures/basic_wall.jpg", "basic_wall");
-        loadTexture("./assets/textures/plank_floor.jpg", "basic_floor");
+        loadTexture("./assets/textures/basic_floor.jpg", "basic_floor");
     }
 
     listening() {
@@ -221,19 +221,19 @@ export class GameManager {
 
         //---------------------------------------------------------
         // Create and set the spotlight
-        let spotLight = new THREE.SpotLight(`rgb(255,255,255)`);
+        let spotLight = new THREE.SpotLight(`rgb(240,240,136)`);
         spotLight.position.copy(lightPosition);
         const directionalZ =
             60 * Math.cos(this.degrees_to_radians(objective_angle)) * -1;
         const directionalX =
             60 * Math.sin(this.degrees_to_radians(objective_angle));
         spotLight.target.position.set(x + directionalX, -50, z + directionalZ);
-        spotLight.distance = 0;
+        spotLight.distance = 100;
         spotLight.castShadow = true;
-        spotLight.decay = 0.1;
+        spotLight.decay = 0.4;
         spotLight.penumbra = 0.8;
         spotLight.intensity = 30;
-        spotLight.angle = THREE.MathUtils.degToRad(25);
+        spotLight.angle = THREE.MathUtils.degToRad(33);
         // Shadow Parameters
         spotLight.shadow.mapSize.width = 1024;
         spotLight.shadow.mapSize.height = 1024;
@@ -274,23 +274,16 @@ export class GameManager {
         const createBlock = (
             i,
             j,
-            color,
             yTranslation,
+            materialParameters,
             hasCollision = false,
-            texture = null
         ) => {
             const geometry = new THREE.BoxGeometry(
                 BLOCK_SIZE,
                 BLOCK_SIZE,
                 BLOCK_SIZE
             );
-            let material = new THREE.MeshLambertMaterial({ color });
-            if (texture) {
-                material = new THREE.MeshLambertMaterial({
-                    map: texture,
-                    color,
-                });
-            }
+            let material = new THREE.MeshStandardMaterial(materialParameters);
             const cube = new THREE.Mesh(geometry, material);
             cube.receiveShadow = true;
 
@@ -307,11 +300,11 @@ export class GameManager {
                 wall.setModel(cube);
                 wall.createCollisionShape();
                 this.walls.push(wall);
-                let helper = new THREE.Box3Helper(
-                    wall.collisionShape,
-                    0x000000
-                );
-                this.scene.add(helper);
+                // let helper = new THREE.Box3Helper(
+                //     wall.collisionShape,
+                //     0x000000
+                // );
+                // this.scene.add(helper);
             }
 
             this.scene.add(cube);
@@ -335,29 +328,36 @@ export class GameManager {
                         createBlock(
                             i,
                             j,
-                            data[i][j].color,
                             -BLOCK_SIZE / 2 + levelHeight,
-                            false,
-                            getTexture("basic_floor")
+                            {
+                                color: data[i][j].color,
+                                map: getTexture("basic_floor")
+                            },
+                            false
+                            
                         );
                         break;
                     case "WallBlock":
                         createBlock(
                             i,
                             j,
-                            data[i][j].color,
                             BLOCK_SIZE / 2 + levelHeight,
+                            {
+                                color: data[i][j].color,
+                                map: getTexture("basic_wall"),
+                                metalness: 1,
+                                roughness: 0.6
+                            },
                             true,
-                            getTexture("basic_wall")
                         );
                         break;
                     case "Spawn":
-                        createBlock(
-                            i,
-                            j,
-                            this.spawnColor,
-                            -BLOCK_SIZE / 2 + levelHeight
-                        );
+                        createBlock(i, j, -BLOCK_SIZE / 2 + levelHeight, {
+                            color: this.spawnColor,
+                            map: getTexture("basic_wall"),
+                            metalness: 1,
+                            roughness: 0.3,
+                        });
                         const translation = getTranslation(i, j, -13);
                         const spawn = [translation.x, translation.z];
                         this.playerSpawnPoint[spawnIndex] = spawn;
