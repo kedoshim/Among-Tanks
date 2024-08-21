@@ -12,7 +12,7 @@ export class Projectile {
         this.direction = direction.normalize();
 
         this.projectile = this.build_projectile(1, color); // modelo do projétil
-        this.projectile.position.set(position.x, position.y - 3, position.z);
+        this.projectile.position.set(position.x, position.y+2, position.z);
         this.lastPosition = new THREE.Vector3(position.x, position.y - 3, position.z)
 
         this.collisionShape = new THREE.Box3().setFromObject(this.projectile);
