@@ -21,6 +21,21 @@ export function createTurret(
         base.material = new THREE.MeshPhongMaterial({
             color: floorColor,
         });
+
+        let invisible = new THREE.BoxGeometry(17, 17, 17);
+
+        // Create an invisible material
+        let invisibleMaterial = new THREE.MeshBasicMaterial({
+            color: 0x000000, // The color doesn't matter because the material will be transparent
+            transparent: true,
+            opacity: 0, // Set opacity to 0 to make it invisible
+        });
+
+        // Create the mesh with the geometry and invisible material
+        invisible = new THREE.Mesh(invisible, invisibleMaterial);
+
+        base.add(invisible);
+
         base.castShadow = true;
         return base;
     }

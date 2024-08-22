@@ -467,14 +467,29 @@ export class GameManager {
             };
         };
         for(let i = 0; i < this.turretsPos.length; i++) {
-            let data = this.turretsPos[i]
-            let translation = getTranslation(data.x,
+            let data = this.turretsPos[i];
+            let translation = getTranslation(
+                data.x,
                 data.y,
-                -BLOCK_SIZE / 2 + levelHeight + 8.6)
-            let turret = createTurret(translation.x, translation.y, translation.z)
-            this.scene.add(turret.base)
-            this.scene.add(turret.body)
-            this.turrets.push(new Turret(turret.body, this.players[1], this.bots))
+                -BLOCK_SIZE / 2 + levelHeight + 8.6
+            );
+            let turret = createTurret(
+                translation.x,
+                translation.y,
+                translation.z
+            );
+            this.scene.add(turret.base);
+            this.scene.add(turret.body);
+
+            let wall = new CollisionBlock();
+            wall.setBlockSize(BLOCK_SIZE);
+            wall.setModel(turret.base);
+            wall.createCollisionShape();
+            this.walls.push(wall);
+
+            this.turrets.push(
+                new Turret(turret.body, this.players[1], this.bots)
+            );
         }
 
     }
