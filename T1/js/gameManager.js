@@ -215,20 +215,6 @@ export class GameManager {
         return object;
     }
 
-    // createTeapot(x, y, z, color) {
-    //     let geometry = new TeapotGeometry(17);
-    //     let material = new THREE.MeshPhongMaterial({
-    //         color,
-    //         shininess: "100",
-    //         specular: "white",
-    //     });
-    //     material.side = THREE.DoubleSide;
-    //     let obj = new THREE.Mesh(geometry, material);
-    //     obj.castShadow = true;
-    //     obj.position.set(x, y, z);
-    //     this.scene.add(obj);
-    // }
-
     drawLights(x, y, z, objective_angle = 0) {
         let asset = {
             object: null,
