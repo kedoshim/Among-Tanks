@@ -571,16 +571,18 @@ export class Turret {
             }
         }
 
-        self.shootParams = shootParams;
+        this.shootParams = shootParams;
         this._bulletSpeed = this.shootParams.bulletSpeed;
         TouchList._damage = this.shootParams.damage;
 
         this._shootCooldown = this.shootParams.shootCooldown;
-        this._lastShootTime = 0;
+        this._lastShootTime = Date.now();
+        this._projectiles = []
     }
 
     trackNearestTank() {
-        let playerPosition = this.players._tank.model.position;
+        
+        let playerPosition = this.players._tank.model.position.clone();
         let bots = this.bots;
         let turretPosition = this.model.position.clone();
 
@@ -588,7 +590,7 @@ export class Turret {
 
         positions.push(playerPosition);
         bots.forEach(bot => {
-            positions.push(bot.player_tank._tank.model.position);
+            positions.push(bot.player_tank._tank.model.position.clone());
         });
 
 
@@ -596,7 +598,7 @@ export class Turret {
         let nearestPosition;
 
         positions.forEach(pos => {
-            const actualDistance = pos.distanceTo(turretPosition);
+            const actualDistance = pos.distanceTo(turretPosition.clone());
             if (actualDistance < shortestDistance) {
                 shortestDistance = actualDistance;
                 nearestPosition = pos;
@@ -606,7 +608,7 @@ export class Turret {
         let turretDirection = new THREE.Vector3(0, 0, 1);
         turretDirection.applyQuaternion(this.model.quaternion);
 
-        let target = nearestPosition.sub(turretPosition);
+        let target = nearestPosition.sub(turretPosition.clone());
 
         // rotate right
         let rotationAngle = Math.PI / 32;
@@ -629,17 +631,18 @@ export class Turret {
 
     shoot() {
         const currentTime = Date.now();
-        if (currentTime - this._lastShootTime >= this.shootParams.shootCooldown) {
+        console.log(currentTime - this._lastShootTime)
+        if (currentTime - this._lastShootTime < this.shootParams.shootCooldown) {
             return;
         }
-
+        console.log("DOASKOPDKPAOSDop")
         this._lastShootTime = currentTime;
 
         const length = 11;
         const projectilePosition = this.model.position.clone(); // Posição inicial do projétil é a mesma do bot
 
         const turretForwardVector = new THREE.Vector3(0, 0, 1); // Vetor de avanço do bot na direção Z positiva
-        turretForwardVector.applzQuaternion(this.model.quaternion); // Aplicar rotação do bot ao vetor de avanço
+        turretForwardVector.applyQuaternion(this.model.quaternion); // Aplicar rotação do bot ao vetor de avanço
 
         // Calcular a direção do projétil com base no vetor de avanço do bot
         const originalDirection = turretForwardVector.normalize();
@@ -653,7 +656,7 @@ export class Turret {
             originalDirection.clone(),
             this._bulletSpeed,
             this._damage,
-            ricochetsAmount=0
+            0
         );
         this._projectiles.push(projectile);
     }

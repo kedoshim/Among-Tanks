@@ -58,6 +58,13 @@ export function getLights(ind = null) {
     return lightning[index]
 }
 
+export function getTurrets(ind = null) {
+  if (ind)
+    return lightning[ind];
+  else
+    return lightning[index]
+}
+
 
 function decode(json) {
     let firstNotEmpty = findFirstNotEmpty(json);

@@ -3,9 +3,11 @@ import { CSG } from "../../../../libs/other/CSGMesh.js";
 
 let cachedTurret = null;
 
-export function createTurret() {
+export function createTurret(_x, _y, _z) {
     if (cachedTurret)
         return cachedTurret.clone();
+
+    let material = new THREE.MeshPhongMaterial({ color: "white" });
     
     function createBaseCSG(width = 4) {
         let cilynderGeometry = new THREE.CylinderGeometry(width, width, 1);
@@ -272,6 +274,8 @@ export function createTurret() {
     //cannon
     let cannon = createCannonCSG(0, 5.8, 0);
     base.add(cannon);
+    base.position.set(_x, _y, _z)
+    console.log("DKPSDPOWPOD")
 
     return base;
 

@@ -25,6 +25,7 @@ import { preloadCommonTankModel } from "./entities/tanks/models/common_tank_mode
 import { TeapotGeometry } from "../build/jsm/geometries/TeapotGeometry.js";
 import { loadGLBFile } from "./models.js";
 import { getTexture, loadTexture } from "./textures.js";
+import {createTurret} from './entities/turret/model/turret_model.js'
 
 export class GameManager {
     constructor(level, lighting, renderer = null) {
@@ -32,6 +33,14 @@ export class GameManager {
         this.renderer = renderer;
         this.config = getConfig();
         this.lighting = lighting;
+        this.turretsPos = [
+            {
+                "x": 19,
+                "y": 11
+            }
+        ]
+
+        
     }
 
     async start() {
@@ -41,6 +50,7 @@ export class GameManager {
         await this.loadTextures();
         this.loadLevel(this.levelData);
         this.createPlayers();
+        this.createTurrets(this.levelData);
         this.createCollisionSystem();
         this.createAISystem();
         this.createTurretSystem();
@@ -118,7 +128,7 @@ export class GameManager {
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.material = setDefaultMaterial(); // create a basic material
         // this.light = initDefaultBasicLight(this.scene);
-        const AmbientLight = new THREE.AmbientLight(0xffffff, 0.1); // soft white light
+        const AmbientLight = new THREE.AmbientLight(0xffffff, 0.8); // soft white light
         this.scene.add(AmbientLight);
         this.controls = new InfoBox();
         this.shotInfo = new SecondaryBox();
@@ -401,6 +411,8 @@ export class GameManager {
             }
         }
 
+        
+
         for (let i = 0; i < this.lighting.length; i++) {
             for (let j = 0; j < this.lighting[i].length; j++) {
                 if ("angle" in this.lighting[i][j]) {
@@ -433,8 +445,34 @@ export class GameManager {
                 }
             }
         }
-
+        
+        
         //
+    }
+
+    createTurrets(level) {
+        const levelHeight = 5;
+        const data = level.blocks;
+        let { x, y } = level.offset;
+        const BLOCK_SIZE = 17;
+        const getTranslation = (i, j, yTranslation) => {
+            
+            return {
+                x: BLOCK_SIZE * i + 1 - x,
+                y: yTranslation,
+                z: BLOCK_SIZE * j + 1 - y,
+            };
+        };
+        for(let i = 0; i < this.turretsPos.length; i++) {
+            let data = this.turretsPos[i]
+            let translation = getTranslation(data.x,
+                data.y,
+                -BLOCK_SIZE / 2 + levelHeight + 8.6)
+            let turret = createTurret(translation.x, translation.y, translation.z)
+            this.scene.add(turret)
+            this.turrets.push(new Turret(turret, this.players[1], this.bots))
+        }
+
     }
 
     createCollisionSystem() {
@@ -670,6 +708,7 @@ export class GameManager {
     }
 
     render() {
+        
         this.renderer.render(this.scene, this.camera);
     }
 }
