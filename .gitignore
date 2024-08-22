@@ -5,3 +5,4 @@ T1/level_builder/py/_pycache_/
 !*.json
 !.gitignore
 *.pyc
+/T1/level_builder/py/__pycache__
