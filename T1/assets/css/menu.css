@@ -1,0 +1,33 @@
+/* Apply the font to the entire page */
+        body {
+            background-color: #181D21;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Arialic Hollow', sans-serif; /* Use the custom font */
+        }
+
+        h1 {
+            font-size: 4em;
+        }
+
+        /* Style the play button */
+        .play-button {
+            background-color: #152B33;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border-radius: 10px; /* Make the button rounded */
+        }
+
+        /* Change button background color on hover */
+        .play-button:hover {
+            background-color: #3D515E;
+        }
