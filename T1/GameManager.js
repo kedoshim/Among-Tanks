@@ -12,6 +12,7 @@ import {
     onWindowResize,
     createGroundPlaneXZ,
     getMaxSize,
+    degreesToRadians,
 } from "../libs/util/util.js";
 
 import { CameraControls } from "./camera.js";
@@ -27,6 +28,7 @@ import { loadGLBFile } from "./models.js";
 import { getTexture, loadTexture } from "./textures.js";
 import {createTurret} from './entities/turret/model/turret_model.js'
 import { addPlayerToHud, resetHud, updatePlayerHud} from "./hud.js";
+import { GLTFLoader } from "../build/jsm/loaders/GLTFLoader.js";
 
 export class GameManager {
     constructor(level, lighting, renderer = null) {
@@ -163,7 +165,7 @@ export class GameManager {
         this.listening();
 
         resetHud();
-        
+
     }
 
     createPlayer(index) {
@@ -242,16 +244,55 @@ export class GameManager {
     }
 
     drawLights(x, y, z, objective_angle = 0) {
+        function loadGLBFile(
+            asset,
+            file,
+            desiredScale,
+            scene,
+            position = { x: 0, y: 0, z: 0 },
+            rotation
+        ) {
+            let loader = new GLTFLoader();
+            loader.load(
+                file,
+                function (gltf) {
+                    let obj = gltf.scene;
+                    obj.traverse(function (child) {
+                        if (child.isMesh) {
+                            child.castShadow = false;
+                        }
+                    });
+                    obj.scale.set(desiredScale, desiredScale, desiredScale);
+                    //obj = fixPosition(obj);
+                    obj.updateMatrixWorld(true);
+                    obj.position.set(position.x, position.y, position.z);
+                    console.log(rotation);
+                    obj.rotation.set(
+                        0,
+                        -degreesToRadians(rotation + 90),
+                        0
+                    );
+                    scene.add(obj);
+
+                    // Store loaded gltf in our js object
+                    asset.object = gltf.scene;
+                },
+                null,
+                null
+            );
+        }
         let asset = {
             object: null,
             loaded: false,
             bb: new THREE.Box3(),
         };
-        loadGLBFile(asset, "./assets/models/LampPost.glb", 46, this.scene, {
+        loadGLBFile(asset, "./assets/models/LampPost.glb", 15, this.scene, {
             x,
-            y: y - 42,
-            z,
-        });
+            y: y - 20,
+            z
+        },
+            objective_angle
+        );
 
         let lightPosition = new THREE.Vector3(x, y, z);
 
