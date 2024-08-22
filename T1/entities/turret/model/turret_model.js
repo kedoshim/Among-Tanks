@@ -5,7 +5,7 @@ export function createTurret(
     _x,
     _y,
     _z,
-    floorColor = "gray",
+    floorColor = "#303030",
     bodyColor = "red",
     cannonColor = "white"
 ) {
@@ -58,7 +58,7 @@ export function createTurret(
 
         let mid = CSG.toMesh(midCSG, new THREE.Matrix4());
         mid.material = new THREE.MeshPhongMaterial({
-            color: darkenColor(bodyColor,0.7),
+            color: darkenColor(bodyColor, 0.7),
         });
         mid.castShadow = true;
         return mid;
@@ -163,9 +163,9 @@ export function createTurret(
     mid.add(amogus);
     amogus.translateY(13);
 
-    base.position.set(_x, _y, _z)
-    mid.position.set(_x, _y+2, _z)
-    
+    base.position.set(_x, _y, _z);
+    mid.position.set(_x, _y + 2, _z);
+
     return {
         base: base,
         body: mid,
