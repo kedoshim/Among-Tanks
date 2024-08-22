@@ -135,8 +135,10 @@ export class GameManager {
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         this.material = setDefaultMaterial(); // create a basic material
         // this.light = initDefaultBasicLight(this.scene);
-        const AmbientLight = new THREE.AmbientLight(0xffffff, 0.8); // soft white light
+        const AmbientLight = new THREE.AmbientLight(0xffffff, 0.1); // soft white light
         this.scene.add(AmbientLight);
+        const directionalLight = new THREE.DirectionalLight("#a050f0",0.3); // soft white light
+        this.scene.add(directionalLight);
         // this.controls = new InfoBox();
         // this.shotInfo = new SecondaryBox();
         this.keyboard = new KeyboardState();
