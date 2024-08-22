@@ -75,6 +75,7 @@ export class ProjectileCollisionSystem extends CollisionSystem {
                 if (hitTank) {
                     projectiles[projectileIndex].hitTank();
                     player.health -= projectiles[projectileIndex].damage;
+                    console.log(player.health + " " + projectiles[projectileIndex].damage)
                     if (player.health <= 0) {
                         player._tank.die();
                     }

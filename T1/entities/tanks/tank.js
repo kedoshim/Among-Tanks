@@ -440,6 +440,8 @@ export class Tank {
             }
         }
 
+        console.log(this._projectiles)
+
         var audio = new Audio("audio/shot.mp3"); // Áudio do tiro
         audio.play();
     }

@@ -563,7 +563,7 @@ export class Turret {
 
         if (!shootParams) {
             shootParams = {
-                bulletSpeed: 2,
+                bulletSpeed: 1,
                 damage: 1,
                 shootCooldown: 3000,
                 ricochetsAmount: 0,
@@ -631,11 +631,9 @@ export class Turret {
 
     shoot() {
         const currentTime = Date.now();
-        console.log(currentTime - this._lastShootTime)
         if (currentTime - this._lastShootTime < this.shootParams.shootCooldown) {
             return;
         }
-        console.log("DOASKOPDKPAOSDop")
         this._lastShootTime = currentTime;
 
         const length = 11;

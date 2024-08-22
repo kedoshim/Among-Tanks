@@ -169,11 +169,11 @@ export class GameManager {
             let bot1 = new Bot(new_player);
             this.bots.push(bot1);
         }
-        // if (index == 3) {
-        //     new_player._controller.isBot = true;
-        //     let bot2 = new Bot(new_player);
-        //     this.bots.push(bot2);
-        // }
+        if (index == 3) {
+            new_player._controller.isBot = true;
+            let bot2 = new Bot(new_player);
+            this.bots.push(bot2);
+        }
 
         this.players[index] = new_player;
     }
@@ -609,6 +609,18 @@ export class GameManager {
 
             // console.log(player.tank.projectiles);
             player.tank.projectiles = [];
+        }
+
+        for (let index = 0; index < this.turrets.length; index++) {
+            const turret = this.turrets[index];
+            let turretProjectiles = turret._projectiles;
+            console.log(turretProjectiles.length)
+            for (let index2 = turretProjectiles.length - 1; index2 >= 0; index2--) {
+                this.projectiles.push(turretProjectiles[index2]);
+            }
+
+            // console.log(player.tank.projectiles);
+            this.turrets[index]._projectiles = [];
         }
     }
 
