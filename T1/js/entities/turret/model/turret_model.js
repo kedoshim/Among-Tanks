@@ -7,18 +7,18 @@ export function createTurret(
     _z,
     floorColor = "#303030",
     bodyColor = "red",
-    cannonColor = "white"
+    cannonColor = "gray"
 ) {
     let material = new THREE.MeshPhongMaterial({ color: "white" });
 
     let halfCapsuleObject;
 
-    function createBase(blockWidth = 17) {
+    function createFloor(blockWidth = 16) {
         let floorGeometry = new THREE.BoxGeometry(blockWidth, 4, blockWidth);
         floorGeometry.translate(0, 2, 0);
 
-        let base = new THREE.Mesh(floorGeometry);
-        base.material = new THREE.MeshPhongMaterial({
+        let floor = new THREE.Mesh(floorGeometry);
+        floor.material = new THREE.MeshPhongMaterial({
             color: floorColor,
         });
 
@@ -34,10 +34,18 @@ export function createTurret(
         // Create the mesh with the geometry and invisible material
         invisible = new THREE.Mesh(invisible, invisibleMaterial);
 
-        base.add(invisible);
+        floor.add(invisible);
 
-        base.castShadow = true;
-        return base;
+        floor.castShadow = true;
+
+        //base
+        let base = createHalfCapsule(1, 0.7, 1);
+        base.material = new THREE.MeshPhongMaterial({
+            color: darkenColor(bodyColor, 0.9),
+        })
+        base.translateY(2);
+        floor.add(base);
+        return floor;
     }
 
     function createMid() {
@@ -45,27 +53,37 @@ export function createTurret(
         let bodyGeometry = new THREE.SphereGeometry(5, 8, 8);
         bodyGeometry.translate(0, 9, 0);
 
-        //base
-        let halfCapsule = createHalfCapsule(1, 0.7, 1);
-        halfCapsule.translateY(2);
+        //mid
+        let backGeometry = new THREE.SphereGeometry(2, 8, 8);
+        backGeometry.translate(0, 9, -5);
 
-        halfCapsule.updateMatrix();
+        // let outerWidth = 0.7;
+        let outerWidth = 0.2;
+        let outerLength = 0.8;
+        let cannonHole = createHalfCapsule(outerWidth, outerLength, outerWidth);
+        cannonHole.rotateX((3 * Math.PI) / 2);
+        cannonHole.translateY(-8);
+        cannonHole.translateZ(9.5);
+
+        cannonHole.updateMatrix();
 
         let bodyCSG = CSG.fromGeometry(bodyGeometry);
-        let halfCapsuleCSG = CSG.fromMesh(halfCapsule);
+        let backCSG = CSG.fromGeometry(backGeometry);
+        let holeCSG = CSG.fromMesh(cannonHole);
 
-        let midCSG = halfCapsuleCSG.union(bodyCSG);
+        let midCSG = bodyCSG.subtract(holeCSG);
+        midCSG = midCSG.union(backCSG);
 
         let mid = CSG.toMesh(midCSG, new THREE.Matrix4());
         mid.material = new THREE.MeshPhongMaterial({
             color: darkenColor(bodyColor, 0.7),
         });
-        mid.castShadow = true;
         return mid;
     }
 
     function createCannon() {
-        let outerWidth = 0.7;
+        // let outerWidth = 0.7;
+        let outerWidth = 0.2;
         let outerLength = 0.8;
 
         let outerCapsule = createHalfCapsule(
@@ -75,7 +93,8 @@ export function createTurret(
         );
         outerCapsule.rotateX((3 * Math.PI) / 2);
 
-        let innerWidth = 0.4;
+        // let innerWidth = 0.4;
+        let innerWidth = 0.1;
         let innerLength = 0.6;
 
         let innerCapsule = createHalfCapsule(
@@ -148,7 +167,7 @@ export function createTurret(
     }
 
     //base
-    let base = createBase(17);
+    let floor = createFloor();
 
     //mid
     let mid = createMid();
@@ -163,11 +182,11 @@ export function createTurret(
     mid.add(amogus);
     amogus.translateY(13);
 
-    base.position.set(_x, _y, _z);
+    floor.position.set(_x, _y, _z);
     mid.position.set(_x, _y + 2, _z);
 
     return {
-        base: base,
+        base: floor,
         body: mid,
     };
 }
