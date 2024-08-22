@@ -2102,8 +2102,8 @@
                 "colision": true
             },
             {
-                "color": 5002587,
-                "type": "GroundBlock",
+                "color": 6651116,
+                "type": "WallBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -9085,14 +9085,7 @@
             {},
             {},
             {},
-            {
-                "angle": 180,
-                "color": [
-                    0,
-                    255,
-                    0
-                ]
-            },
+            {},
             {},
             {},
             {},
@@ -10042,6 +10035,10 @@
         {
             "x": 19,
             "y": 11
+        },
+        {
+            "x": 19,
+            "y": 14
         }
     ]
 }

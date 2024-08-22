@@ -109,10 +109,13 @@ export class GameManager {
     }
 
     manageLevelChange() {
-        if (this.keyboard.down("1")) {
+        if (this.keyboard.down("0")) {
+            this.changeLevelFunction(0);
+        }
+        else if (this.keyboard.down("1")) {
             this.changeLevelFunction(1);
         }
-        if (this.keyboard.down("2")) {
+        else if (this.keyboard.down("2")) {
             this.changeLevelFunction(2);
         }
     }
@@ -205,19 +208,19 @@ export class GameManager {
         return object;
     }
 
-    createTeapot(x, y, z, color) {
-        let geometry = new TeapotGeometry(17);
-        let material = new THREE.MeshPhongMaterial({
-            color,
-            shininess: "100",
-            specular: "white",
-        });
-        material.side = THREE.DoubleSide;
-        let obj = new THREE.Mesh(geometry, material);
-        obj.castShadow = true;
-        obj.position.set(x, y, z);
-        this.scene.add(obj);
-    }
+    // createTeapot(x, y, z, color) {
+    //     let geometry = new TeapotGeometry(17);
+    //     let material = new THREE.MeshPhongMaterial({
+    //         color,
+    //         shininess: "100",
+    //         specular: "white",
+    //     });
+    //     material.side = THREE.DoubleSide;
+    //     let obj = new THREE.Mesh(geometry, material);
+    //     obj.castShadow = true;
+    //     obj.position.set(x, y, z);
+    //     this.scene.add(obj);
+    // }
 
     degrees_to_radians(degrees) {
         // Store the value of pi.

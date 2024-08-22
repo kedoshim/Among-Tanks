@@ -21,6 +21,7 @@ export function createTurret(
         base.material = new THREE.MeshPhongMaterial({
             color: floorColor,
         });
+        base.castShadow = true;
         return base;
     }
 
@@ -44,6 +45,7 @@ export function createTurret(
         mid.material = new THREE.MeshPhongMaterial({
             color: bodyColor,
         });
+        mid.castShadow = true;
         return mid;
     }
 
@@ -80,6 +82,7 @@ export function createTurret(
         cannon.material = new THREE.MeshPhongMaterial({
             color: cannonColor,
         });
+        cannon.castShadow = true;
         return cannon;
     }
 
@@ -94,10 +97,12 @@ export function createTurret(
         amogusFace.material = new THREE.MeshPhongMaterial({
             color: "white",
         });
+        amogusFace.castShadow = true;
         amogusFace.scale.set(1, 0.5, 1);
         amogus.add(amogusFace);
         amogusFace.position.set(0, 3, 3);
 
+        amogus.castShadow = true;
         return amogus;
     }
 
@@ -122,6 +127,7 @@ export function createTurret(
 
         let halfCapsuleCSG = capsuleCSG.intersect(boxCSG);
         halfCapsuleObject = CSG.toMesh(halfCapsuleCSG, new THREE.Matrix4());
+        halfCapsuleObject.castShadow = true;
 
         return createHalfCapsule(scaleX, scaleY, scaleZ);
     }

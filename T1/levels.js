@@ -1,4 +1,5 @@
 const levelPaths = {
+  0: "./level_builder/py/level.json",
   1: "./levels/level1.json",
   2: "./levels/level2.json",
 };
