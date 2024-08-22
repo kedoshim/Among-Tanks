@@ -9,8 +9,8 @@ export function loadTexture(path, name) {
     // Load the texture
     const texture = textureLoader.load(path);
 
-    if (texture)
-        console.log(texture);
+    // if (texture)
+        // console.log(texture);
 
     loadedTextures[name] = texture;
 }

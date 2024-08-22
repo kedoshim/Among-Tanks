@@ -1,5 +1,6 @@
 const levelPaths = {
   1: "./levels/level1.json",
+  2: "./levels/level2.json",
 };
 
 const levels = {};
@@ -44,8 +45,17 @@ export function getNextLevel() {
   }
 }
 
-export function getLights() {
-  return lightning[index]
+export function getLevel(index) {
+  if (levels[index])
+    return levels[index];
+  return levels[0];
+}
+
+export function getLights(ind = null) {
+  if (ind)
+    return lightning[ind];
+  else
+    return lightning[index]
 }
 
 

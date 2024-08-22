@@ -88,38 +88,18 @@ export function createTurret() {
     function createCannonCSG(x, z, y) {
         let yPos = 0;
         let h = 0;
+        let q = 1.5;
         //cannon center
         let centerThickness = 2.4;
-        let cilynder1Geometry = new THREE.CylinderGeometry(
-            centerThickness,
-            centerThickness,
-            7
-        );
-        let cilynder1 = new THREE.Mesh(cilynder1Geometry, material);
-        cilynder1.position.set(0, h + centerThickness / 2, yPos);
-        cilynder1.rotateX(Math.PI / 2);
-
-        //cannon thin
         let thinThickness = 1.4;
-        let cilynder2Geometry = new THREE.CylinderGeometry(
-            thinThickness,
-            thinThickness,
-            7
-        );
-        let cilynder2 = new THREE.Mesh(cilynder2Geometry, material);
-        cilynder2.position.set(0, h + centerThickness / 2, yPos + 4);
-        cilynder2.rotateX(Math.PI / 2);
+        let radius1 = 20;
+        let radius2 = radius1 * 0.3;
 
-        //cannon tip
-        let tipThickness = 1.9;
-        let cilynder3Geometry = new THREE.CylinderGeometry(
-            tipThickness,
-            tipThickness,
-            4.5
-        );
-        let cilynder3 = new THREE.Mesh(cilynder3Geometry, material);
-        cilynder3.position.set(0, h + centerThickness / 2, yPos + 9.5);
-        cilynder3.rotateX(Math.PI / 2);
+        let cubeGeometry = new THREE.BoxGeometry(1, 5, 20);
+        let cube1 = new THREE.Mesh(cubeGeometry, material);
+        cube1.position.set(q + 0.7, h + 0.5 + centerThickness / 2, 5);
+        let cube2 = new THREE.Mesh(cubeGeometry, material);
+        cube2.position.set(-(q + 0.7), h + 0.5 + centerThickness / 2, 5);
 
         //cannon inside
         let insideThickness = thinThickness - 0.5;
@@ -132,81 +112,132 @@ export function createTurret() {
         cilynder4.position.set(0, h + centerThickness / 2, yPos + 8);
         cilynder4.rotateX(Math.PI / 2);
 
-        let radius1 = 2.1;
-        let radius2 = radius1 * 0.3;
-        let torusGeometry = new THREE.TorusGeometry(radius1, radius2);
-        let torus = new THREE.Mesh(torusGeometry, material);
-        torus.position.set(0, h + 0.5 + centerThickness / 2, yPos - 4.8);
-        torus.scale.set(1.6, 1, 1.3);
-        torus.rotateY(Math.PI / 2);
-
-        radius1 = 0.8;
-        radius2 = radius1 * 0.5;
-        let q = 1.5;
-        let miniTorusGeometry = new THREE.TorusGeometry(
-            radius1,
-            radius2,
-            undefined,
-            undefined,
-            Math.PI * 1.3
-        );
-        let miniTorus1 = new THREE.Mesh(miniTorusGeometry, material);
-        miniTorus1.position.set(q, h - 0.8, 0);
-        miniTorus1.rotateZ(3 * (Math.PI / 2));
-
-        let miniTorus2 = new THREE.Mesh(miniTorusGeometry, material);
-        miniTorus2.position.set(-q, h - 0.8, 0);
-        miniTorus2.rotateZ((Math.PI / 2) * 0.7);
-
-        let cubeGeometry = new THREE.BoxGeometry(1, 5, 20);
-        let cube1 = new THREE.Mesh(cubeGeometry, material);
-        cube1.position.set(q + 0.7, h + 0.5 + centerThickness / 2, 5);
-        let cube2 = new THREE.Mesh(cubeGeometry, material);
-        cube2.position.set(-(q + 0.7), h + 0.5 + centerThickness / 2, 5);
-
-        cilynder1.updateMatrix();
-        cilynder2.updateMatrix();
-        cilynder3.updateMatrix();
         cilynder4.updateMatrix();
-        torus.updateMatrix();
-        miniTorus1.updateMatrix();
-        miniTorus2.updateMatrix();
         cube1.updateMatrix();
         cube2.updateMatrix();
 
-        // scene.add(cilynder1);
-        // scene.add(cilynder2);
-        // scene.add(cilynder3);
-        // scene.add(cilynder4);
-        // scene.add(torus);
-        // scene.add(miniTorus1);
-        // scene.add(miniTorus2);
-        // scene.add(cube1);
-        // scene.add(cube2);
-
-        let cilynder1CSG = CSG.fromMesh(cilynder1);
-        let cilynder2CSG = CSG.fromMesh(cilynder2);
-        let cilynder3CSG = CSG.fromMesh(cilynder3);
         let cilynder4CSG = CSG.fromMesh(cilynder4);
-
-        let torusCSG = CSG.fromMesh(torus);
-        let miniTorus1CSG = CSG.fromMesh(miniTorus1);
-        let miniTorus2CSG = CSG.fromMesh(miniTorus2);
-
         let cube1CSG = CSG.fromMesh(cube1);
         let cube2CSG = CSG.fromMesh(cube2);
 
-        let cannonCSG = cilynder1CSG.union(cilynder2CSG);
-        cannonCSG = cannonCSG.union(cilynder3CSG);
-        cannonCSG = cannonCSG.union(torusCSG);
-        cannonCSG = cannonCSG.subtract(cube1CSG);
-        cannonCSG = cannonCSG.subtract(cube2CSG);
-        cannonCSG = cannonCSG.union(miniTorus1CSG);
-        cannonCSG = cannonCSG.union(miniTorus2CSG);
-        cannonCSG = cannonCSG.subtract(cilynder4CSG);
+        function createCannonCenter() {
+            let cilynder1Geometry = new THREE.CylinderGeometry(
+                centerThickness,
+                centerThickness,
+                7
+            );
+            let cilynder1 = new THREE.Mesh(cilynder1Geometry, material);
+            cilynder1.position.set(0, h + centerThickness / 2, yPos);
+            cilynder1.rotateX(Math.PI / 2);
 
-        let cannon = CSG.toMesh(cannonCSG, new THREE.Matrix4());
-        cannon.material = new THREE.MeshPhongMaterial({ color: "gray" });
+            radius1 = 0.8;
+            radius2 = radius1 * 0.5;
+
+            let miniTorusGeometry = new THREE.TorusGeometry(
+                radius1,
+                radius2,
+                undefined,
+                undefined,
+                Math.PI * 1.3
+            );
+            let miniTorus1 = new THREE.Mesh(miniTorusGeometry, material);
+            miniTorus1.position.set(q, h - 0.8, 0);
+            miniTorus1.rotateZ(3 * (Math.PI / 2));
+
+            let miniTorus2 = new THREE.Mesh(miniTorusGeometry, material);
+            miniTorus2.position.set(-q, h - 0.8, 0);
+            miniTorus2.rotateZ((Math.PI / 2) * 0.7);
+
+            let torusGeometry = new THREE.TorusGeometry(radius1, radius2);
+            let torus = new THREE.Mesh(torusGeometry, material);
+            torus.position.set(0, h + 0.5 + centerThickness / 2, yPos - 4.8);
+            torus.scale.set(1.6, 1, 1.3);
+            torus.rotateY(Math.PI / 2);
+
+            cilynder1.updateMatrix();
+            miniTorus1.updateMatrix();
+            miniTorus2.updateMatrix();
+            torus.updateMatrix();
+
+            let cilynder1CSG = CSG.fromMesh(cilynder1);
+            let miniTorus1CSG = CSG.fromMesh(miniTorus1);
+            let miniTorus2CSG = CSG.fromMesh(miniTorus2);
+            let torusCSG = CSG.fromMesh(torus);
+
+            let cannonCenterCSG = cilynder1CSG.union(torusCSG);
+            cannonCenterCSG = cannonCenterCSG.subtract(cube1CSG);
+            cannonCenterCSG = cannonCenterCSG.subtract(cube2CSG);
+            cannonCenterCSG = cannonCenterCSG.union(miniTorus1CSG);
+            cannonCenterCSG = cannonCenterCSG.union(miniTorus2CSG);
+            cannonCenterCSG = cannonCenterCSG.subtract(cilynder4CSG);
+
+            let cannonCenter = CSG.toMesh(cannonCenterCSG, new THREE.Matrix4());
+            cannonCenter.material = new THREE.MeshPhongMaterial({
+                color: "white",
+            });
+            return cannonCenter;
+        }
+
+        function createCannonThin() {
+            //cannon thin
+
+            let cilynder2Geometry = new THREE.CylinderGeometry(
+                thinThickness,
+                thinThickness,
+                7
+            );
+            let cilynder2 = new THREE.Mesh(cilynder2Geometry, material);
+            cilynder2.position.set(0, h + centerThickness / 2, yPos + 4);
+            cilynder2.rotateX(Math.PI / 2);
+
+            cilynder2.updateMatrix();
+
+            let cilynder2CSG = CSG.fromMesh(cilynder2);
+
+            let cannonMidCSG = cilynder2CSG.subtract(cilynder4CSG);
+
+            let cannonMid = CSG.toMesh(cannonMidCSG, new THREE.Matrix4());
+            cannonMid.material = new THREE.MeshPhongMaterial({
+                color: "gray",
+            });
+
+            return cannonMid;
+        }
+
+        function createCannonTip() {
+            //cannon tip
+            let tipThickness = 1.9;
+            let cilynder3Geometry = new THREE.CylinderGeometry(
+                tipThickness,
+                tipThickness,
+                4.5
+            );
+            let cilynder3 = new THREE.Mesh(cilynder3Geometry, material);
+            cilynder3.position.set(0, h + centerThickness / 2, yPos + 9.5);
+            cilynder3.rotateX(Math.PI / 2);
+
+            cilynder3.updateMatrix();
+
+            let cilynder3CSG = CSG.fromMesh(cilynder3);
+
+            let cannonTipCSG = cilynder3CSG.subtract(cube1CSG);
+            cannonTipCSG = cannonTipCSG.subtract(cube2CSG);
+            cannonTipCSG = cannonTipCSG.subtract(cilynder4CSG);
+
+            let cannonTip = CSG.toMesh(cannonTipCSG, new THREE.Matrix4());
+            cannonTip.material = new THREE.MeshPhongMaterial({
+                color: "white",
+            });
+            return cannonTip;
+        }
+
+        let cannon = createCannonCenter();
+        let thin = createCannonThin();
+        let tip = createCannonTip();
+
+        cannon.add(thin);
+        cannon.add(tip);
+
         cannon.position.set(x, z, y);
 
         // scene.add(cannon);

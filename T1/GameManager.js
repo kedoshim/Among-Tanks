@@ -98,6 +98,15 @@ export class GameManager {
         }
     }
 
+    manageLevelChange() {
+        if (this.keyboard.down("1")) {
+            this.changeLevelFunction(1);
+        }
+        if (this.keyboard.down("2")) {
+            this.changeLevelFunction(2);
+        }
+    }
+
     setup() {
         this.numberOfPlayers = Math.max(
             2,
@@ -134,6 +143,8 @@ export class GameManager {
         this.projectileCollisionSystem = null;
         this.tankCollisionSystem = null;
         this.walls = [];
+
+        this.startGame = false;
 
         this.listening();
     }
@@ -293,7 +304,7 @@ export class GameManager {
             j,
             yTranslation,
             materialParameters,
-            hasCollision = false,
+            hasCollision = false
         ) => {
             const geometry = new THREE.BoxGeometry(
                 BLOCK_SIZE,
@@ -348,10 +359,9 @@ export class GameManager {
                             -BLOCK_SIZE / 2 + levelHeight,
                             {
                                 color: data[i][j].color,
-                                map: getTexture("basic_floor")
+                                map: getTexture("basic_floor"),
                             },
                             false
-                            
                         );
                         break;
                     case "WallBlock":
@@ -363,7 +373,7 @@ export class GameManager {
                                 color: data[i][j].color,
                                 map: getTexture("basic_wall"),
                             },
-                            true,
+                            true
                         );
                         break;
                     case "Spawn":
@@ -474,6 +484,7 @@ export class GameManager {
     keyboardUpdate() {
         this.keyboard.update();
         this.manageOrbitControls();
+        this.manageLevelChange();
 
         for (const key in this.players) {
             const player = this.players[key];
@@ -600,19 +611,24 @@ export class GameManager {
     }
 
     checkEnd() {
-        if (Object.keys(this.players).length <= 1) {
-            let winner = 0;
-            for (const key in this.players) {
-                if (!this.deadIndex.includes(key)) {
-                    winner = key;
+        if (Object.keys(this.players).length > 1) {
+            this.startGame = true;
+        }
+        if (this.startGame) {
+            if (Object.keys(this.players).length <= 1) {
+                let winner = 0;
+                for (const key in this.players) {
+                    if (!this.deadIndex.includes(key)) {
+                        winner = key;
+                    }
                 }
+                this.shotInfo.hide();
+                this.deleteScene(this.scene);
+                winner = winner;
+                alert("Game Over! Player " + winner + " won!");
+                this.resetFunction();
+                return true;
             }
-            this.shotInfo.hide();
-            this.deleteScene(this.scene);
-            this.resetFunction();
-            winner = winner;
-            alert("Game Over! Player " + winner + " won!");
-            return true;
         }
         return false;
     }
@@ -621,7 +637,7 @@ export class GameManager {
     }
 
     frame() {
-        if (!this.checkEnd()) {
+        if (!(this.checkEnd() || !this.startGame)) {
             this.keyboardUpdate();
             this.updateAiAction();
             this.updateTurretsActions();
@@ -647,6 +663,10 @@ export class GameManager {
 
     setResetFunction(func) {
         this.resetFunction = func;
+    }
+
+    setChangeLevelFunction(func) {
+        this.changeLevelFunction = func;
     }
 
     render() {
