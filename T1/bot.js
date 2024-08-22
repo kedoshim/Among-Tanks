@@ -540,6 +540,21 @@ export class Bot {
     }
 }
 
+export class TurretSystem {
+    constructor(turrets) {
+        this.turrets = turrets;
+    }
+
+    nextAction() {
+        let turrets = this.turrets;
+
+        turrets.forEach(turret => {
+            turret.trackNearestTank();
+            turret.shoot();
+        })
+    }
+}
+
 export class Turret {
     constructor(model, players, bots, shootParams=null) {
         this.model = model;

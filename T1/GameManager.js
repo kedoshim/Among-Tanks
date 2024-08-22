@@ -20,7 +20,7 @@ import { ProjectileCollisionSystem, TankCollisionSystem } from "./collision.js";
 import { Entity } from "./entities/entity.js";
 import { getConfig } from "./config.js";
 import { CollisionBlock } from "./blocks.js";
-import { AISystem, Bot } from "./bot.js";
+import { AISystem, Bot, Turret, TurretSystem } from "./bot.js";
 import { preloadCommonTankModel } from "./entities/tanks/models/common_tank_model.js";
 import { TeapotGeometry } from "../build/jsm/geometries/TeapotGeometry.js";
 import { loadGLBFile } from "./models.js";
@@ -43,6 +43,7 @@ export class GameManager {
         this.createPlayers();
         this.createCollisionSystem();
         this.createAISystem();
+        this.createTurretSystem();
     }
 
     async loadModels() {
@@ -128,6 +129,7 @@ export class GameManager {
         this.previousHitBox = [];
 
         this.bots = [];
+        this.turrets = [];
 
         this.projectileCollisionSystem = null;
         this.tankCollisionSystem = null;
@@ -441,6 +443,10 @@ export class GameManager {
         this.ai_system = new AISystem(this.players[1], this.walls, this.bots);
     }
 
+    createTurretSystem() {
+        this.turrets_system = new TurretSystem(this.turrets);
+    }
+
     showInformation() {
         // Use this to show information onscreen
         this.controls.add("Controls");
@@ -536,6 +542,10 @@ export class GameManager {
         }
     }
 
+    updateTurretsActions() {
+        this.turrets_system.nextAction();
+    }
+
     insertNewProjectiles() {
         for (const key in this.players) {
             const player = this.players[key];
@@ -614,6 +624,7 @@ export class GameManager {
         if (!this.checkEnd()) {
             this.keyboardUpdate();
             this.updateAiAction();
+            this.updateTurretsActions();
             this.cameraUpdate();
             this.checkCollision();
             this.displayUpdate();
