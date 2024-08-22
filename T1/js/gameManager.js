@@ -218,6 +218,16 @@ export class GameManager {
     }
 
     drawLights(x, y, z, objective_angle = 0) {
+        const lampHeight = 56;
+        const lampDistance = 16
+        
+        const postHeight = 25;
+
+        const directionalZ =
+            60 * Math.cos(THREE.MathUtils.degToRad(objective_angle)) * -1;
+        const directionalX =
+            60 * Math.sin(THREE.MathUtils.degToRad(objective_angle));
+
         let asset = {
             object: null,
             loaded: false,
@@ -230,13 +240,18 @@ export class GameManager {
             this.scene,
             {
                 x,
-                y: y - 20,
+                y: y + postHeight,
                 z,
             },
             objective_angle
         );
 
-        let lightPosition = new THREE.Vector3(x, y, z);
+
+        let lightPosition = new THREE.Vector3(
+            x + directionalX / (60 / lampDistance),
+            y + lampHeight,
+            z + directionalZ / (60 / lampDistance)
+        );
 
         // Sphere to represent the light
         let lightSphere = this.createLightSphere(
@@ -252,10 +267,6 @@ export class GameManager {
         // Create and set the spotlight
         let spotLight = new THREE.SpotLight(`rgb(240,240,136)`);
         spotLight.position.copy(lightPosition);
-        const directionalZ =
-            60 * Math.cos(THREE.MathUtils.degToRad(objective_angle)) * -1;
-        const directionalX =
-            60 * Math.sin(THREE.MathUtils.degToRad(objective_angle));
         spotLight.target.position.set(x + directionalX, -50, z + directionalZ);
         spotLight.distance = 100;
         spotLight.castShadow = true;
@@ -417,17 +428,9 @@ export class GameManager {
                         translated.z
                     );
 
-                    // Sphere to represent the light
-                    let lightSphere = this.createLightSphere(
-                        this.scene,
-                        1,
-                        10,
-                        10,
-                        lightPosition
-                    );
                     this.drawLights(
                         translated.x,
-                        translated.y + 50,
+                        translated.y,
                         translated.z,
                         this.lighting[i][j]["angle"]
                     );
