@@ -588,9 +588,12 @@ export class Turret {
 
         let positions = [];
 
-        positions.push(playerPosition);
+        if (!this.players._tank.died)
+            positions.push(playerPosition);
         bots.forEach(bot => {
-            positions.push(bot.player_tank._tank.model.position.clone());
+            if (!bot.player_tank._tank.died) {
+                positions.push(bot.player_tank._tank.model.position.clone());
+            }
         });
 
 
@@ -626,7 +629,7 @@ export class Turret {
             rotationDirection = -1;
         }
         
-        this.model.rotateY(this.shootParams.rotationSpeed * 0.25 * rotationDirection);
+        this.model.rotateY(this.shootParams.rotationSpeed * 0.25 * rotationDirection * 0.75);
     }
 
     shoot() {
@@ -636,7 +639,7 @@ export class Turret {
         }
         this._lastShootTime = currentTime;
 
-        const length = 11;
+        const length = 12.5;
         const projectilePosition = this.model.position.clone(); // Posição inicial do projétil é a mesma do bot
 
         const turretForwardVector = new THREE.Vector3(0, 0, 1); // Vetor de avanço do bot na direção Z positiva
