@@ -5,24 +5,30 @@ export function createTurret(
     _x,
     _y,
     _z,
+    blockWidth = 17,
     floorColor = "#303030",
     bodyColor = "red",
     cannonColor = "gray"
 ) {
+    
     let material = new THREE.MeshPhongMaterial({ color: "white" });
 
     let halfCapsuleObject;
 
-    function createFloor(blockWidth = 16) {
-        let floorGeometry = new THREE.BoxGeometry(blockWidth, 4, blockWidth);
-        floorGeometry.translate(0, 2, 0);
+    function createFloor() {
+        let floorGeometry = new THREE.BoxGeometry(blockWidth*2, 4, blockWidth*2);
+        floorGeometry.translate(0, 6, 0);
 
         let floor = new THREE.Mesh(floorGeometry);
         floor.material = new THREE.MeshPhongMaterial({
             color: floorColor,
         });
 
-        let invisible = new THREE.BoxGeometry(17, 17, 17);
+        let invisible = new THREE.BoxGeometry(
+            blockWidth * 2,
+            blockWidth * 2,
+            blockWidth * 2
+        );
 
         // Create an invisible material
         let invisibleMaterial = new THREE.MeshBasicMaterial({
@@ -184,6 +190,9 @@ export function createTurret(
 
     floor.position.set(_x, _y, _z);
     mid.position.set(_x, _y + 2, _z);
+
+    floor.translateY( -blockWidth / 4);
+    mid.translateY( -blockWidth / 4);
 
     return {
         base: floor,
