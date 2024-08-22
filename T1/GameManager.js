@@ -469,8 +469,9 @@ export class GameManager {
                 data.y,
                 -BLOCK_SIZE / 2 + levelHeight + 8.6)
             let turret = createTurret(translation.x, translation.y, translation.z)
-            this.scene.add(turret)
-            this.turrets.push(new Turret(turret, this.players[1], this.bots))
+            this.scene.add(turret.base)
+            this.scene.add(turret.body)
+            this.turrets.push(new Turret(turret.body, this.players[1], this.bots))
         }
 
     }

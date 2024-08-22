@@ -1,283 +1,152 @@
 import * as THREE from "three";
 import { CSG } from "../../../../libs/other/CSGMesh.js";
 
-let cachedTurret = null;
-
-export function createTurret(_x, _y, _z) {
-    if (cachedTurret)
-        return cachedTurret.clone();
-
+export function createTurret(
+    _x,
+    _y,
+    _z,
+    floorColor = "gray",
+    bodyColor = "red",
+    cannonColor = "white"
+) {
     let material = new THREE.MeshPhongMaterial({ color: "white" });
-    
-    function createBaseCSG(width = 4) {
-        let cilynderGeometry = new THREE.CylinderGeometry(width, width, 1);
-        let cilynder = new THREE.Mesh(cilynderGeometry, material);
-        cilynder.position.set(0.0, 0.5, 0.0);
 
-        let cubeGeometry = new THREE.BoxGeometry(
-            width * 1.5,
-            width * 3,
-            width * 1.5
-        );
-        let cube1 = new THREE.Mesh(cubeGeometry, material);
-        let cube2 = new THREE.Mesh(cubeGeometry, material);
-        let cube3 = new THREE.Mesh(cubeGeometry, material);
-        let cube4 = new THREE.Mesh(cubeGeometry, material);
-        let d = width * 1.6;
-        cube1.position.set(0.0, 0, d);
-        cube2.position.set(0.0, 0, -d);
-        cube3.position.set(d, 0, 0);
-        cube4.position.set(-d, 0, 0);
+    let halfCapsuleObject;
 
-        cilynder.updateMatrix();
+    function createBase(blockWidth = 17) {
+        let floorGeometry = new THREE.BoxGeometry(blockWidth, 4, blockWidth);
+        floorGeometry.translate(0, 2, 0);
 
-        cube1.updateMatrix();
-        cube2.updateMatrix();
-        cube3.updateMatrix();
-        cube4.updateMatrix();
-
-        let cilynderCSG = CSG.fromMesh(cilynder);
-
-        let cube1CSG = CSG.fromMesh(cube1);
-        let cube2CSG = CSG.fromMesh(cube2);
-        let cube3CSG = CSG.fromMesh(cube3);
-        let cube4CSG = CSG.fromMesh(cube4);
-
-        let baseCSG = cilynderCSG.subtract(cube1CSG);
-        baseCSG = baseCSG.subtract(cube2CSG);
-        baseCSG = baseCSG.subtract(cube3CSG);
-        baseCSG = baseCSG.subtract(cube4CSG);
-
-        let base = CSG.toMesh(baseCSG, new THREE.Matrix4());
-        base.material = new THREE.MeshPhongMaterial({ color: "gray" });
-
+        let base = new THREE.Mesh(floorGeometry);
+        base.material = new THREE.MeshPhongMaterial({
+            color: floorColor,
+        });
         return base;
     }
 
-    function createSupportCSG(x, z, y, height = 3) {
-        let cilynder1Geometry = new THREE.CylinderGeometry(0.6, 1, height);
-        let cilynder1 = new THREE.Mesh(cilynder1Geometry, material);
-        cilynder1.position.set(-0.1, 2, 0.0);
-        // scene.add(cilynder1);
+    function createMid() {
+        //mid
+        let bodyGeometry = new THREE.SphereGeometry(5, 8, 8);
+        bodyGeometry.translate(0, 9, 0);
 
-        let cilynder2Geometry = new THREE.CylinderGeometry(0.6, 1, height);
-        let cilynder2 = new THREE.Mesh(cilynder2Geometry, material);
-        cilynder2.position.set(0.1, 2, 0.0);
-        // scene.add(cilynder2);
+        //base
+        let halfCapsule = createHalfCapsule(1, 0.7, 1);
+        halfCapsule.translateY(2);
 
-        let cubeGeometry = new THREE.BoxGeometry(1.3, height, 1.1);
-        let cube1 = new THREE.Mesh(cubeGeometry, material);
-        cube1.position.set(0, 2, 0.0);
-        // scene.add(cube1);
+        halfCapsule.updateMatrix();
 
-        let cilynder1CSG = CSG.fromMesh(cilynder1);
-        let cilynder2CSG = CSG.fromMesh(cilynder2);
+        let bodyCSG = CSG.fromGeometry(bodyGeometry);
+        let halfCapsuleCSG = CSG.fromMesh(halfCapsule);
 
-        let cube1CSG = CSG.fromMesh(cube1);
+        let midCSG = halfCapsuleCSG.union(bodyCSG);
 
-        let barCSG = cilynder1CSG.intersect(cilynder2CSG);
-        barCSG = barCSG.intersect(cube1CSG);
-
-        let bar = CSG.toMesh(barCSG, new THREE.Matrix4());
-        bar.material = new THREE.MeshPhongMaterial({ color: "white" });
-
-        bar.position.set(x, z, y);
-
-        // scene.add(bar);
-        return bar;
+        let mid = CSG.toMesh(midCSG, new THREE.Matrix4());
+        mid.material = new THREE.MeshPhongMaterial({
+            color: bodyColor,
+        });
+        return mid;
     }
 
-    function createCannonCSG(x, z, y) {
-        let yPos = 0;
-        let h = 0;
-        let q = 1.5;
-        //cannon center
-        let centerThickness = 2.4;
-        let thinThickness = 1.4;
-        let radius1 = 20;
-        let radius2 = radius1 * 0.3;
+    function createCannon() {
+        let outerWidth = 0.7;
+        let outerLength = 0.8;
 
-        let cubeGeometry = new THREE.BoxGeometry(1, 5, 20);
-        let cube1 = new THREE.Mesh(cubeGeometry, material);
-        cube1.position.set(q + 0.7, h + 0.5 + centerThickness / 2, 5);
-        let cube2 = new THREE.Mesh(cubeGeometry, material);
-        cube2.position.set(-(q + 0.7), h + 0.5 + centerThickness / 2, 5);
-
-        //cannon inside
-        let insideThickness = thinThickness - 0.5;
-        let cilynder4Geometry = new THREE.CylinderGeometry(
-            insideThickness,
-            insideThickness,
-            10
+        let outerCapsule = createHalfCapsule(
+            outerWidth,
+            outerLength,
+            outerWidth
         );
-        let cilynder4 = new THREE.Mesh(cilynder4Geometry, material);
-        cilynder4.position.set(0, h + centerThickness / 2, yPos + 8);
-        cilynder4.rotateX(Math.PI / 2);
+        outerCapsule.rotateX((3 * Math.PI) / 2);
 
-        cilynder4.updateMatrix();
-        cube1.updateMatrix();
-        cube2.updateMatrix();
+        let innerWidth = 0.4;
+        let innerLength = 0.6;
 
-        let cilynder4CSG = CSG.fromMesh(cilynder4);
-        let cube1CSG = CSG.fromMesh(cube1);
-        let cube2CSG = CSG.fromMesh(cube2);
+        let innerCapsule = createHalfCapsule(
+            innerWidth,
+            innerLength,
+            innerWidth
+        );
+        innerCapsule.rotateX((3 * Math.PI) / 2);
 
-        function createCannonCenter() {
-            let cilynder1Geometry = new THREE.CylinderGeometry(
-                centerThickness,
-                centerThickness,
-                7
-            );
-            let cilynder1 = new THREE.Mesh(cilynder1Geometry, material);
-            cilynder1.position.set(0, h + centerThickness / 2, yPos);
-            cilynder1.rotateX(Math.PI / 2);
+        outerCapsule.updateMatrix();
+        innerCapsule.updateMatrix();
 
-            radius1 = 0.8;
-            radius2 = radius1 * 0.5;
+        let outerCSG = CSG.fromMesh(outerCapsule);
+        let innerCSG = CSG.fromMesh(innerCapsule);
 
-            let miniTorusGeometry = new THREE.TorusGeometry(
-                radius1,
-                radius2,
-                undefined,
-                undefined,
-                Math.PI * 1.3
-            );
-            let miniTorus1 = new THREE.Mesh(miniTorusGeometry, material);
-            miniTorus1.position.set(q, h - 0.8, 0);
-            miniTorus1.rotateZ(3 * (Math.PI / 2));
+        let cannonCSG = outerCSG.subtract(innerCSG);
 
-            let miniTorus2 = new THREE.Mesh(miniTorusGeometry, material);
-            miniTorus2.position.set(-q, h - 0.8, 0);
-            miniTorus2.rotateZ((Math.PI / 2) * 0.7);
-
-            let torusGeometry = new THREE.TorusGeometry(radius1, radius2);
-            let torus = new THREE.Mesh(torusGeometry, material);
-            torus.position.set(0, h + 0.5 + centerThickness / 2, yPos - 4.8);
-            torus.scale.set(1.6, 1, 1.3);
-            torus.rotateY(Math.PI / 2);
-
-            cilynder1.updateMatrix();
-            miniTorus1.updateMatrix();
-            miniTorus2.updateMatrix();
-            torus.updateMatrix();
-
-            let cilynder1CSG = CSG.fromMesh(cilynder1);
-            let miniTorus1CSG = CSG.fromMesh(miniTorus1);
-            let miniTorus2CSG = CSG.fromMesh(miniTorus2);
-            let torusCSG = CSG.fromMesh(torus);
-
-            let cannonCenterCSG = cilynder1CSG.union(torusCSG);
-            cannonCenterCSG = cannonCenterCSG.subtract(cube1CSG);
-            cannonCenterCSG = cannonCenterCSG.subtract(cube2CSG);
-            cannonCenterCSG = cannonCenterCSG.union(miniTorus1CSG);
-            cannonCenterCSG = cannonCenterCSG.union(miniTorus2CSG);
-            cannonCenterCSG = cannonCenterCSG.subtract(cilynder4CSG);
-
-            let cannonCenter = CSG.toMesh(cannonCenterCSG, new THREE.Matrix4());
-            cannonCenter.material = new THREE.MeshPhongMaterial({
-                color: "white",
-            });
-            return cannonCenter;
-        }
-
-        function createCannonThin() {
-            //cannon thin
-
-            let cilynder2Geometry = new THREE.CylinderGeometry(
-                thinThickness,
-                thinThickness,
-                7
-            );
-            let cilynder2 = new THREE.Mesh(cilynder2Geometry, material);
-            cilynder2.position.set(0, h + centerThickness / 2, yPos + 4);
-            cilynder2.rotateX(Math.PI / 2);
-
-            cilynder2.updateMatrix();
-
-            let cilynder2CSG = CSG.fromMesh(cilynder2);
-
-            let cannonMidCSG = cilynder2CSG.subtract(cilynder4CSG);
-
-            let cannonMid = CSG.toMesh(cannonMidCSG, new THREE.Matrix4());
-            cannonMid.material = new THREE.MeshPhongMaterial({
-                color: "gray",
-            });
-
-            return cannonMid;
-        }
-
-        function createCannonTip() {
-            //cannon tip
-            let tipThickness = 1.9;
-            let cilynder3Geometry = new THREE.CylinderGeometry(
-                tipThickness,
-                tipThickness,
-                4.5
-            );
-            let cilynder3 = new THREE.Mesh(cilynder3Geometry, material);
-            cilynder3.position.set(0, h + centerThickness / 2, yPos + 9.5);
-            cilynder3.rotateX(Math.PI / 2);
-
-            cilynder3.updateMatrix();
-
-            let cilynder3CSG = CSG.fromMesh(cilynder3);
-
-            let cannonTipCSG = cilynder3CSG.subtract(cube1CSG);
-            cannonTipCSG = cannonTipCSG.subtract(cube2CSG);
-            cannonTipCSG = cannonTipCSG.subtract(cilynder4CSG);
-
-            let cannonTip = CSG.toMesh(cannonTipCSG, new THREE.Matrix4());
-            cannonTip.material = new THREE.MeshPhongMaterial({
-                color: "white",
-            });
-            return cannonTip;
-        }
-
-        let cannon = createCannonCenter();
-        let thin = createCannonThin();
-        let tip = createCannonTip();
-
-        cannon.add(thin);
-        cannon.add(tip);
-
-        cannon.position.set(x, z, y);
-
-        // scene.add(cannon);
+        let cannon = CSG.toMesh(cannonCSG, new THREE.Matrix4());
+        cannon.material = new THREE.MeshPhongMaterial({
+            color: cannonColor,
+        });
         return cannon;
     }
 
+    function createAmogus() {
+        let amogus = createHalfCapsule(0.5, 0.6, 0.5);
+        amogus.material = new THREE.MeshPhongMaterial({
+            color: bodyColor,
+        });
+
+        let amogusFaceGeometry = new THREE.SphereGeometry(4, 8, 8);
+        let amogusFace = new THREE.Mesh(amogusFaceGeometry);
+        amogusFace.material = new THREE.MeshPhongMaterial({
+            color: "white",
+        });
+        amogusFace.scale.set(1, 0.5, 1);
+        amogus.add(amogusFace);
+        amogusFace.position.set(0, 3, 3);
+
+        return amogus;
+    }
+
+    function createHalfCapsule(scaleX = 1, scaleY = 1, scaleZ = 1) {
+        // Check if halfCapsuleObject exists, and if so, clone it
+        if (halfCapsuleObject) {
+            let newObject = halfCapsuleObject.clone();
+            newObject.geometry = halfCapsuleObject.geometry.clone();
+            newObject.scale.set(scaleX, scaleY, scaleZ);
+            return newObject;
+        }
+
+        // If halfCapsuleObject doesn't exist, create it
+        let capsuleGeometry = new THREE.CapsuleGeometry(6, 3);
+        capsuleGeometry.translate(0, 0, 0); // Translate capsuleGeometry before converting to CSG
+
+        let boxGeometry = new THREE.BoxGeometry(15, 10, 15);
+        boxGeometry.translate(0, 5, 0);
+
+        let capsuleCSG = CSG.fromGeometry(capsuleGeometry);
+        let boxCSG = CSG.fromGeometry(boxGeometry);
+
+        let halfCapsuleCSG = capsuleCSG.intersect(boxCSG);
+        halfCapsuleObject = CSG.toMesh(halfCapsuleCSG, new THREE.Matrix4());
+
+        return createHalfCapsule(scaleX, scaleY, scaleZ);
+    }
+
     //base
-    let base = createBaseCSG();
+    let base = createBase(17);
 
-    //4 supports
-    let supports = new THREE.Mesh();
-    let d = 2;
-    let h = 2;
-    let support1 = createSupportCSG(0, h, d);
-    let support2 = createSupportCSG(0, h, -d);
-    let support3 = createSupportCSG(d, h, 0);
-    let support4 = createSupportCSG(-d, h, 0);
-    support3.rotateY(Math.PI / 2);
-    support4.rotateY(Math.PI / 2);
-    supports.add(support1, support2, support3, support4);
-    base.add(supports);
-
-    //base
-    let base2 = createBaseCSG(3.1);
-    base2.position.set(0, h + 1, 0);
-    base.add(base2);
-
-    let base3 = createBaseCSG(2);
-    base3.position.set(0, h + 1.5, 0);
-    base.add(base3);
+    //mid
+    let mid = createMid();
 
     //cannon
-    let cannon = createCannonCSG(0, 5.8, 0);
-    base.add(cannon);
+    let cannon = createCannon();
+    mid.add(cannon);
+    cannon.position.set(0, 9.5, 8);
+
+    //amogus
+    let amogus = createAmogus();
+    mid.add(amogus);
+    amogus.translateY(13);
+
     base.position.set(_x, _y, _z)
-    console.log("DKPSDPOWPOD")
-
-    return base;
-
-    cachedTurret = base;
+    mid.position.set(_x, _y+2, _z)
+    
+    return {
+        base: base,
+        body: mid,
+    };
 }
