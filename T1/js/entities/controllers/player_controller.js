@@ -1,5 +1,5 @@
   import { Controller } from "./controller.js";
-import KeyboardState from "../../../libs/util/KeyboardState.js";
+import KeyboardState from "../../../../libs/util/KeyboardState.js";
 import { Tank } from "../tanks/tank.js";
 
 import { getConfig } from "../../config.js";

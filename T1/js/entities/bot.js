@@ -1,4 +1,4 @@
-import {Projectile} from '../T1/projectile.js';
+import {Projectile} from '../classes/projectile.js';
 import * as THREE from 'three';
 
 

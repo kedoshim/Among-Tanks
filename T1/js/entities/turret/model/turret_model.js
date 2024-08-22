@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { CSG } from "../../../../libs/other/CSGMesh.js";
+import { CSG } from "../../../../../libs/other/CSGMesh.js";
 
 export function createTurret(
     _x,

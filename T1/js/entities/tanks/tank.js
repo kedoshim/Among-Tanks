@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { Projectile } from "../../projectile.js";
-import { Object3D } from "../../../build/three.module.js";
+import { Projectile } from "../../../js/classes/projectile.js";
+import { Object3D } from "../../../../build/three.module.js";
 import { HealthBar } from "./healthBar.js";
 
 /**
@@ -33,8 +33,7 @@ export class Tank {
         this._positiveMovement = true;
 
         if (!shootingOpitions) {
-            this.shootingOpitions = shootingOpitions =
-            {
+            this.shootingOpitions = shootingOpitions = {
                 bulletSpeed: 2,
                 damage: 1,
                 spreadShots: 1,
@@ -47,8 +46,7 @@ export class Tank {
         this._damage = shootingOpitions.damage;
         this._spreadShots = shootingOpitions.spreadShots;
         this._semiAutoShots = shootingOpitions.semiAutoShots;
-        this._shootCooldown = 1000//shootingOpitions.cooldown
-        
+        this._shootCooldown = 1000; //shootingOpitions.cooldown
 
         // Cria a barra de vida
         this._maxHealth = maxHealth;
@@ -302,7 +300,7 @@ export class Tank {
      * @param {number} forwardForce Varies from -1 (moves backwards) to 1 (moves frontwards)
      * @param {number} rotationDirection Varies from -1 (left) to 1 (right)
      */
-    moveRotating(forwardForce, rotationDirection, isMoving=false) {
+    moveRotating(forwardForce, rotationDirection, isMoving = false) {
         if (Math.abs(forwardForce) > 1) {
             forwardForce = forwardForce >= 0 ? 1 : -1;
         }

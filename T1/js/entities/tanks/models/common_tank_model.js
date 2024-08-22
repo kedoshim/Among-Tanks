@@ -1,6 +1,7 @@
 import * as THREE from "three";
-import { setDefaultMaterial } from "../../../../libs/util/util.js";
-import { GLTFLoader } from "../../../../build/jsm/loaders/GLTFLoader.js";
+import { setDefaultMaterial } from "../../../../../libs/util/util.js";
+import { GLTFLoader } from "../../../../../build/jsm/loaders/GLTFLoader.js";
+import { darkenColor } from "../../../utils.js";
 
 let cachedTank = null;
 
@@ -121,17 +122,4 @@ export function createCommonTank(tankColor, amogColor) {
         console.error("Tank model is not yet loaded.");
         return null;
     }
-}
-
-function darkenColor(rgbString, factor) {
-    // Parse the RGB string into a Three.js color object
-    const color = new THREE.Color(rgbString);
-
-    // Darken the color by multiplying its components by the factor
-    color.r *= 1 - factor;
-    color.g *= 1 - factor;
-    color.b *= 1 - factor;
-
-    // Return the darkened color as an RGB string
-    return color.getStyle();
 }

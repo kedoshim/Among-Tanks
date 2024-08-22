@@ -1,4 +1,4 @@
-import { initRenderer } from "../libs/util/util.js";
+import { initRenderer } from "../../libs/util/util.js";
 
 import { GameManager } from "./gameManager.js";
 

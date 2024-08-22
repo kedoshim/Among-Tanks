@@ -1,10 +1,12 @@
-export function addPlayerToHud(index, hexColor) {
+import { darkenColor } from "../utils.js";
+
+export function addPlayerToHud(index, hexAmogColor, hexTankColor) {
     let hudDiv = document.getElementById("hud");
     let playerDiv = document.createElement("div");
     playerDiv.className = "player";
     playerDiv.id = `div-p${index}`;
     
-    createAmogusProfile(hexColor, index, playerDiv);
+    createAmogusProfile(hexAmogColor,hexTankColor, index, playerDiv);
     createHealthbar(index, playerDiv);
 
     hudDiv.appendChild(playerDiv);
@@ -21,9 +23,10 @@ export function resetHud() {
     hudDiv.innerHTML = "";
 }
 
-function createAmogusProfile(hexColor, index, div) {
+function createAmogusProfile(hexColor,hexTankColor, index, div) {
     const svgUrl = "./assets/svg/Amogus.svg"; // Path to your SVG file
-    const targetColor = "#3f5aa8"; // Color to replace
+    const bodyColor = "#3f5aa8"; // Color to replace
+    const capColor = "#3d472e"; // Color to replace
     const newColor = hexColor; // New color
 
     fetch(svgUrl)
@@ -36,11 +39,11 @@ function createAmogusProfile(hexColor, index, div) {
 
             // Change all instances of the target color to the new color
             svgElement.querySelectorAll("*").forEach((el) => {
-                if (el.getAttribute("fill") === targetColor) {
+                if (el.getAttribute("fill") === bodyColor) {
                     el.setAttribute("fill", newColor);
                 }
-                if (el.getAttribute("stroke") === targetColor) {
-                    el.setAttribute("stroke", newColor);
+                if (el.getAttribute("fill") === capColor) {
+                    el.setAttribute("fill", darkenColor(hexTankColor,0.7));
                 }
             });
 

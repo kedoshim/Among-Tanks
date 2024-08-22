@@ -1,5 +1,5 @@
-import { Scene } from "../../build/three.module.js";
-import KeyboardState from "../../libs/util/KeyboardState.js";
+import { Scene } from "../../../build/three.module.js";
+import KeyboardState from "../../../libs/util/KeyboardState.js";
 import { Controller } from "./controllers/controller.js";
 import { Tank } from "./tanks/tank.js";
 import * as THREE from "three";

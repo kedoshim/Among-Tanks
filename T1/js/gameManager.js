@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import KeyboardState from "../libs/util/KeyboardState.js";
+import KeyboardState from "../../libs/util/KeyboardState.js";
 import {
     initRenderer,
     initDefaultBasicLight,
@@ -13,22 +13,27 @@ import {
     createGroundPlaneXZ,
     getMaxSize,
     degreesToRadians,
-} from "../libs/util/util.js";
+} from "../../libs/util/util.js";
 
-import { CameraControls } from "./camera.js";
+import { CameraControls } from "./screen/camera.js";
 import { Player } from "./entities/player.js";
-import { ProjectileCollisionSystem, TankCollisionSystem } from "./collision.js";
+import {
+    ProjectileCollisionSystem,
+    TankCollisionSystem,
+} from "./classes/collision.js";
 import { Entity } from "./entities/entity.js";
 import { getConfig } from "./config.js";
-import { CollisionBlock } from "./blocks.js";
-import { AISystem, Bot, Turret, TurretSystem } from "./bot.js";
+import { CollisionBlock } from "./classes/blocks.js";
+import { AISystem, Bot, Turret, TurretSystem } from "./entities/bot.js";
 import { preloadCommonTankModel } from "./entities/tanks/models/common_tank_model.js";
-import { TeapotGeometry } from "../build/jsm/geometries/TeapotGeometry.js";
-import { loadGLBFile } from "./models.js";
-import { getTexture, loadTexture } from "./textures.js";
-import {createTurret} from './entities/turret/model/turret_model.js'
-import { addPlayerToHud, resetHud, updatePlayerHud} from "./hud.js";
-import { GLTFLoader } from "../build/jsm/loaders/GLTFLoader.js";
+import { loadGLBFile } from "./loaders/models.js";
+import { getTexture, loadTexture } from "./loaders/textures.js";
+import { createTurret } from "./entities/turret/model/turret_model.js";
+import {
+    addPlayerToHud,
+    resetHud,
+    updatePlayerHud,
+} from "./screen/hud.js";
 
 export class GameManager {
     constructor(level, lighting, renderer = null) {
@@ -38,12 +43,10 @@ export class GameManager {
         this.lighting = lighting;
         this.turretsPos = [
             {
-                "x": 19,
-                "y": 11
-            }
-        ]
-
-        
+                x: 19,
+                y: 11,
+            },
+        ];
     }
 
     async start() {
@@ -114,11 +117,9 @@ export class GameManager {
     manageLevelChange() {
         if (this.keyboard.down("0")) {
             this.changeLevelFunction(0);
-        }
-        else if (this.keyboard.down("1")) {
+        } else if (this.keyboard.down("1")) {
             this.changeLevelFunction(1);
-        }
-        else if (this.keyboard.down("2")) {
+        } else if (this.keyboard.down("2")) {
             this.changeLevelFunction(2);
         }
     }
@@ -165,14 +166,13 @@ export class GameManager {
         this.listening();
 
         resetHud();
-
     }
 
     createPlayer(index) {
         let new_player = new Player("", [0, 0], "", "", this.config);
 
         new_player.spawnPoint = this.playerSpawnPoint[Player.playerNumber - 1];
-            addPlayerToHud(index, new_player.tank._amogColor)
+        addPlayerToHud(index, new_player.tank._amogColor,new_player.tank._tankColor);
 
         if (index == 2) {
             new_player._controller.isBot = true;
@@ -229,68 +229,22 @@ export class GameManager {
     //     this.scene.add(obj);
     // }
 
-    degrees_to_radians(degrees) {
-        // Store the value of pi.
-        let pi = Math.PI;
-        // Multiply degrees by pi divided by 180 to convert to radians.
-        return degrees * (pi / 180);
-    }
-
-    normalizeDegrees(degress) {
-        if (degress > 180) {
-            return degress - 180;
-        }
-        return degress;
-    }
-
     drawLights(x, y, z, objective_angle = 0) {
-        function loadGLBFile(
-            asset,
-            file,
-            desiredScale,
-            scene,
-            position = { x: 0, y: 0, z: 0 },
-            rotation
-        ) {
-            let loader = new GLTFLoader();
-            loader.load(
-                file,
-                function (gltf) {
-                    let obj = gltf.scene;
-                    obj.traverse(function (child) {
-                        if (child.isMesh) {
-                            child.castShadow = false;
-                        }
-                    });
-                    obj.scale.set(desiredScale, desiredScale, desiredScale);
-                    //obj = fixPosition(obj);
-                    obj.updateMatrixWorld(true);
-                    obj.position.set(position.x, position.y, position.z);
-                    console.log(rotation);
-                    obj.rotation.set(
-                        0,
-                        -degreesToRadians(rotation + 90),
-                        0
-                    );
-                    scene.add(obj);
-
-                    // Store loaded gltf in our js object
-                    asset.object = gltf.scene;
-                },
-                null,
-                null
-            );
-        }
         let asset = {
             object: null,
             loaded: false,
             bb: new THREE.Box3(),
         };
-        loadGLBFile(asset, "./assets/models/LampPost.glb", 15, this.scene, {
-            x,
-            y: y - 20,
-            z
-        },
+        loadGLBFile(
+            asset,
+            "./assets/models/LampPost.glb",
+            50,
+            this.scene,
+            {
+                x,
+                y: y - 20,
+                z,
+            },
             objective_angle
         );
 
@@ -311,9 +265,9 @@ export class GameManager {
         let spotLight = new THREE.SpotLight(`rgb(240,240,136)`);
         spotLight.position.copy(lightPosition);
         const directionalZ =
-            60 * Math.cos(this.degrees_to_radians(objective_angle)) * -1;
+            60 * Math.cos(THREE.MathUtils.degToRad(objective_angle)) * -1;
         const directionalX =
-            60 * Math.sin(this.degrees_to_radians(objective_angle));
+            60 * Math.sin(THREE.MathUtils.degToRad(objective_angle));
         spotLight.target.position.set(x + directionalX, -50, z + directionalZ);
         spotLight.distance = 100;
         spotLight.castShadow = true;
@@ -460,8 +414,6 @@ export class GameManager {
             }
         }
 
-        
-
         for (let i = 0; i < this.lighting.length; i++) {
             for (let j = 0; j < this.lighting[i].length; j++) {
                 if ("angle" in this.lighting[i][j]) {
@@ -494,8 +446,7 @@ export class GameManager {
                 }
             }
         }
-        
-        
+
         //
     }
 
@@ -505,14 +456,13 @@ export class GameManager {
         let { x, y } = level.offset;
         const BLOCK_SIZE = 17;
         const getTranslation = (i, j, yTranslation) => {
-            
             return {
                 x: BLOCK_SIZE * i + 1 - x,
                 y: yTranslation,
                 z: BLOCK_SIZE * j + 1 - y,
             };
         };
-        for(let i = 0; i < this.turretsPos.length; i++) {
+        for (let i = 0; i < this.turretsPos.length; i++) {
             let data = this.turretsPos[i];
             let translation = getTranslation(
                 data.x,
@@ -537,7 +487,6 @@ export class GameManager {
                 new Turret(turret.body, this.players[1], this.bots)
             );
         }
-
     }
 
     createCollisionSystem() {
@@ -653,7 +602,7 @@ export class GameManager {
     updateAiAction() {
         for (let index = 0; index < this.bots.length; index++) {
             this.ai_system.nextAction(index);
-            this.bots[index].move();            
+            this.bots[index].move();
         }
     }
 
@@ -681,7 +630,11 @@ export class GameManager {
             const turret = this.turrets[index];
             let turretProjectiles = turret._projectiles;
             // console.log(turretProjectiles.length)
-            for (let index2 = turretProjectiles.length - 1; index2 >= 0; index2--) {
+            for (
+                let index2 = turretProjectiles.length - 1;
+                index2 >= 0;
+                index2--
+            ) {
                 this.projectiles.push(turretProjectiles[index2]);
             }
 
@@ -724,7 +677,7 @@ export class GameManager {
             player.tank.healthBar.updateHealthBar(player.health);
             player.tank.healthBar.setHealthBarPosition(player.tank.position);
             let lifePercent = player.health / player.tank.healthBar.maxLife;
-            updatePlayerHud(key,lifePercent*100);
+            updatePlayerHud(key, lifePercent * 100);
         }
     }
 
@@ -788,7 +741,6 @@ export class GameManager {
     }
 
     render() {
-        
         this.renderer.render(this.scene, this.camera);
     }
 }

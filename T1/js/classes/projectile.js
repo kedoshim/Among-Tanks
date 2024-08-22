@@ -1,8 +1,15 @@
-import * as THREE from 'three';
-import { setDefaultMaterial } from "../libs/util/util.js";
+import * as THREE from "three";
+import { setDefaultMaterial } from "../../../libs/util/util.js";
 
 export class Projectile {
-    constructor(position, direction, speed=0.1, damage=1, ricochetsAmount=2, color="white") {
+    constructor(
+        position,
+        direction,
+        speed = 0.1,
+        damage = 1,
+        ricochetsAmount = 2,
+        color = "white"
+    ) {
         this.damage = damage;
         this.speed = speed;
         this.ricochetsAmount = ricochetsAmount;
@@ -12,8 +19,12 @@ export class Projectile {
         this.direction = direction.normalize();
 
         this.projectile = this.build_projectile(1, color); // modelo do projétil
-        this.projectile.position.set(position.x, position.y+2, position.z);
-        this.lastPosition = new THREE.Vector3(position.x, position.y - 3, position.z)
+        this.projectile.position.set(position.x, position.y + 2, position.z);
+        this.lastPosition = new THREE.Vector3(
+            position.x,
+            position.y - 3,
+            position.z
+        );
 
         this.collisionShape = new THREE.Box3().setFromObject(this.projectile);
 
@@ -63,7 +74,11 @@ export class Projectile {
 
     moveStep() {
         let step = this.direction.clone().multiplyScalar(this.speed);
-        this.lastPosition = new THREE.Vector3(this.projectile.position.x, this.projectile.position.y, this.projectile.position.z);
+        this.lastPosition = new THREE.Vector3(
+            this.projectile.position.x,
+            this.projectile.position.y,
+            this.projectile.position.z
+        );
         this.projectile.position.add(step);
         this.collisionShape = null;
         this.collisionShape = new THREE.Box3().setFromObject(this.projectile);
