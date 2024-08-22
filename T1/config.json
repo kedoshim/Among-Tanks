@@ -1,6 +1,6 @@
 {
   "directionalMovementEnabled": false ,
-  "numberOfPlayers" : 3,
+  "numberOfPlayers" : 4,
   "playerSpawnPoint" : [
     [-20, -20],
     [20, -20],
@@ -9,8 +9,8 @@
   ],
 
   "playerConfig": {
-    "defaultPlayerAmogusColors": ["darkorange", "antiquewhite", "purple", "pink"],
-    "defaultPlayerTankColors": ["darkblue", "red", "goldenrod", "green"],
+    "defaultPlayerAmogusColors": ["#FF8C00", "#FAEBD7", "#800080", "#FFC0CB"],
+    "defaultPlayerTankColors": ["#00008B", "#FF0000", "#DAA520", "#008000"],
     "defaultPlayerControls": [
       {
         "up": "W",

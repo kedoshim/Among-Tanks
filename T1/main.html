@@ -1,21 +1,45 @@
 <!DOCTYPE html>
 <html>
-   <head>
-      <title>Among Tanks</title>
+    <head>
+        <title>Among Tanks</title>
 
-      <link rel="shortcut icon" href="./amog.ico">
-      <link rel="stylesheet" href="../html/resources/default.css">
-      <meta name="viewport" content="width=device-width, initial-scale=1">  
-   </head>
+        <link rel="shortcut icon" href="./amog.ico" />
+        <link rel="stylesheet" href="../html/resources/default.css" />
+        <link rel="stylesheet" href="./assets/css/lifeBar.css" />
+        <link rel="stylesheet" href="./assets/css/hud.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+    </head>
 
-   <body>
-      <!-- Import maps polyfill -- Remove this when import maps will be widely supported-->
-      <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>  
-      <script type="importmap"> 
-         {"imports": {"three": "../build/three.module.js"}} 
-      </script>  
-      <div id="webgl-output">     
-         <script type="module" src="main.js"></script>
-      </div>
-   </body>
+    <body>
+        <!-- Import maps polyfill -- Remove this when import maps will be widely supported-->
+        <script
+            async
+            src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"
+        ></script>
+        <script type="importmap">
+            { "imports": { "three": "../build/three.module.js" } }
+        </script>
+        <div id="webgl-output">
+            <script type="module" src="main.js"></script>
+        </div>
+        <div id="hud">
+         <!-- <img src = "./assets/svg/Amogus.svg" alt="amogus" class="profile"> -->
+         <!-- <div id="life-bar">
+                    <div id="life-bar-value"></div>
+         </div> -->
+            <!-- <div
+                style="
+                    padding: 6px 14px;
+                    bottom: 0px;
+                    left: 0px;
+                    position: fixed;
+                    background-color: rgb(0, 0, 0);
+                    color: white;
+                    font-size: 26px;
+                "
+            >
+                aaa
+            </div> -->
+        </div>
+    </body>
 </html>

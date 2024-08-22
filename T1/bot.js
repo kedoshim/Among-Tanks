@@ -425,7 +425,7 @@ export class AISystem {
             }
         });
 
-        console.log(wallsDirections);
+        // console.log(wallsDirections);
 
         return wallsDirections;
     }

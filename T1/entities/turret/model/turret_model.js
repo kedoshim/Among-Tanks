@@ -58,7 +58,7 @@ export function createTurret(
 
         let mid = CSG.toMesh(midCSG, new THREE.Matrix4());
         mid.material = new THREE.MeshPhongMaterial({
-            color: bodyColor,
+            color: darkenColor(bodyColor,0.7),
         });
         mid.castShadow = true;
         return mid;
@@ -170,4 +170,17 @@ export function createTurret(
         base: base,
         body: mid,
     };
+}
+
+function darkenColor(rgbString, factor) {
+    // Parse the RGB string into a Three.js color object
+    const color = new THREE.Color(rgbString);
+
+    // Darken the color by multiplying its components by the factor
+    color.r *= 1 - factor;
+    color.g *= 1 - factor;
+    color.b *= 1 - factor;
+
+    // Return the darkened color as an RGB string
+    return color.getStyle();
 }

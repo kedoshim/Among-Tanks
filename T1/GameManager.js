@@ -26,6 +26,7 @@ import { TeapotGeometry } from "../build/jsm/geometries/TeapotGeometry.js";
 import { loadGLBFile } from "./models.js";
 import { getTexture, loadTexture } from "./textures.js";
 import {createTurret} from './entities/turret/model/turret_model.js'
+import { addPlayerToHud, resetHud, updatePlayerHud} from "./hud.js";
 
 export class GameManager {
     constructor(level, lighting, renderer = null) {
@@ -133,8 +134,8 @@ export class GameManager {
         // this.light = initDefaultBasicLight(this.scene);
         const AmbientLight = new THREE.AmbientLight(0xffffff, 0.8); // soft white light
         this.scene.add(AmbientLight);
-        this.controls = new InfoBox();
-        this.shotInfo = new SecondaryBox();
+        // this.controls = new InfoBox();
+        // this.shotInfo = new SecondaryBox();
         this.keyboard = new KeyboardState();
         console.log("Inicializando GameManager...");
         // Create a basic light to illuminate the scene
@@ -160,12 +161,16 @@ export class GameManager {
         this.startGame = false;
 
         this.listening();
+
+        resetHud();
+        
     }
 
     createPlayer(index) {
         let new_player = new Player("", [0, 0], "", "", this.config);
 
         new_player.spawnPoint = this.playerSpawnPoint[Player.playerNumber - 1];
+            addPlayerToHud(index, new_player.tank._amogColor)
 
         if (index == 2) {
             new_player._controller.isBot = true;
@@ -564,6 +569,7 @@ export class GameManager {
             const player = this.players[key];
             if (player._tank.died) {
                 this.removeDeadPlayer(player, key);
+                updatePlayerHud(key, 0);
             }
         }
 
@@ -595,8 +601,8 @@ export class GameManager {
 
         info = info.substring(0, info.length - 2);
 
-        this.shotInfo.changeMessage(info);
-        this.shotInfo.changeStyle("#00b3ad", 0xffffff, "25", "Lucida Console");
+        // this.shotInfo.changeMessage(info);
+        // this.shotInfo.changeStyle("#00b3ad", 0xffffff, "25", "Lucida Console");
     }
 
     cameraUpdate() {
@@ -633,7 +639,7 @@ export class GameManager {
         for (let index = 0; index < this.turrets.length; index++) {
             const turret = this.turrets[index];
             let turretProjectiles = turret._projectiles;
-            console.log(turretProjectiles.length)
+            // console.log(turretProjectiles.length)
             for (let index2 = turretProjectiles.length - 1; index2 >= 0; index2--) {
                 this.projectiles.push(turretProjectiles[index2]);
             }
@@ -676,6 +682,8 @@ export class GameManager {
             const player = this.players[key];
             player.tank.healthBar.updateHealthBar(player.health);
             player.tank.healthBar.setHealthBarPosition(player.tank.position);
+            let lifePercent = player.health / player.tank.healthBar.maxLife;
+            updatePlayerHud(key,lifePercent*100);
         }
     }
 
@@ -691,7 +699,7 @@ export class GameManager {
                         winner = key;
                     }
                 }
-                this.shotInfo.hide();
+                // this.shotInfo.hide();
                 this.deleteScene(this.scene);
                 winner = winner;
                 alert("Game Over! Player " + winner + " won!");
