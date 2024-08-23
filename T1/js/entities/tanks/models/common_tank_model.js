@@ -2,8 +2,11 @@ import * as THREE from "three";
 import { setDefaultMaterial } from "../../../../../libs/util/util.js";
 import { GLTFLoader } from "../../../../../build/jsm/loaders/GLTFLoader.js";
 import { darkenColor } from "../../../utils.js";
+import { MeshPhongMaterial } from "../../../../../build/three.module.js";
 
 let cachedTank = null;
+
+let material = new THREE.MeshPhongMaterial({ color: "white" });
 
 export function preloadCommonTankModel() {
     return new Promise((resolve, reject) => {
@@ -23,6 +26,15 @@ export function preloadCommonTankModel() {
                     if (node.isMesh) {
                         node.castShadow = true;
                         node.receiveShadow = true;
+                        let color = node.material.color;
+                        let shine =
+                            (100 - node.material.roughness * 1.2 * 100) / 2;
+                        console.log(shine);
+                        node.material = new THREE.MeshPhongMaterial({
+                            color: color,
+                            shininess: shine,
+                            specular: darkenColor(color, -0.3),
+                        });
                     }
                 });
 
@@ -37,9 +49,9 @@ export function preloadCommonTankModel() {
     });
 }
 
-export function createCommonTank(tankColor, amogColor) {
+export function createCommonTank(tankColor, amogColor, sus = false) {
     if (cachedTank) {
-    //     console.log("Using cached tank model");
+        //     console.log("Using cached tank model");
 
         // Clone the cached tank model
         const tankClone = cachedTank.clone();
@@ -57,8 +69,8 @@ export function createCommonTank(tankColor, amogColor) {
                     child.material = child.material.clone();
                 }
 
-                 child.castShadow = true;
-                 child.receiveShadow = true;
+                child.castShadow = true;
+                child.receiveShadow = true;
             }
         });
 
@@ -97,16 +109,25 @@ export function createCommonTank(tankColor, amogColor) {
 
         const amogusObject = tankClone.getObjectByName("Amogus");
         if (amogusObject) {
-
             amogusObject.children[0].material.color.set(amogColor);
             amogusObject.material.color.set(amogColor);
+            if (sus) {
+                amogusObject.children[1].material.emissive.set(
+                    darkenColor("#ff5050", 0.5)
+                );
+            }
+            else {
+                amogusObject.children[1].material.emissive.set(
+                    darkenColor(amogusObject.children[1].material.color, 0.8)
+                );
+            }
         } else {
             console.warn(`"Amogus" object not found in the tank model.`);
-      }
-      
+        }
+
         const headObject = tankClone.getObjectByName("Head");
         if (headObject) {
-            headObject.material.color.set(darkenColor(amogColor,-0.5));
+            headObject.material.color.set(darkenColor(amogColor, -0.5));
         } else {
             console.warn(`"Head" object not found in the tank model.`);
         }
