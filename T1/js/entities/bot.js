@@ -159,11 +159,11 @@ export class AISystem {
             this.moveTank(botIndex);
         }
         else if (this.isPlayerInFrontOfBot(botIndex)) {
-            if (this.bots[botIndex].player_tank._tank.model.position.distanceTo(this.player._tank.model.position) >= 5 * this.walls[0].BLOCK_SIZE) {
+            if (this.bots[botIndex]._tank.model.position.distanceTo(this.player._tank.model.position) >= 5 * this.walls[0].BLOCK_SIZE) {
                 this.shoot(botIndex);
             }
             else {
-                this.bots[botIndex]._nextMove.movement = -1;
+                this.bots[botIndex]._controller._nextMove.movement = -1;
                 this.shoot(botIndex);
             }
         }
@@ -175,7 +175,7 @@ export class AISystem {
     //-------------- States --------------
 
     thereIsObjectsBetweenPlayerAndBot(botIndex) {
-        let bot = this.bots[botIndex].player_tank;
+        let bot = this.bots[botIndex];
         let player = this.player;
         let walls = this.walls;
 
@@ -206,7 +206,7 @@ export class AISystem {
     
 
     isPlayerInFrontOfBot(botIndex) {
-        let bot = this.bots[botIndex].player_tank;
+        let bot = this.bots[botIndex];
         let player = this.player;
 
         let playerPosition = player._tank._model.position.clone();
@@ -230,7 +230,7 @@ export class AISystem {
     // -------------- Complex Actions --------------
 
     trackPlayer(botIndex) {
-        let bot = this.bots[botIndex].player_tank;
+        let bot = this.bots[botIndex];
         let player = this.player;
         let nextMove = {
             isDirectional: false,
@@ -264,21 +264,21 @@ export class AISystem {
             nextMove["rotation"] = -1;
         }
 
-        this.bots[botIndex].setNextMove(nextMove);
+        this.bots[botIndex]._controller.setNextMove(nextMove);
     }
 
     moveTank(botIndex) {
         let bot = this.bots[botIndex];
-        bot.resetMove();
+        bot._controller.resetMove();
 
         let block_size = this.walls[0].BLOCK_SIZE;
 
-        let botPosition = bot.player_tank._tank._model.position.clone();
+        let botPosition = bot._tank._model.position.clone();
         let player = this.player;
 
         
         if (botIndex % 2 == 0) {
-            let path = this.aStar.findPath(bot.player_tank._tank._model.position, player._tank._model.position);
+            let path = this.aStar.findPath(bot._tank._model.position, player._tank._model.position);
 
             if (path.length > 1) {
                 
@@ -295,7 +295,7 @@ export class AISystem {
                 nextPosition = new THREE.Vector3(nextPosition.x, botPosition.y, nextPosition.z);
 
                 let direction = new THREE.Vector3(0, 0, 1);
-                direction.applyQuaternion(bot.player_tank._tank._model.quaternion);
+                direction.applyQuaternion(bot._tank._model.quaternion);
 
                 // rotate right
                 let rotationAngle = Math.PI / 32;
@@ -308,29 +308,30 @@ export class AISystem {
                 let actualDirection = actualPosition.sub(botPosition);
                 
                 if (direction.angleTo(actualDirection) < 0.10 && botPosition.distanceTo(actualPosition) > block_size / 8) {
-                    this.bots[botIndex]._nextMove.movement = 1;
-                    this.bots[botIndex].isMoving = true;
+                    this.bots[botIndex]._controller._nextMove.movement = 1;
+                    this.bots[botIndex]._controller.isMoving = true;
+                
                 }
                 else {
                     if (imaginary_vector_rotation.angleTo(chosenDirection) < direction.angleTo(chosenDirection)) {
-                        this.bots[botIndex]._nextMove.rotation = 1;
+                        this.bots[botIndex]._controller._nextMove.rotation = 1;
                     }
                     else {
-                        this.bots[botIndex]._nextMove.rotation = -1;
+                        this.bots[botIndex]._controller._nextMove.rotation = -1;
                     }
         
                     if (direction.angleTo(chosenDirection) < 0.09) {
-                        this.bots[botIndex]._nextMove.movement = 1;
-                        this.bots[botIndex].isMoving = true;
+                        this.bots[botIndex]._controller._nextMove.movement = 1;
+                        this.bots[botIndex]._controller.isMoving = true;
                     }
                 }
             }
         }
         else {
             let direction = new THREE.Vector3(0, 0, 1);
-            direction.applyQuaternion(bot.player_tank._tank._model.quaternion);
+            direction.applyQuaternion(bot._tank._model.quaternion);
     
-            let botPosition = bot.player_tank._tank._model.position.clone();
+            let botPosition = bot._tank._model.position.clone();
     
             // rotate right
             let rotationAngle = Math.PI / 32;
@@ -342,18 +343,18 @@ export class AISystem {
             let chosenDirection = this.decideTankMovement(botPosition, direction);
             
             if (direction.angleTo(chosenDirection) < 0.03) {
-                this.bots[botIndex]._nextMove.movement = 1;
+                this.bots[botIndex]._controller._nextMove.movement = 1;
             }
             else {
                 if (imaginary_vector_rotation.angleTo(chosenDirection) < direction.angleTo(chosenDirection)) {
-                    this.bots[botIndex]._nextMove.rotation = 1;
+                    this.bots[botIndex]._controller._nextMove.rotation = 1;
                 }
                 else {
-                    this.bots[botIndex]._nextMove.rotation = -1;
+                    this.bots[botIndex]._controller._nextMove.rotation = -1;
                 }
     
                 if (direction.angleTo(chosenDirection) < 0.09) {
-                    this.bots[botIndex]._nextMove.movement = 1;
+                    this.bots[botIndex]._controller._nextMove.movement = 1;
                 }
             }
         }
@@ -432,23 +433,23 @@ export class AISystem {
 
     // -------------- Actions --------------
     rotateLeft(botIndex) {
-        this.bots[botIndex].rotateLeft();
+        this.bots[botIndex]._controller.rotateLeft();
     }
 
     rotateRight(botIndex) {
-        this.bots[botIndex].rotateRight();
+        this.bots[botIndex]._controller.rotateRight();
     }
 
     forward(botIndex) {
-        this.bots[botIndex].forward();
+        this.bots[botIndex]._controller.forward();
     }
 
     reverse(botIndex) {
-        this.bots[botIndex].reverse();
+        this.bots[botIndex]._controller.reverse();
     }
 
     shoot(botIndex) {
-        this.bots[botIndex].shoot();
+        this.bots[botIndex]._controller.shoot();
     }
 }
 
@@ -590,15 +591,15 @@ export class Turret {
 
         if (!this.players._tank.died)
             positions.push(playerPosition);
-        bots.forEach(bot => {
-            if (!bot.player_tank._tank.died) {
-                positions.push(bot.player_tank._tank.model.position.clone());
+        Object.values(bots).forEach((bot) => {
+            if (!bot._tank.died) {
+                positions.push(bot._tank.model.position.clone());
             }
         });
 
 
         let shortestDistance = Infinity;
-        let nearestPosition;
+        let nearestPosition = turretPosition.clone();
 
         positions.forEach(pos => {
             const actualDistance = pos.distanceTo(turretPosition.clone());

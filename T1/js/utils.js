@@ -23,3 +23,12 @@ export function darkenColor(rgbString, factor) {
     // Return the darkened color as an RGB string
     return color.getStyle();
 }
+
+export function joinObjectsIntoList(obj1, obj2) {
+    // Get all the values from both objects and join them in a list
+    const values1 = Object.values(obj1);
+    const values2 = Object.values(obj2);
+
+    // Combine both lists into a single list
+    return [...values1, ...values2];
+}

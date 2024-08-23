@@ -443,4 +443,11 @@ export class Tank {
         var audio = new Audio("./assets/audio/shot.mp3"); // Áudio do tiro
         audio.play();
     }
+
+    canShoot() {
+        if (currentTime - this._lastShootTime < this._shootCooldown) {
+            return false;
+        }
+        return true;
+    }
 }

@@ -29,11 +29,9 @@ import { preloadCommonTankModel } from "./entities/tanks/models/common_tank_mode
 import { loadGLBFile } from "./loaders/models.js";
 import { getTexture, loadTexture } from "./loaders/textures.js";
 import { createTurret } from "./entities/turret/model/turret_model.js";
-import {
-    addPlayerToHud,
-    resetHud,
-    updatePlayerHud,
-} from "./screen/hud.js";
+import { addPlayerToHud, resetHud, updatePlayerHud } from "./screen/hud.js";
+import { Enemy } from "./entities/enemy.js";
+import {joinObjectsIntoList } from "./utils.js";
 
 export class GameManager {
     constructor(level, lighting, renderer = null) {
@@ -56,6 +54,7 @@ export class GameManager {
         await this.loadTextures();
         this.loadLevel(this.levelData);
         this.createPlayers();
+        this.createBots();
         this.createTurrets(this.levelData);
         this.createCollisionSystem();
         this.createAISystem();
@@ -108,6 +107,19 @@ export class GameManager {
         }
     }
 
+    createBots() {
+        Enemy.enemyNumber = 0;
+
+        for (let i = 1; i <= this.numberOfBots; i++) {
+            this.createBot(i);
+        }
+        for (const key in this.enemies) {
+            const bot = this.enemies[key];
+            console.log("loading bot '" + bot.name + "'");
+            bot.load(this.scene);
+        }
+    }
+
     manageOrbitControls() {
         if (this.keyboard.down("O")) {
             this.cameraController.changeCameraMode();
@@ -124,11 +136,29 @@ export class GameManager {
         }
     }
 
+    setNumberOfEntities() {
+        const maxPlayers = 4;
+        this.numberOfEntities =
+            this.config.numberOfPlayers + this.config.numberOfBots;
+
+        if (this.numberOfEntities > 2) {
+            this.numberOfPlayers = Math.max(
+                1,
+                Math.min(this.config.numberOfPlayers, 4)
+            ); //min = 2, max = 4
+            this.numberOfBots = Math.min(
+                this.config.numberOfBots,
+                maxPlayers - this.numberOfPlayers
+            );
+        }
+        else if (this.numberOfEntities >= 0) {
+            this.numberOfPlayers = this.config.numberOfPlayers;
+            this.numberOfBots = this.config.numberOfBots;
+        }
+    }
+
     setup() {
-        this.numberOfPlayers = Math.max(
-            2,
-            Math.min(this.config.numberOfPlayers, 4)
-        ); //min = 2, max = 4
+        this.setNumberOfEntities();
         this.scene = new THREE.Scene(); // Create main scene
         if (this.renderer === null) this.renderer = initRenderer(); // Init a basic renderer
         this.renderer.shadowMap.enabled = true;
@@ -137,7 +167,7 @@ export class GameManager {
         // this.light = initDefaultBasicLight(this.scene);
         const AmbientLight = new THREE.AmbientLight(0xffffff, 0.1); // soft white light
         this.scene.add(AmbientLight);
-        const directionalLight = new THREE.DirectionalLight("#a050f0",0.3); // soft white light
+        const directionalLight = new THREE.DirectionalLight("#b050c0", 0.3); // soft white light
         this.scene.add(directionalLight);
         // this.controls = new InfoBox();
         // this.shotInfo = new SecondaryBox();
@@ -153,10 +183,10 @@ export class GameManager {
         this.playerSpawnPoint = [];
         this.players = {};
         this.projectiles = [];
-        this.entities = [];
+        this.enemies = {};
+        this.allTanks = [];
         this.previousHitBox = [];
 
-        this.bots = [];
         this.turrets = [];
 
         this.projectileCollisionSystem = null;
@@ -170,22 +200,36 @@ export class GameManager {
         resetHud();
     }
 
+    createBot(index) {
+        let new_bot = new Enemy("", [0, 0], "", "");
+
+        new_bot.spawnPoint = this.playerSpawnPoint[Entity.entityNumber - 1];
+
+        new_bot._controller.isBot = true;
+
+        this.enemies[index] = new_bot;
+    }
+
     createPlayer(index) {
-        let new_player = new Player("", [0, 0], "", "", this.config);
+        let new_player = new Player("", [0, 0], "", "");
 
-        new_player.spawnPoint = this.playerSpawnPoint[Player.playerNumber - 1];
-        addPlayerToHud(index, new_player.tank._amogColor,new_player.tank._tankColor);
+        new_player.spawnPoint = this.playerSpawnPoint[Entity.entityNumber - 1];
+        addPlayerToHud(
+            index,
+            new_player.tank._amogColor,
+            new_player.tank._tankColor
+        );
 
-        if (index == 2) {
-            new_player._controller.isBot = true;
-            let bot1 = new Bot(new_player);
-            this.bots.push(bot1);
-        }
-        if (index == 3) {
-            new_player._controller.isBot = true;
-            let bot2 = new Bot(new_player);
-            this.bots.push(bot2);
-        }
+        // if (index == 2) {
+        //     new_player._controller.isBot = true;
+        //     let bot1 = new Bot(new_player);
+        //     this.enemies.push(bot1);
+        // }
+        // if (index == 3) {
+        //     new_player._controller.isBot = true;
+        //     let bot2 = new Bot(new_player);
+        //     this.enemies.push(bot2);
+        // }
 
         this.players[index] = new_player;
     }
@@ -219,8 +263,8 @@ export class GameManager {
 
     drawLights(x, y, z, objective_angle = 0) {
         const lampHeight = 56;
-        const lampDistance = 16
-        
+        const lampDistance = 16;
+
         const postHeight = 25;
 
         const directionalZ =
@@ -246,7 +290,6 @@ export class GameManager {
             objective_angle
         );
 
-
         let lightPosition = new THREE.Vector3(
             x + directionalX / (60 / lampDistance),
             y + lampHeight,
@@ -265,7 +308,7 @@ export class GameManager {
 
         //---------------------------------------------------------
         // Create and set the spotlight
-        let spotLight = new THREE.SpotLight(`rgb(240,240,136)`);
+        let spotLight = new THREE.SpotLight(`rgb(240,200,136)`);
         spotLight.position.copy(lightPosition);
         spotLight.target.position.set(x + directionalX, -50, z + directionalZ);
         spotLight.distance = 100;
@@ -403,8 +446,8 @@ export class GameManager {
                 }
             }
         }
-        if (spawnIndex < this.numberOfPlayers) {
-            for (let i = spawnIndex; i < this.numberOfPlayers; i++) {
+        if (spawnIndex < this.numberOfEntities) {
+            for (let i = spawnIndex; i < this.numberOfEntities; i++) {
                 if (this.playerSpawnPoint[i - spawnIndex])
                     this.playerSpawnPoint.push(
                         this.playerSpawnPoint[i - spawnIndex]
@@ -475,25 +518,30 @@ export class GameManager {
             this.walls.push(wall);
 
             this.turrets.push(
-                new Turret(turret.body, this.players[1], this.bots)
+                new Turret(turret.body, this.players[1], this.enemies)
             );
         }
     }
 
     createCollisionSystem() {
+        this.allTanks = joinObjectsIntoList(this.players, this.enemies);
         this.tankCollisionSystem = new TankCollisionSystem(
-            this.players,
+            this.allTanks,
             this.walls
         );
         this.projectileCollisionSystem = new ProjectileCollisionSystem(
-            this.players,
+            this.allTanks,
             this.walls,
             this.projectiles
         );
     }
 
     createAISystem() {
-        this.ai_system = new AISystem(this.players[1], this.walls, this.bots);
+        this.ai_system = new AISystem(
+            this.players[1],
+            this.walls,
+            this.enemies
+        );
     }
 
     createTurretSystem() {
@@ -528,6 +576,7 @@ export class GameManager {
         this.keyboard.update();
         this.manageOrbitControls();
         this.manageLevelChange();
+        const AI = this.ai_system;
 
         for (const key in this.players) {
             const player = this.players[key];
@@ -535,11 +584,12 @@ export class GameManager {
             if (this.connectedGamepads[key] != null) {
                 playerGamepad = navigator.getGamepads()[key];
             }
-            player.runController(this.keyboard, playerGamepad);
+            const inputs = { keyboard: this.keyboard, gamepad: playerGamepad };
+            player.runController(inputs);
         }
 
-        this.entities.forEach((entity) => {
-            entity.runController();
+        Object.values(this.enemies).forEach((entity) => {
+            entity.runController({}, AI);
         });
     }
 
@@ -553,9 +603,27 @@ export class GameManager {
                 updatePlayerHud(key, 0);
             }
         }
+        for (const key in this.enemies) {
+            const entity = this.enemies[key];
+            if (entity._tank.died) {
+                this.removeDeadEntity(entity, key);
+            }
+        }
 
         this.projectileCollisionSystem.checkCollisionWithWalls();
         this.tankCollisionSystem.checkCollisionWithWalls();
+    }
+
+    removeDeadEntity(entity, key) {
+        this.scene.remove(entity.tank.model);
+        this.scene.remove(entity.tank.healthBar.model);
+
+        entity.tank.projectiles.forEach((projectile) => {
+            this.scene.remove(projectile.projectile);
+        });
+        
+        delete this.enemies[key];
+        console.log(`Entity ${entity.name} died`);
     }
 
     removeDeadPlayer(player, key) {
@@ -587,13 +655,14 @@ export class GameManager {
     }
 
     cameraUpdate() {
-        this.cameraController.calculatePosition(this.players);
+        this.allTanks = joinObjectsIntoList(this.players, this.enemies);
+        this.cameraController.calculatePosition(this.allTanks);
     }
 
     updateAiAction() {
-        for (let index = 0; index < this.bots.length; index++) {
+        for (let index = 0; index < this.enemies.length; index++) {
             this.ai_system.nextAction(index);
-            this.bots[index].move();
+            this.enemies[index].runController();
         }
     }
 
@@ -615,6 +684,21 @@ export class GameManager {
 
             // console.log(player.tank.projectiles);
             player.tank.projectiles = [];
+        }
+
+        for (const key in this.enemies) {
+            const entity = this.enemies[key];
+            let entityProjectiles = entity.tank.projectiles;
+            for (
+                let index = entityProjectiles.length - 1;
+                index >= 0;
+                index--
+            ) {
+                this.projectiles.push(entityProjectiles[index]);
+            }
+
+            // console.log(player.tank.projectiles);
+            entity.tank.projectiles = [];
         }
 
         for (let index = 0; index < this.turrets.length; index++) {
@@ -670,14 +754,27 @@ export class GameManager {
             let lifePercent = player.health / player.tank.healthBar.maxLife;
             updatePlayerHud(key, lifePercent * 100);
         }
+        for (const key in this.enemies) {
+            const entity = this.enemies[key];
+            if (entity.tank.healthBar) {
+                entity.tank.healthBar.updateHealthBar(entity.health);
+                entity.tank.healthBar.setHealthBarPosition(entity.tank.position);
+                let lifePercent = entity.health / entity.tank.healthBar.maxLife;                
+            }
+        }
     }
 
     checkEnd() {
-        if (Object.keys(this.players).length > 1) {
+        if (Object.keys(this.players).length >= 1) {
             this.startGame = true;
         }
         if (this.startGame) {
-            if (Object.keys(this.players).length <= 1) {
+            const numberOFAlivePlayers = Object.keys(this.players).length
+            if (numberOFAlivePlayers <= 0) {
+                this.resetFunction();
+                alert("Game Over! Restarting game");
+            }
+            if (numberOFAlivePlayers <= 1 && Object.keys(this.enemies).length <= 0) {
                 let winner = 0;
                 for (const key in this.players) {
                     if (!this.deadIndex.includes(key)) {

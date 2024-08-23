@@ -71,13 +71,10 @@ export class CameraControls {
             minZ: Infinity,
         };
 
-        for (const key in players) {
-            const player = players[key];
+        // Itera sobre a lista de jogadores
+        for (const player of players) {
             let positionX = player.tank.position.x;
-
             let positionZ = player.tank.position.z;
-
-            // console.log(positionX, positionZ);
 
             if (positionX > extremes.maxX) extremes.maxX = positionX;
             if (positionX < extremes.minX) extremes.minX = positionX;
@@ -89,7 +86,6 @@ export class CameraControls {
         extremes.minX -= this._padding;
         extremes.minZ -= this._padding / (this._height / 100);
 
-        // console.log(extremes);
         return extremes;
     }
 

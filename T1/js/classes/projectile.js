@@ -69,7 +69,7 @@ export class Projectile {
     // Cria uma esfera para representar o projétil
     build_projectile(radius, color) {
         let projectile_sphere = new THREE.SphereGeometry(radius);
-        let material = setDefaultMaterial(color);
+        let material = new THREE.MeshPhongMaterial({color:"white",emissive:"#aaaaaa"})
         const model = new THREE.Mesh(projectile_sphere, material);
         model.castShadow = true;
         return model;

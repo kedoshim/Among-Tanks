@@ -16,10 +16,11 @@ export class PlayerController extends Controller {
    * @param {*} keyboardKeys
    * @param {{ up: number; down: number; left: number; right: number; shoot: number; }} [gamepadButtons=""]
    */
-  constructor(target, keyboardKeys, gamepadButtons = "", config = {}) {
-    const gamepadConfig = config.gamepadConfig;
-
+  constructor(target, keyboardKeys, gamepadButtons = "") {
     super(target);
+
+    this.config = getConfig();
+    const gamepadConfig = this.config.gamepadConfig;
 
     this._keys = keyboardKeys;
     this.isBot = false;
@@ -29,11 +30,10 @@ export class PlayerController extends Controller {
     } else {
       this._buttons = gamepadButtons;
     }
-    this._directionalMovementEnabled = config.directionalMovementEnabled;
+    this._directionalMovementEnabled = this.config.directionalMovementEnabled;
     this._deadzone = gamepadConfig.deadzone;
     this._stickMultiplier = gamepadConfig.stickMultiplier
 
-    this.config = getConfig();
   }
 
   set upKey(key) {
@@ -242,7 +242,9 @@ export class PlayerController extends Controller {
    * @param {KeyboardState} keyboard The keyboard assigned to the player
    * @param {Gamepad} [gamepad=null] The gamepad assigned to the player
    */
-  async control(keyboard, gamepad = null) {
+  async control(input) {
+    const keyboard = input.keyboard;
+    const gamepad = input.gamepad;
     if (this.config.directionalMovementEnabled) {
       this._directionalMovement(keyboard, gamepad);
     } else {

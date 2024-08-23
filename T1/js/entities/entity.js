@@ -8,173 +8,176 @@ import * as THREE from "three";
  * Represents players and enemies
  */
 export class Entity {
-  /**
-   * The number of created entities
-   *
-   * @static
-   * @type {number}
-   */
-  static entityNumber = 0;
-  /**
-   * Creates an instance of Entity.
-   *
-   * @constructor
-   * @param {string} [name=""] Entity's name
-   * @param {Array.<number>} [spawnPoint=[0, 0]] [x,z] coordinates
-   * @param {Tank} [tank=null] The tank assigned to the entity
-   * @param {Controller} [controller=null] The controller assigned to the entity
-   */
-  constructor(name = "", spawnPoint = [0, 0], tank = null, controller = null) {
-    this._name = name || `Entity_${Entity.entityNumber}`;
-    this._spawnPoint = spawnPoint;
-    this._tank = tank;
-    this._controller = controller;
+    /**
+     * The number of created entities
+     *
+     * @static
+     * @type {number}
+     */
+    static entityNumber = 0;
+    /**
+     * Creates an instance of Entity.
+     *
+     * @constructor
+     * @param {string} [name=""] Entity's name
+     * @param {Array.<number>} [spawnPoint=[0, 0]] [x,z] coordinates
+     * @param {Tank} [tank=null] The tank assigned to the entity
+     * @param {Controller} [controller=null] The controller assigned to the entity
+     */
+    constructor(
+        name = "",
+        spawnPoint = [0, 0],
+        tank = null,
+        controller = null
+    ) {
+        this._name = name || `Entity_${Entity.entityNumber}`;
+        this._spawnPoint = spawnPoint;
+        this._tank = tank;
+        this._controller = controller;
 
-    Entity.entityNumber++;
-  }
-
-  /**
-   * Calls the controller with the specified inputs
-   *
-   * @param {KeyboardState} keyboard
-   * @param {Gamepad} gamepad
-   */
-  runController(keyboard, gamepad) {
-    if (this._controller == null) {
-      console.warn(
-        `Tried to control Entity ${this._name} but their '_controller' attribute was 'null'`
-      );
-      return;
+        Entity.entityNumber++;
     }
 
-    this._controller.control(keyboard, gamepad);
-  }
+    /**
+     * Calls the controller with the specified inputs
+     *
+     * @param {KeyboardState} keyboard
+     * @param {Gamepad} gamepad
+     */
+    runController(inputs = {}, AI = null) {
+        if (this._controller == null) {
+            console.warn(
+                `Tried to control Entity ${this._name} but their '_controller' attribute was 'null'`
+            );
+            return;
+        }
 
-  reset(scene) {
-    this.tank.projectiles.forEach((projectile) => {
-      scene.remove(projectile);
-    })
-    this._tank.reset();
-
-  }
-
-  /**
-   * Loads entity's tanks in the provided scene
-   *
-   * @param {Scene} scene
-   */
-  load(scene) {
-    if (this._tank == null) {
-      console.warn(
-        `Tried to load Entity ${this._name} but their '_tank' attribute was 'null'`
-      );
-      return;
+        this._controller.control(inputs, AI);
     }
 
-    scene.add(this._tank._model);
+    reset(scene) {
+        this.tank.projectiles.forEach((projectile) => {
+            scene.remove(projectile);
+        });
+        this._tank.reset();
+    }
 
-    let [x, z] = this._spawnPoint;
+    /**
+     * Loads entity's tanks in the provided scene
+     *
+     * @param {Scene} scene
+     */
+    load(scene) {
+        if (this._tank == null) {
+            console.warn(
+                `Tried to load Entity ${this._name} but their '_tank' attribute was 'null'`
+            );
+            return;
+        }
 
-    this._tank._model.position.x = x;
-    this._tank._model.position.z = z;
+        scene.add(this._tank._model);
 
-    this._tank._healthBar.createLifeBar();
-    this._tank._healthBar.setHealthBarPosition(this._tank._model.position);
+        let [x, z] = this._spawnPoint;
 
-    scene.add(this._tank._healthBar.model);
-  }
+        this._tank._model.position.x = x;
+        this._tank._model.position.z = z;
 
-  loadHitBox(scene) {
-    // Create a bounding box helper
-    let helper = new THREE.Box3Helper(this.tank.collisionShape, "blue");
-    scene.add(helper);
+        this._tank._healthBar.createLifeBar();
+        this._tank._healthBar.setHealthBarPosition(this._tank._model.position);
 
-    return helper;
-  }
-  
+        scene.add(this._tank._healthBar.model);
+    }
 
-  set name(name) {
-    this._name = name;
-  }
-  // Getters
+    loadHitBox(scene) {
+        // Create a bounding box helper
+        let helper = new THREE.Box3Helper(this.tank.collisionShape, "blue");
+        scene.add(helper);
 
-  /**
-   * @type {string}
-   */
-  get name() {
-    return this._name;
-  }
+        return helper;
+    }
 
-  /**
-   * @type {Array.<number>} [x,z] coordinates
-   */
-  get spawnPoint() {
-    return this.spawnPoint;
-  }
+    set name(name) {
+        this._name = name;
+    }
+    // Getters
 
-  /**
-   * @type {Tank}
-   */
-  get tank() {
-    return this._tank;
-  }
+    /**
+     * @type {string}
+     */
+    get name() {
+        return this._name;
+    }
 
-  /**
-   * @type {Controller}
-   */
-  get controller() {
-    return this._controller;
-  }
+    /**
+     * @type {Array.<number>} [x,z] coordinates
+     */
+    get spawnPoint() {
+        return this._spawnPoint;
+    }
 
-  /**
-   * @readonly
-   * @type {number}
-   */
-  get totalEntitiesNumber() {
-    return Entity.entityNumber;
-  }
+    /**
+     * @type {Tank}
+     */
+    get tank() {
+        return this._tank;
+    }
 
-  /**
-   * @type {int}
-   */
-  get health() {
-    return this._tank._health;
-  }
+    /**
+     * @type {Controller}
+     */
+    get controller() {
+        return this._controller;
+    }
 
-  // Setters
+    /**
+     * @readonly
+     * @type {number}
+     */
+    get totalEntitiesNumber() {
+        return Entity.entityNumber;
+    }
 
-  /**
-   * @param {string} name
-   */
-  set name(name) {
-    this._name = name;
-  }
+    /**
+     * @type {int}
+     */
+    get health() {
+        return this._tank._health;
+    }
 
-  /**
-   * @param {Array.<number>} spawnPoint [x,z] coordinates
-   */
-  set spawnPoint(spawnPoint) {
-    this._spawnPoint = spawnPoint;
-  }
+    // Setters
 
-  /**
-   * @param {Tank} tank
-   */
-  set tank(tank) {
-    this._tank = tank;
-  }
+    /**
+     * @param {string} name
+     */
+    set name(name) {
+        this._name = name;
+    }
 
-  /**
-   * @param {Controller} controller
-   */
-  set controller(controller) {
-    this._controller = controller;
-  }
+    /**
+     * @param {Array.<number>} spawnPoint [x,z] coordinates
+     */
+    set spawnPoint(spawnPoint) {
+        this._spawnPoint = spawnPoint;
+    }
 
-  /**
-   * @param {int} health
-   */
-  set health(health) {
-    this._tank._health = health;
-  }
+    /**
+     * @param {Tank} tank
+     */
+    set tank(tank) {
+        this._tank = tank;
+    }
+
+    /**
+     * @param {Controller} controller
+     */
+    set controller(controller) {
+        this._controller = controller;
+    }
+
+    /**
+     * @param {int} health
+     */
+    set health(health) {
+        this._tank._health = health;
+    }
 }

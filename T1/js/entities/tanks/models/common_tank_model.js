@@ -29,7 +29,7 @@ export function preloadCommonTankModel() {
                         let color = node.material.color;
                         let shine =
                             (100 - node.material.roughness * 1.2 * 100) / 2;
-                        console.log(shine);
+                        // console.log(shine);
                         node.material = new THREE.MeshPhongMaterial({
                             color: color,
                             shininess: shine,

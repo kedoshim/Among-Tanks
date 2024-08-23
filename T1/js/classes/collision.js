@@ -26,8 +26,8 @@ export class ProjectileCollisionSystem extends CollisionSystem {
     //     let projectiles = [];
 
     //     // itera sobre todos os players e adiciona todos os projéteis na lista projectiles
-    //     for (const key in this.players) {
-    //         const player = this.players[key];
+    //     for (const player in this.players) {
+    //         
     //         for (
     //             let projectileIndex = 0;
     //             projectileIndex < player._tank.projectiles.length;
@@ -51,8 +51,8 @@ export class ProjectileCollisionSystem extends CollisionSystem {
         let projectiles = this.projectiles;
 
         // itera sobre todos os jogadores
-        for (const key in this.players) {
-            const player = this.players[key];
+        for (const player of this.players) {
+            
 
             // itera sobre todos os projéteis da cena
             for (
@@ -232,8 +232,8 @@ export class TankCollisionSystem extends CollisionSystem {
         let dotProduct;
 
         // itera sobre todos os players
-        for (const key in this.players) {
-            const player = this.players[key];
+        for (const player of this.players) {
+            
             this.actualPlayer = player;
             this.horizontal = false;
             this.vertical = false;
@@ -464,8 +464,8 @@ export class TankCollisionSystem extends CollisionSystem {
         let hitWall; // se o tanque colidiu com o n-ésimo muro
 
         // Itera sobre todos os jogadores
-        for (const key in this.players) {
-            const player = this.players[key];
+        for (const player of this.players) {
+            
             wallsThatCollided = [];
             this.actualPlayer = player;
             this.horizontal = false;
