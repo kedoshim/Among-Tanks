@@ -27,6 +27,7 @@ function createAmogusProfile(hexColor,hexTankColor, index, div) {
     const svgUrl = "./assets/svg/Amogus.svg"; // Path to your SVG file
     const bodyColor = "#3f5aa8"; // Color to replace
     const capColor = "#3d472e"; // Color to replace
+    const shadowColor = "#666766";
     const newColor = hexColor; // New color
 
     fetch(svgUrl)
@@ -42,8 +43,11 @@ function createAmogusProfile(hexColor,hexTankColor, index, div) {
                 if (el.getAttribute("fill") === bodyColor) {
                     el.setAttribute("fill", newColor);
                 }
-                if (el.getAttribute("fill") === capColor) {
+                else if (el.getAttribute("fill") === capColor) {
                     el.setAttribute("fill", darkenColor(hexTankColor,0.7));
+                }
+                else if (el.getAttribute("fill") === shadowColor) {
+                    el.setAttribute("fill", darkenColor(newColor,0.8));
                 }
             });
 
