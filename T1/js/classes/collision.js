@@ -115,7 +115,8 @@ export class ProjectileCollisionSystem extends CollisionSystem {
 
                 // se foi detectada alguma colisão do projétil com algum muro, adicionar o muro na lista de muros atingidos
                 if (hitWall) {
-                    wallsThatCollided.push(wall);
+                    if (!(wall.isTurretWall && projectile.isTurretProjectile))
+                        wallsThatCollided.push(wall);
                 }
             }
 

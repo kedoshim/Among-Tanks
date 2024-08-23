@@ -468,7 +468,7 @@ export class GameManager {
             this.scene.add(turret.base);
             this.scene.add(turret.body);
 
-            let wall = new CollisionBlock();
+            let wall = new CollisionBlock(true);
             wall.setBlockSize(BLOCK_SIZE);
             wall.setModel(turret.base);
             wall.createCollisionShape();

@@ -44,9 +44,10 @@ export class Block {
 }
 
 export class CollisionBlock extends Block {
-    constructor() {
+    constructor(isTurretWall=false) {
         super();
         this.collisionShape = null;
+        this.isTurretWall = isTurretWall;
     }
 
     createCollisionShape() {

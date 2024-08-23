@@ -563,7 +563,7 @@ export class Turret {
 
         if (!shootParams) {
             shootParams = {
-                bulletSpeed: 1,
+                bulletSpeed: 1.5,
                 damage: 1,
                 shootCooldown: 3000,
                 ricochetsAmount: 0,
@@ -640,7 +640,8 @@ export class Turret {
         this._lastShootTime = currentTime;
 
         const length = 12.5;
-        const projectilePosition = this.model.position.clone(); // Posição inicial do projétil é a mesma do bot
+        let projectilePosition = this.model.position.clone(); // Posição inicial do projétil é a mesma do bot
+        projectilePosition.y = projectilePosition.y + 6;
 
         const turretForwardVector = new THREE.Vector3(0, 0, 1); // Vetor de avanço do bot na direção Z positiva
         turretForwardVector.applyQuaternion(this.model.quaternion); // Aplicar rotação do bot ao vetor de avanço
@@ -657,8 +658,12 @@ export class Turret {
             originalDirection.clone(),
             this._bulletSpeed,
             this._damage,
-            0
+            0, 
+            true,
         );
         this._projectiles.push(projectile);
+
+        var audio = new Audio("./assets/audio/shot.mp3"); // Áudio do tiro
+        audio.play();
     }
 }
