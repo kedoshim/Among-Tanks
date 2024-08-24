@@ -364,6 +364,7 @@ export class Tank {
     }
 
     die() {
+        this.collisionShape = null
         this.died = true;
     }
 
