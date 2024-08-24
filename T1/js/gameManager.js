@@ -34,17 +34,12 @@ import { Enemy } from "./entities/enemy.js";
 import { joinObjectsIntoList } from "./utils.js";
 
 export class GameManager {
-    constructor(level, lighting, renderer = null) {
+    constructor(level, lighting, turret, renderer = null) {
         this.levelData = level;
         this.renderer = renderer;
         this.config = getConfig();
         this.lighting = lighting;
-        this.turretsPos = [
-            {
-                x: 19,
-                y: 11,
-            },
-        ];
+        this.turretsPos = turret
     }
 
     async start() {
@@ -455,30 +450,24 @@ export class GameManager {
             }
         }
 
-        for (let i = 0; i < this.lighting.length; i++) {
-            for (let j = 0; j < this.lighting[i].length; j++) {
-                if ("angle" in this.lighting[i][j]) {
-                    let translated = getTranslation(
-                        i,
-                        j,
-                        BLOCK_SIZE / 2 + levelHeight
-                    );
+        for (let s = 0; s < this.lighting.length; s++) {
+            let lightning = this.lighting[s]
+            let i = lightning.x
+            let j = lightning.y
+            let translated = getTranslation(
+                i,
+                j,
+                BLOCK_SIZE / 2 + levelHeight
+            );
 
-                    let lightPosition = new THREE.Vector3(
-                        translated.x,
-                        translated.y + 50,
-                        translated.z
-                    );
-
-                    this.drawLights(
-                        translated.x,
-                        translated.y,
-                        translated.z,
-                        this.lighting[i][j]["angle"]
-                    );
-                }
-            }
+            this.drawLights(
+                translated.x,
+                translated.y,
+                translated.z,
+                this.lighting[s]["angle"]
+            );
         }
+
 
         //
     }

@@ -9,12 +9,9 @@ import Block
 
 class ResizableScreen:
     def __init__(self, grid_size=32):
-
         
         # Inicialize o pygame
         pygame.init()
-
-
 
         # Configurações da tela
         self.WINDOW_SIZE = (constraints.SCREEN_WIDTH, constraints.SCREEN_HEIGHT)
@@ -454,6 +451,24 @@ class ResizableScreen:
         pos_y = y // self.grid_size
         return pos_x, pos_y
     
+    def draw_square_on_center(self, screen, color, center, size):
+        """
+        Desenha um quadrado com o centro em uma posição específica.
+       
+        Parâmetros:
+        - screen: a superfície onde o quadrado será desenhado
+        - color: cor do quadrado (RGB)
+        - center: tupla (x, y) indicando a posição do centro do quadrado
+        - size: tamanho do lado do quadrado
+        """
+        # Calcula a posição do canto superior esquerdo
+        half_size = size // 2
+        top_left_x = center[0] - half_size
+        top_left_y = center[1] - half_size
+       
+        # Desenha o quadrado
+        pygame.draw.rect(screen, color, (top_left_x, top_left_y, size, size))
+    
     def get_triangle_points(self, pos, angle=0):
         _x, _y = pos
         x = _x * self.grid_size
@@ -487,10 +502,41 @@ class ResizableScreen:
 
 
     def add_turret(self, x, y):
+        (_x, _y) = pygame.mouse.get_pos()
         self.level.turret.append({
-            "x": x,
-            "y": y,
+            "x": _x / self.grid_size,
+            "y": _y / self.grid_size,
         })
+
+    def get_correct_half(self, pos):
+        x, y = self.get_tile_mouse_position(pos)
+        _x, _y = pos
+        output_x = 0
+        output_y = 0
+        if y == len(self.level.representation[0]) - 1:
+            output_y = float(y - 0.5) * self.grid_size
+
+        elif y == 0:
+            output_y = 0.5 * self.grid_size
+
+        else:
+            real_y = (_y - y*self.grid_size) / self.grid_size
+            target_y = -0.5 if real_y < 0.5 else 0.5
+            output_y = (y + target_y) * self.grid_size
+        if x == len(self.level.representation) - 1:
+            output_x = float(x - 0.5) * self.grid_size
+
+        elif x == 0:
+            output_x = 0.5 * self.grid_size
+
+        else:
+            real_x = (_x - x*self.grid_size) / self.grid_size
+            target_x = -0.5 if real_x < 0.5 else 0.5
+            output_x = (x + target_x) * self.grid_size
+
+    def draw_turret_block(self, pos, color=(255, 128, 0)):
+            #real_pos = self.get_correct_half(pos)
+        self.draw_square_on_center(self.screen, color, pos, self.grid_size*2)
     
     def draw_square_on_tile(self):
         key = self.selected_block
@@ -521,7 +567,7 @@ class ResizableScreen:
                     # Blite a superfície temporária na tela
                     self.screen.blit(temp_surface, (x*self.grid_size, y*self.grid_size))
 
-                if self.level.blocks[key]["render_type"] == "eraser" or self.level.blocks[key]["render_type"] == "turret" or self.level.blocks[key]["render_type"] == "selector":
+                if self.level.blocks[key]["render_type"] == "eraser" or self.level.blocks[key]["render_type"] == "selector":
                     temp_surface = pygame.Surface((self.grid_size, self.grid_size), pygame.SRCALPHA)
                     # Initializing Color
                     color = (255,0,0)
@@ -538,6 +584,11 @@ class ResizableScreen:
 
                     # Blite a superfície temporária na tela
                     self.screen.blit(temp_surface, (x*self.grid_size, y*self.grid_size))
+
+                if self.level.blocks[key]["render_type"] == "turret":
+                    color = (self.level.blocks[self.selected_block]["color"]["r"], self.level.blocks[self.selected_block]["color"]["g"],
+                                self.level.blocks[self.selected_block]["color"]["b"])
+                    self.draw_turret_block(pygame.mouse.get_pos(), color)
             else:
                 temp_surface = pygame.Surface((self.grid_size, self.grid_size), pygame.SRCALPHA)
                 # Initializing Color
@@ -596,7 +647,7 @@ class ResizableScreen:
                             elif self.level.blocks[key]["render_type"] == "selector":
                                 self.open_properties_window((tile_x, tile_y))
                             elif self.level.blocks[key]["render_type"] == "turret":
-                                self.add_turret(tile_x, tile_y)
+                                self.add_turret(x, y)
 
                 if event.type == pygame.MOUSEWHEEL:
                     if event.y > 0:

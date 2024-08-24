@@ -6,6 +6,7 @@ const levelPaths = {
 
 const levels = {};
 const lightning = {}
+const turrets = {}
 
 let index = 0;
 
@@ -31,6 +32,17 @@ export async function loadLights() {
     const level_json = await loaded_level.json();
     const level_data = level_json.lightning
     lightning[index] = level_data;
+  }
+}
+
+export async function loadTurrets() {
+  console.log("Loading lights")
+  for (const index in levelPaths) {
+    const path = levelPaths[index];
+    const loaded_level = await fetch(path);
+    const level_json = await loaded_level.json();
+    const level_data = level_json.turrets
+    turrets[index] = level_data;
   }
 }
 
@@ -61,9 +73,9 @@ export function getLights(ind = null) {
 
 export function getTurrets(ind = null) {
   if (ind)
-    return lightning[ind];
+    return turrets[ind];
   else
-    return lightning[index]
+    return turrets[index]
 }
 
 

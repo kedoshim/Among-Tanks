@@ -1,5 +1,7 @@
 import json
 from Block import Block
+import copy
+import time
 
 class LevelBuilder:
     def __init__(self, x, y) -> None:
@@ -22,19 +24,102 @@ class LevelBuilder:
         """
         return [[Block() for _ in range(y)] for _ in range(x)]
     
+    
+    def remove_empty_borders(self, json_data):
+        first_in_z = 0
+        first_in_x = 0
+        last_in_z = len(json_data) - 1
+        last_in_x = len(json_data[0]) - 1
+
+        # Analyze z
+        for i in range(len(json_data)):
+            has_non_empty_block = False
+            for j in range(len(json_data[i])):
+                if json_data[i][j]['type'] != "EmptyBlock":
+                    has_non_empty_block = True
+                    break
+            if has_non_empty_block:
+                first_in_z = i
+                break
+
+        # Analyze x
+        for i in range(len(json_data[0])):
+            has_non_empty_block = False
+            for j in range(len(json_data)):
+                if json_data[j][i]['type'] != "EmptyBlock":
+                    has_non_empty_block = True
+                    break
+            if has_non_empty_block:
+                first_in_x = i
+                break
+
+        # Analyze last z
+        for i in range(len(json_data) - 1, -1, -1):
+            has_non_empty_block = False
+            for j in range(len(json_data[i])):
+                if json_data[i][j]['type'] != "EmptyBlock":
+                    has_non_empty_block = True
+                    break
+            if has_non_empty_block:
+                last_in_z = i
+                break
+
+        # Analyze last x
+        for i in range(len(json_data[0]) - 1, -1, -1):
+            has_non_empty_block = False
+            for j in range(len(json_data)):
+                if json_data[j][i]['type'] != "EmptyBlock":
+                    has_non_empty_block = True
+                    break
+            if has_non_empty_block:
+                last_in_x = i
+                break
+
+        # Remove empty rows and columns
+        json_data = json_data[first_in_z:last_in_z + 1]
+        for i in range(len(json_data)):
+            json_data[i] = json_data[i][first_in_x:last_in_x + 1]
+
+        return json_data, first_in_x, first_in_z
+
+    
     def save_json(self):
         level_rep = self.representation
         x, y = self.size
-        level_arr = [[{} for _ in range(y)] for _ in range(x)]
+        original_level_arr = [[{} for _ in range(y)] for _ in range(x)]
         
         for i in range(len(level_rep)):
             
             for j in range(len(level_rep[i])):
                 block_d = level_rep[i][j].serialize_as_json()
-                level_arr[i][j] = block_d
+                original_level_arr[i][j] = block_d
 
-        with open('level.json', 'w+') as f:
-            json.dump({"blocks": level_arr, "lightning": self.lightning, "turrets": self.turret}, f, indent=4)
+        level_arr, first_in_x, first_in_z = self.remove_empty_borders(original_level_arr)
+
+        lightning_reduced = []
+        turret_reduced = copy.deepcopy(self.turret)
+
+        for i in range(len(self.lightning)):
+            for j in range(len(self.lightning[0])):
+                if 'angle' in self.lightning[i][j]:
+                    lightning_reduced.append({
+                        'x': i - first_in_z,
+                        'y': j - first_in_x,
+                        "angle": self.lightning[i][j]["angle"],
+                        "color": self.lightning[i][j]["color"]
+                    })
+
+        for i in range(len(self.turret)):
+            turret_reduced[i]["x"] -= first_in_z
+            turret_reduced[i]["y"] -= first_in_x
+
+       
+
+        with open(f"{time.time()}_level.json", 'w+') as f:
+            json.dump({"blocks": level_arr, "lightning": lightning_reduced, "turrets": turret_reduced}, f, indent=4)
+        
+        with open(f"{time.time()}_to_import.json", 'w+') as f:
+            json.dump({"blocks": original_level_arr, "lightning": self.lightning, "turrets": self.turret}, f, indent=4)
 
     def hex_to_rgb(self, hex_value):
         # Converte o valor inteiro em uma string hexadecimal, removendo o prefixo '0x'

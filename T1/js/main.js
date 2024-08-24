@@ -9,6 +9,8 @@ import {
     loadLights,
     getLights,
     getLevel,
+    getTurrets,
+    loadTurrets
 } from "./levels.js";
 
 async function main() {
@@ -16,8 +18,9 @@ async function main() {
 
     let level = getNextLevel();
     let lightning = getLights();
+    let turret = getTurrets()
 
-    let manager = new GameManager(level, lightning, renderer);
+    let manager = new GameManager(level, lightning, turret, renderer);
     await manager.start();
 
     const resetFunction = () => {
@@ -26,7 +29,8 @@ async function main() {
         
         level = getNextLevel();
         lightning = getLights();
-        manager = new GameManager(level, lightning, renderer);
+        turret = getTurrets()
+        manager = new GameManager(level, lightning, turret, renderer);
         manager.start();
         
         manager.setResetFunction(resetFunction);
@@ -39,7 +43,8 @@ async function main() {
 
         level = getLevel(index);
         lightning = getLights(index);
-        manager = new GameManager(level, lightning, renderer);
+        turret = getTurrets(index)
+        manager = new GameManager(level, lightning, turret, renderer);
         manager.start();
 
         manager.setResetFunction(resetFunction);
@@ -61,6 +66,7 @@ async function initialize() {
     await loadConfig();
     await loadLevels();
     await loadLights();
+    await loadTurrets();
 }
 
 await initialize();
