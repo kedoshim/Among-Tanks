@@ -1,6 +1,7 @@
 import * as THREE from "three"
 import { GLTFLoader } from "../../../build/jsm/loaders/GLTFLoader.js";
 import { getMaxSize } from "../../../libs/util/util.js";
+import { Color, MeshLambertMaterial } from "../../../build/three.module.js";
 
 export function loadGLBFile(
     asset,
@@ -18,6 +19,9 @@ export function loadGLBFile(
             obj.traverse(function (child) {
                 if (child.isMesh) {
                     child.castShadow = false;
+                    child.material = new MeshLambertMaterial({
+                        color: child.material.color,
+                    })
                 }
             });
             obj = normalizeAndRescale(obj, desiredScale);
