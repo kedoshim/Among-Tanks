@@ -330,7 +330,7 @@ export class AISystem {
                 let chosenDirection = nextPosition.sub(botPosition);
                 let actualDirection = actualPosition.sub(botPosition);
                 
-                if (direction.angleTo(actualDirection) < 0.10 && botPosition.distanceTo(actualPosition) > block_size / 8) {
+                if (direction.angleTo(actualDirection) < 0.15 && botPosition.distanceTo(actualPosition) > block_size / 8) {
                     this.bots[botIndex]._controller._nextMove.movement = 1;
                     this.bots[botIndex]._controller.isMoving = true;
                 
