@@ -8,6 +8,7 @@ export class Projectile {
         speed = 0.1,
         damage = 1,
         ricochetsAmount = 2,
+        size = 1,
         isTurretProjectile = false,
         color = "white"
     ) {
@@ -21,7 +22,7 @@ export class Projectile {
 
         this.isTurretProjectile = isTurretProjectile;
 
-        this.projectile = this.build_projectile(1, color); // modelo do projétil
+        this.projectile = this.build_projectile(size, color); // modelo do projétil
         this.projectile.position.set(position.x, position.y + 2, position.z);
         this.lastPosition = new THREE.Vector3(
             position.x,

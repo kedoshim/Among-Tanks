@@ -477,16 +477,18 @@ export class Turret {
 
         if (!shootParams) {
             shootParams = {
-                bulletSpeed: 1.5,
+                bulletSpeed: 3,
                 damage: 1,
                 shootCooldown: 3000,
                 ricochetsAmount: 0,
-                rotationSpeed: 0.15
+                rotationSpeed: 0.20,
+                bulletSize: 2
             }
         }
 
         this.shootParams = shootParams;
         this._bulletSpeed = this.shootParams.bulletSpeed;
+        this._bulletSize = this.shootParams.bulletSize;
         TouchList._damage = this.shootParams.damage;
 
         this._shootCooldown = this.shootParams.shootCooldown;
@@ -573,6 +575,7 @@ export class Turret {
             this._bulletSpeed,
             this._damage,
             0, 
+            this._bulletSize,
             true,
         );
         this._projectiles.push(projectile);
