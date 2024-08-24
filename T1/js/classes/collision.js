@@ -117,6 +117,8 @@ export class ProjectileCollisionSystem extends CollisionSystem {
                 if (hitWall) {
                     if (!(wall.isTurretWall && projectile.isTurretProjectile))
                         wallsThatCollided.push(wall);
+                    if (wall.isTurretWall && !projectile.isTurretProjectile)
+                        projectile.hitTurretWall();
                 }
             }
 
