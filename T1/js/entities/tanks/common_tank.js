@@ -13,7 +13,7 @@ export class CommonTank extends Tank {
 
     let shootingOpitions = {
       bulletSpeed : 2,
-      spreadShots : 10,
+      spreadShots : 1,
       semiAutoShots : 1,
       cooldown : 250,
       damage : 2,
