@@ -164,12 +164,39 @@ export class AISystem {
                 this.shoot(botIndex);
             }
             else {
-                this.bots[botIndex]._controller._nextMove.movement = -1;
+                this.reverseMove(botIndex);
                 this.shoot(botIndex);
             }
         }
         else {
             this.trackPlayer(botIndex);
+        }
+    }
+
+    reverseMove(botIndex) {
+        let smallDistance = Infinity;
+        let safeDistance = this.walls[0].BLOCK_SIZE / 2;
+
+        // Actual reverse direction of the tank
+        let direction = new THREE.Vector3(0, 0, -1);
+        direction.applyQuaternion(this.bots[botIndex]._tank._model.quaternion);
+
+        // Calculate tank's back position
+        let botPosition = this.bots[botIndex]._tank._model.position.clone();
+        let backPosition = botPosition.clone().add(direction.multiplyScalar(safeDistance));
+
+        // Verify the small distance between tank's back position and a wall
+        for (let index = 0; index < this.walls.length; index++) {
+            let wallDistance = backPosition.distanceTo(this.walls[index].model.position);
+            if (wallDistance < smallDistance) {
+                smallDistance = wallDistance;
+            }
+        }
+
+        if (smallDistance >= safeDistance) {
+            this.bots[botIndex]._controller._nextMove.movement = -1; // Mover para trás
+        } else {
+            this.bots[botIndex]._controller._nextMove.movement = 0;  // Não se mover
         }
     }
 
@@ -221,11 +248,6 @@ export class AISystem {
         }
 
         return false;
-    }
-
-    // Check the turret state for 
-    checkTurretState(botIndex) {
-        
     }
 
     // -------------- Complex Actions --------------
