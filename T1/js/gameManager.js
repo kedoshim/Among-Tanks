@@ -24,7 +24,7 @@ import {
 import { Entity } from "./entities/entity.js";
 import { getConfig } from "./config.js";
 import { CollisionBlock } from "./classes/blocks.js";
-import { AISystem, Bot, Turret, TurretSystem } from "./entities/bot.js";
+import { AISystem, Turret, TurretSystem } from "./entities/bot.js";
 import { preloadCommonTankModel } from "./entities/tanks/models/common_tank_model.js";
 import { loadGLBFile } from "./loaders/models.js";
 import { getTexture, loadTexture } from "./loaders/textures.js";
