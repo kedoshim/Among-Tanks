@@ -31,7 +31,7 @@ import { getTexture, loadTexture } from "./loaders/textures.js";
 import { createTurret } from "./entities/turret/model/turret_model.js";
 import { addPlayerToHud, resetHud, updatePlayerHud } from "./screen/hud.js";
 import { Enemy } from "./entities/enemy.js";
-import {joinObjectsIntoList } from "./utils.js";
+import { joinObjectsIntoList } from "./utils.js";
 
 export class GameManager {
     constructor(level, lighting, renderer = null) {
@@ -150,8 +150,7 @@ export class GameManager {
                 this.config.numberOfBots,
                 maxPlayers - this.numberOfPlayers
             );
-        }
-        else if (this.numberOfEntities >= 0) {
+        } else if (this.numberOfEntities >= 0) {
             this.numberOfPlayers = this.config.numberOfPlayers;
             this.numberOfBots = this.config.numberOfBots;
         }
@@ -504,18 +503,96 @@ export class GameManager {
                 -BLOCK_SIZE / 2 + levelHeight + 8.6
             );
             let turret = createTurret(
-                translation.x,
+                translation.x + BLOCK_SIZE / 2,
                 translation.y,
-                translation.z
+                translation.z - BLOCK_SIZE / 2
             );
             this.scene.add(turret.base);
             this.scene.add(turret.body);
 
-            let wall = new CollisionBlock(true);
-            wall.setBlockSize(BLOCK_SIZE);
-            wall.setModel(turret.base);
-            wall.createCollisionShape();
-            this.walls.push(wall);
+            function createTurretCollisionWalls() {
+                let collisionShapeGeometry = new THREE.BoxGeometry(
+                    BLOCK_SIZE,
+                    BLOCK_SIZE,
+                    BLOCK_SIZE
+                );
+
+                const initialPosition = turret.base.position;
+
+                let collisionShape1 = new THREE.Mesh(collisionShapeGeometry);
+                let collisionShape2 = new THREE.Mesh(collisionShapeGeometry);
+                let collisionShape3 = new THREE.Mesh(collisionShapeGeometry);
+                let collisionShape4 = new THREE.Mesh(collisionShapeGeometry);
+
+                console.log(initialPosition);
+
+                let newPosition = initialPosition
+                    .clone()
+                    .add(
+                        new THREE.Vector3(-BLOCK_SIZE / 2, 0, -BLOCK_SIZE / 2)
+                    );
+                collisionShape1.position.set(
+                    newPosition.x,
+                    newPosition.y,
+                    newPosition.z
+                );
+
+                newPosition = initialPosition
+                    .clone()
+                    .add(new THREE.Vector3(BLOCK_SIZE / 2, 0, -BLOCK_SIZE / 2));
+                collisionShape2.position.set(
+                    newPosition.x,
+                    newPosition.y,
+                    newPosition.z
+                );
+
+                newPosition = initialPosition
+                    .clone()
+                    .add(new THREE.Vector3(-BLOCK_SIZE / 2, 0, BLOCK_SIZE / 2));
+                collisionShape3.position.set(
+                    newPosition.x,
+                    newPosition.y,
+                    newPosition.z
+                );
+
+                newPosition = initialPosition
+                    .clone()
+                    .add(new THREE.Vector3(BLOCK_SIZE / 2, 0, BLOCK_SIZE / 2));
+                collisionShape4.position.set(
+                    newPosition.x,
+                    newPosition.y,
+                    newPosition.z
+                );
+
+                console.log(collisionShape1);
+
+                let wall1 = new CollisionBlock(true);
+                let wall2 = new CollisionBlock(true);
+                let wall3 = new CollisionBlock(true);
+                let wall4 = new CollisionBlock(true);
+
+                wall1.setBlockSize(BLOCK_SIZE);
+                wall2.setBlockSize(BLOCK_SIZE);
+                wall3.setBlockSize(BLOCK_SIZE);
+                wall4.setBlockSize(BLOCK_SIZE);
+
+                wall1.setModel(collisionShape1);
+                wall2.setModel(collisionShape2);
+                wall3.setModel(collisionShape3);
+                wall4.setModel(collisionShape4);
+
+                wall1.createCollisionShape();
+                wall2.createCollisionShape();
+                wall3.createCollisionShape();
+                wall4.createCollisionShape();
+
+                this.walls.push(wall1);
+                this.walls.push(wall2);
+                this.walls.push(wall3);
+                this.walls.push(wall4);
+            }
+
+            createTurretCollisionWalls();
 
             this.turrets.push(
                 new Turret(turret.body, this.players[1], this.enemies)
@@ -621,7 +698,7 @@ export class GameManager {
         entity.tank.projectiles.forEach((projectile) => {
             this.scene.remove(projectile.projectile);
         });
-        
+
         delete this.enemies[key];
         console.log(`Entity ${entity.name} died`);
     }
@@ -758,8 +835,10 @@ export class GameManager {
             const entity = this.enemies[key];
             if (entity.tank.healthBar) {
                 entity.tank.healthBar.updateHealthBar(entity.health);
-                entity.tank.healthBar.setHealthBarPosition(entity.tank.position);
-                let lifePercent = entity.health / entity.tank.healthBar.maxLife;                
+                entity.tank.healthBar.setHealthBarPosition(
+                    entity.tank.position
+                );
+                let lifePercent = entity.health / entity.tank.healthBar.maxLife;
             }
         }
     }
@@ -769,12 +848,15 @@ export class GameManager {
             this.startGame = true;
         }
         if (this.startGame) {
-            const numberOFAlivePlayers = Object.keys(this.players).length
+            const numberOFAlivePlayers = Object.keys(this.players).length;
             if (numberOFAlivePlayers <= 0) {
                 this.resetFunction();
                 alert("Game Over! Restarting game");
             }
-            if (numberOFAlivePlayers <= 1 && Object.keys(this.enemies).length <= 0) {
+            if (
+                numberOFAlivePlayers <= 1 &&
+                Object.keys(this.enemies).length <= 0
+            ) {
                 let winner = 0;
                 for (const key in this.players) {
                     if (!this.deadIndex.includes(key)) {

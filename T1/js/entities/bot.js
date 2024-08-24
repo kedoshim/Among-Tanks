@@ -145,6 +145,7 @@ export class AISystem {
 
         this.sceneMap = new SceneMap(walls, walls[0].BLOCK_SIZE);
         this.sceneMap.fillSceneMap();
+        console.log(this.sceneMap.sceneMap);
 
         this.aStar = new AStar(this.sceneMap);
 

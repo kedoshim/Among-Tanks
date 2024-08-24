@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuração do Jogo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Configuração do Jogo</h1>
+
+    <form id="configForm">
+        <label for="directionalMovementEnabled">Directional Movement Enabled:</label>
+        <input type="checkbox" id="directionalMovementEnabled">
+
+        <label for="numberOfPlayers">Number of Players:</label>
+        <input type="number" id="numberOfPlayers">
+
+        <label for="numberOfBots">Number of Bots:</label>
+        <input type="number" id="numberOfBots">
+
+        <label for="playerSpawnPoint">Player Spawn Points (comma-separated pairs):</label>
+        <textarea id="playerSpawnPoint"></textarea>
+
+        <label for="defaultPlayerAmogusColors">Default Player Amogus Colors (comma-separated):</label>
+        <input type="text" id="defaultPlayerAmogusColors">
+
+        <label for="defaultPlayerTankColors">Default Player Tank Colors (comma-separated):</label>
+        <input type="text" id="defaultPlayerTankColors">
+
+        <label for="defaultPlayerControls">Default Player Controls (JSON format):</label>
+        <textarea id="defaultPlayerControls"></textarea>
+
+        <label for="defaultGamepadButtons">Default Gamepad Buttons (JSON format):</label>
+        <textarea id="defaultGamepadButtons"></textarea>
+
+        <label for="deadzone">Gamepad Deadzone:</label>
+        <input type="number" step="0.01" id="deadzone">
+
+        <label for="stickMultiplier">Gamepad Stick Multiplier:</label>
+        <input type="number" step="0.1" id="stickMultiplier">
+
+        <label for="FOV">Camera FOV:</label>
+        <input type="number" id="FOV">
+
+        <label for="near">Camera Near:</label>
+        <input type="number" step="0.1" id="near">
+
+        <label for="far">Camera Far:</label>
+        <input type="number" id="far">
+
+        <button type="button" onclick="saveConfig()">Salvar Configuração</button>
+    </form>
+
+    <script>
+        const config = {
+            "directionalMovementEnabled": false,
+            "numberOfPlayers": 1,
+            "numberOfBots": 1,
+            "playerSpawnPoint": [
+                [-20, -20],
+                [20, -20],
+                [-20, 20],
+                [20, 20]
+            ],
+            "playerConfig": {
+                "defaultPlayerAmogusColors": ["#FF8C00", "#FAEBD7", "#800080", "#FFC0CB"],
+                "defaultPlayerTankColors": ["#00008B", "#FF0000", "#DAA520", "#008000"],
+                "defaultPlayerControls": [
+                    { "up": "W", "down": "S", "right": "D", "left": "A", "shoot": ["space", "Q", "shift"] },
+                    { "up": "up", "down": "down", "right": "right", "left": "left", "shoot": ["/", "Á", ","] },
+                    { "up": "I", "down": "K", "right": "L", "left": "J", "shoot": ["H"] },
+                    { "up": "h", "down": "e", "right": "f", "left": "d", "shoot": ["enter"] }
+                ]
+            },
+            "gamepadConfig": {
+                "defaultGamepadButtons": { "up": 12, "down": 13, "left": 14, "right": 15, "shoot": 7 },
+                "deadzone": 0.1,
+                "stickMultiplier": 1
+            },
+            "cameraConfig": { "FOV": 45, "near": 0.1, "far": 2000 }
+        };
+
+        // Preenche os inputs com os valores do config
+        document.getElementById('directionalMovementEnabled').checked = config.directionalMovementEnabled;
+        document.getElementById('numberOfPlayers').value = config.numberOfPlayers;
+        document.getElementById('numberOfBots').value = config.numberOfBots;
+        document.getElementById('playerSpawnPoint').value = config.playerSpawnPoint.map(pair => pair.join(',')).join(' ');
+        document.getElementById('defaultPlayerAmogusColors').value = config.playerConfig.defaultPlayerAmogusColors.join(',');
+        document.getElementById('defaultPlayerTankColors').value = config.playerConfig.defaultPlayerTankColors.join(',');
+        document.getElementById('defaultPlayerControls').value = JSON.stringify(config.playerConfig.defaultPlayerControls, null, 2);
+        document.getElementById('defaultGamepadButtons').value = JSON.stringify(config.gamepadConfig.defaultGamepadButtons, null, 2);
+        document.getElementById('deadzone').value = config.gamepadConfig.deadzone;
+        document.getElementById('stickMultiplier').value = config.gamepadConfig.stickMultiplier;
+        document.getElementById('FOV').value = config.cameraConfig.FOV;
+        document.getElementById('near').value = config.cameraConfig.near;
+        document.getElementById('far').value = config.cameraConfig.far;
+
+        function saveConfig() {
+            config.directionalMovementEnabled = document.getElementById('directionalMovementEnabled').checked;
+            config.numberOfPlayers = parseInt(document.getElementById('numberOfPlayers').value);
+            config.numberOfBots = parseInt(document.getElementById('numberOfBots').value);
+            config.playerSpawnPoint = document.getElementById('playerSpawnPoint').value.split(' ').map(pair => pair.split(',').map(Number));
+            config.playerConfig.defaultPlayerAmogusColors = document.getElementById('defaultPlayerAmogusColors').value.split(',');
+            config.playerConfig.defaultPlayerTankColors = document.getElementById('defaultPlayerTankColors').value.split(',');
+            config.playerConfig.defaultPlayerControls = JSON.parse(document.getElementById('defaultPlayerControls').value);
+            config.gamepadConfig.defaultGamepadButtons = JSON.parse(document.getElementById('defaultGamepadButtons').value);
+            config.gamepadConfig.deadzone = parseFloat(document.getElementById('deadzone').value);
+            config.gamepadConfig.stickMultiplier = parseFloat(document.getElementById('stickMultiplier').value);
+            config.cameraConfig.FOV = parseFloat(document.getElementById('FOV').value);
+            config.cameraConfig.near = parseFloat(document.getElementById('near').value);
+            config.cameraConfig.far = parseFloat(document.getElementById('far').value);
+
+            console.log("Configuração salva:", config);
+            alert("Configuração salva com sucesso!");
+        }
+    </script>
+
+</body>
+</html>

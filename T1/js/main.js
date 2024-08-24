@@ -21,19 +21,21 @@ async function main() {
     await manager.start();
 
     const resetFunction = () => {
-        console.log("restarting game");
-
+        console.log("Reseting Level");
+        console.log("Restarting game");
+        
         level = getNextLevel();
         lightning = getLights();
         manager = new GameManager(level, lightning, renderer);
         manager.start();
-
+        
         manager.setResetFunction(resetFunction);
         manager.setChangeLevelFunction(changeLevelFunction);
     };
-
+    
     const changeLevelFunction = (index) => {
-        console.log("restarting game");
+        console.log("Changing Level");
+        console.log("Restarting game");
 
         level = getLevel(index);
         lightning = getLights(index);
