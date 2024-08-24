@@ -175,7 +175,7 @@ export class AISystem {
 
     reverseMove(botIndex) {
         let smallDistance = Infinity;
-        let safeDistance = this.walls[0].BLOCK_SIZE / 2;
+        let safeDistance = this.walls[0].BLOCK_SIZE;
 
         // Actual reverse direction of the tank
         let direction = new THREE.Vector3(0, 0, -1);
