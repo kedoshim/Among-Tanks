@@ -510,7 +510,7 @@ export class GameManager {
             this.scene.add(turret.base);
             this.scene.add(turret.body);
 
-            function createTurretCollisionWalls() {
+            function createTurretCollisionWalls(walls) {
                 let collisionShapeGeometry = new THREE.BoxGeometry(
                     BLOCK_SIZE,
                     BLOCK_SIZE,
@@ -586,13 +586,13 @@ export class GameManager {
                 wall3.createCollisionShape();
                 wall4.createCollisionShape();
 
-                this.walls.push(wall1);
-                this.walls.push(wall2);
-                this.walls.push(wall3);
-                this.walls.push(wall4);
+                walls.push(wall1);
+                walls.push(wall2);
+                walls.push(wall3);
+                walls.push(wall4);
             }
 
-            createTurretCollisionWalls();
+            createTurretCollisionWalls(this.walls);
 
             this.turrets.push(
                 new Turret(turret.body, this.players[1], this.enemies)
