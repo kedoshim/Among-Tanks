@@ -510,89 +510,89 @@ export class GameManager {
             this.scene.add(turret.base);
             this.scene.add(turret.body);
 
-            function createTurretCollisionWalls(walls) {
-                let collisionShapeGeometry = new THREE.BoxGeometry(
-                    BLOCK_SIZE,
-                    BLOCK_SIZE,
-                    BLOCK_SIZE
+            //function createTurretCollisionWalls() {
+            let collisionShapeGeometry = new THREE.BoxGeometry(
+                BLOCK_SIZE,
+                BLOCK_SIZE,
+                BLOCK_SIZE
+            );
+
+            const initialPosition = turret.base.position;
+
+            let collisionShape1 = new THREE.Mesh(collisionShapeGeometry);
+            let collisionShape2 = new THREE.Mesh(collisionShapeGeometry);
+            let collisionShape3 = new THREE.Mesh(collisionShapeGeometry);
+            let collisionShape4 = new THREE.Mesh(collisionShapeGeometry);
+
+            //console.log(initialPosition);
+
+            let newPosition = initialPosition
+                .clone()
+                .add(
+                    new THREE.Vector3(-BLOCK_SIZE / 2, 0, -BLOCK_SIZE / 2)
                 );
+            collisionShape1.position.set(
+                newPosition.x,
+                newPosition.y,
+                newPosition.z
+            );
 
-                const initialPosition = turret.base.position;
+            newPosition = initialPosition
+                .clone()
+                .add(new THREE.Vector3(BLOCK_SIZE / 2, 0, -BLOCK_SIZE / 2));
+            collisionShape2.position.set(
+                newPosition.x,
+                newPosition.y,
+                newPosition.z
+            );
 
-                let collisionShape1 = new THREE.Mesh(collisionShapeGeometry);
-                let collisionShape2 = new THREE.Mesh(collisionShapeGeometry);
-                let collisionShape3 = new THREE.Mesh(collisionShapeGeometry);
-                let collisionShape4 = new THREE.Mesh(collisionShapeGeometry);
+            newPosition = initialPosition
+                .clone()
+                .add(new THREE.Vector3(-BLOCK_SIZE / 2, 0, BLOCK_SIZE / 2));
+            collisionShape3.position.set(
+                newPosition.x,
+                newPosition.y,
+                newPosition.z
+            );
 
-                console.log(initialPosition);
+            newPosition = initialPosition
+                .clone()
+                .add(new THREE.Vector3(BLOCK_SIZE / 2, 0, BLOCK_SIZE / 2));
+            collisionShape4.position.set(
+                newPosition.x,
+                newPosition.y,
+                newPosition.z
+            );
 
-                let newPosition = initialPosition
-                    .clone()
-                    .add(
-                        new THREE.Vector3(-BLOCK_SIZE / 2, 0, -BLOCK_SIZE / 2)
-                    );
-                collisionShape1.position.set(
-                    newPosition.x,
-                    newPosition.y,
-                    newPosition.z
-                );
+            //console.log(collisionShape1);
 
-                newPosition = initialPosition
-                    .clone()
-                    .add(new THREE.Vector3(BLOCK_SIZE / 2, 0, -BLOCK_SIZE / 2));
-                collisionShape2.position.set(
-                    newPosition.x,
-                    newPosition.y,
-                    newPosition.z
-                );
+            let wall1 = new CollisionBlock(true);
+            let wall2 = new CollisionBlock(true);
+            let wall3 = new CollisionBlock(true);
+            let wall4 = new CollisionBlock(true);
 
-                newPosition = initialPosition
-                    .clone()
-                    .add(new THREE.Vector3(-BLOCK_SIZE / 2, 0, BLOCK_SIZE / 2));
-                collisionShape3.position.set(
-                    newPosition.x,
-                    newPosition.y,
-                    newPosition.z
-                );
+            wall1.setBlockSize(BLOCK_SIZE);
+            wall2.setBlockSize(BLOCK_SIZE);
+            wall3.setBlockSize(BLOCK_SIZE);
+            wall4.setBlockSize(BLOCK_SIZE);
 
-                newPosition = initialPosition
-                    .clone()
-                    .add(new THREE.Vector3(BLOCK_SIZE / 2, 0, BLOCK_SIZE / 2));
-                collisionShape4.position.set(
-                    newPosition.x,
-                    newPosition.y,
-                    newPosition.z
-                );
+            wall1.setModel(collisionShape1);
+            wall2.setModel(collisionShape2);
+            wall3.setModel(collisionShape3);
+            wall4.setModel(collisionShape4);
 
-                console.log(collisionShape1);
+            wall1.createCollisionShape();
+            wall2.createCollisionShape();
+            wall3.createCollisionShape();
+            wall4.createCollisionShape();
 
-                let wall1 = new CollisionBlock(true);
-                let wall2 = new CollisionBlock(true);
-                let wall3 = new CollisionBlock(true);
-                let wall4 = new CollisionBlock(true);
+            this.walls.push(wall1);
+            this.walls.push(wall2);
+            this.walls.push(wall3);
+            this.walls.push(wall4);
+            //}
 
-                wall1.setBlockSize(BLOCK_SIZE);
-                wall2.setBlockSize(BLOCK_SIZE);
-                wall3.setBlockSize(BLOCK_SIZE);
-                wall4.setBlockSize(BLOCK_SIZE);
-
-                wall1.setModel(collisionShape1);
-                wall2.setModel(collisionShape2);
-                wall3.setModel(collisionShape3);
-                wall4.setModel(collisionShape4);
-
-                wall1.createCollisionShape();
-                wall2.createCollisionShape();
-                wall3.createCollisionShape();
-                wall4.createCollisionShape();
-
-                walls.push(wall1);
-                walls.push(wall2);
-                walls.push(wall3);
-                walls.push(wall4);
-            }
-
-            createTurretCollisionWalls(this.walls);
+            //createTurretCollisionWalls();
 
             this.turrets.push(
                 new Turret(turret.body, this.players[1], this.enemies)

@@ -47,6 +47,10 @@ export class Projectile {
         this.ricochetsLeft -= 1;
     }
 
+    hitTurretWall() {
+        this.ricochetsLeft = 0;
+    }
+
     isAlreadyInScene() {
         return this.alreadyInScene;
     }
