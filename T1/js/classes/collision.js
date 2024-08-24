@@ -72,7 +72,7 @@ export class ProjectileCollisionSystem extends CollisionSystem {
                  * Se o projétil colidiu com o tanque, então diminuir a vida do jogador
                  * Se a vida for zerada, o jogador é declarado morto
                  */
-                if (hitTank) {
+                if (hitTank && !player._tank.died) {
                     projectiles[projectileIndex].hitTank();
                     player.health -= projectiles[projectileIndex].damage;
                     // console.log(player.health + " " + projectiles[projectileIndex].damage)
