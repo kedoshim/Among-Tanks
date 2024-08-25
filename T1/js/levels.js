@@ -62,9 +62,10 @@ export function getCurrentLevel() {
   return levels[index];
 }
 
-export function getLevel(index) {
-  if (levels[index])
-    return levels[index];
+export function getLevel(_index) {
+  index = _index
+  if (levels[_index])
+    return levels[_index];
   return levels[0];
 }
 
