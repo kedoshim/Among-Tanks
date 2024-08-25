@@ -58,6 +58,10 @@ export function getNextLevel() {
   }
 }
 
+export function getCurrentLevel() {
+  return levels[index];
+}
+
 export function getLevel(index) {
   if (levels[index])
     return levels[index];

@@ -16,7 +16,7 @@ export class CommonTank extends Tank {
       spreadShots : 1,
       semiAutoShots : 1,
       cooldown : 250,
-      damage : 2,
+      damage : 1,
     }
     super(tankColor, amogColor, moveSpeed, rotationSpeed, maxHealth, shootingOpitions);
 

@@ -839,7 +839,7 @@ export class GameManager {
         if (this.startGame) {
             const numberOFAlivePlayers = Object.keys(this.players).length;
             if (numberOFAlivePlayers <= 0) {
-                this.resetFunction();
+                this.resetFunction(false);
                 alert("Game Over! Restarting game");
             }
             if (
@@ -856,7 +856,7 @@ export class GameManager {
                 this.deleteScene(this.scene);
                 winner = winner;
                 alert("Game Over! Player " + winner + " won!");
-                this.resetFunction();
+                this.resetFunction(true);
                 return true;
             }
         }
