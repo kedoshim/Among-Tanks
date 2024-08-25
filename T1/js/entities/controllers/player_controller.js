@@ -37,19 +37,35 @@ export class PlayerController extends Controller {
   }
 
   set upKey(key) {
-    this._keys.up = key;
+    if (!Array.isArray(key)) {
+      this._keys.up = [key];
+    } else {
+      this._keys.up = key;
+    }
   }
-
+  
   set downKey(key) {
-    this._keys.down = key;
+    if (!Array.isArray(key)) {
+      this._keys.down = [key];
+    } else {
+      this._keys.down = key;
+    }
   }
-
+  
   set leftKey(key) {
-    this._keys.left = key;
+    if (!Array.isArray(key)) {
+      this._keys.left = [key];
+    } else {
+      this._keys.left = key;
+    }
   }
-
+  
   set rightKey(key) {
-    this._keys.right = key;
+    if (!Array.isArray(key)) {
+      this._keys.right = [key];
+    } else {
+      this._keys.right = key;
+    }
   }
 
   set shootKey(keys) {
@@ -62,19 +78,35 @@ export class PlayerController extends Controller {
   }
 
   set upButton(button) {
-    this._buttons.up = button;
+    if (!Array.isArray(button)) {
+      this._buttons.up = [button];
+    } else {
+      this._buttons.up = button;
+    }
   }
-
+  
   set downButton(button) {
-    this._buttons.down = button;
+    if (!Array.isArray(button)) {
+      this._buttons.down = [button];
+    } else {
+      this._buttons.down = button;
+    }
   }
-
+  
   set leftButton(button) {
-    this._buttons.left = button;
+    if (!Array.isArray(button)) {
+      this._buttons.left = [button];
+    } else {
+      this._buttons.left = button;
+    }
   }
-
+  
   set rightButton(button) {
-    this._buttons.right = button;
+    if (!Array.isArray(button)) {
+      this._buttons.right = [button];
+    } else {
+      this._buttons.right = button;
+    }
   }
 
   set shootButton(buttons) {
@@ -175,22 +207,33 @@ export class PlayerController extends Controller {
       return;
     }
     // Check rotation direction based on pressed keys
-    if (keyboard.pressed(this._keys.up)) {
-      movement++;
-      this._target._inMovement = true;
-      this._target._positiveMovement = true;
-    }
-    if (keyboard.pressed(this._keys.down)) {
-      movement--;
-      this._target._inMovement = true;
-      this._target._positiveMovement = false;
-    }
-    if (keyboard.pressed(this._keys.left)) {
-      rotation++;
-    }
-    if (keyboard.pressed(this._keys.right)) {
-      rotation--;
-    }
+    this._keys.up.forEach(key => {
+      if (keyboard.pressed(key)) {
+        movement++;
+        this._target._inMovement = true;
+        this._target._positiveMovement = true;
+      }
+    });
+
+    this._keys.down.forEach(key => {
+      if (keyboard.pressed(key)) {
+        movement--;
+        this._target._inMovement = true;
+        this._target._positiveMovement = false;
+      }
+    });
+
+    this._keys.left.forEach(key => {
+      if (keyboard.pressed(key)) {
+        rotation++;
+      }
+    });
+
+    this._keys.right.forEach(key => {
+      if (keyboard.pressed(key)) {
+        rotation--;
+      }
+    });
 
     this._keys.shoot.every((key, index) => {
       if (keyboard.down(key)) {
@@ -200,6 +243,7 @@ export class PlayerController extends Controller {
         return true;
       }
     });
+
 
     if (gamepad) {
       const gamepadButtons = gamepad.buttons;

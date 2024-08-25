@@ -14,10 +14,10 @@
     "defaultPlayerTankColors": ["#00008B", "#FF0000", "#DAA520", "#008000"],
     "defaultPlayerControls": [
       {
-        "up": "W",
-        "down": "S",
-        "right": "D",
-        "left": "A",
+        "up": ["W", "up"],
+        "down": ["S", "down"],
+        "right": ["D", "right"],
+        "left": ["A", "left"],
         "shoot": ["space", "Q", "shift"]
       },
       {
