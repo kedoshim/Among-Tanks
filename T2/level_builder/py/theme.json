@@ -1,0 +1,11 @@
+{
+    "#custom_button": {
+        "normal": {
+            "colours": {
+                "normal_bg": "#FFAA00",
+                "hovered_bg": "#FFD700",
+                "active_bg": "#FF4500"
+            }
+        }
+    }
+}
