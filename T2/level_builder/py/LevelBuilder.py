@@ -9,7 +9,7 @@ class LevelBuilder:
         self.blocks = json.load(f)
         self.representation = self.create_array(x, y)
         self.size = (x, y)
-        self.lightning = [[{} for _ in range(y)] for _ in range(x)]
+        self.lighting = [[{} for _ in range(y)] for _ in range(x)]
         self.turret = []
 
 
@@ -96,17 +96,17 @@ class LevelBuilder:
 
         level_arr, first_in_x, first_in_z = self.remove_empty_borders(original_level_arr)
 
-        lightning_reduced = []
+        lighting_reduced = []
         turret_reduced = copy.deepcopy(self.turret)
 
-        for i in range(len(self.lightning)):
-            for j in range(len(self.lightning[0])):
-                if 'angle' in self.lightning[i][j]:
-                    lightning_reduced.append({
+        for i in range(len(self.lighting)):
+            for j in range(len(self.lighting[0])):
+                if 'angle' in self.lighting[i][j]:
+                    lighting_reduced.append({
                         'x': i - first_in_z,
                         'y': j - first_in_x,
-                        "angle": self.lightning[i][j]["angle"],
-                        "color": self.lightning[i][j]["color"]
+                        "angle": self.lighting[i][j]["angle"],
+                        "color": self.lighting[i][j]["color"]
                     })
 
         for i in range(len(self.turret)):
@@ -116,10 +116,10 @@ class LevelBuilder:
        
 
         with open(f"{time.time()}_level.json", 'w+') as f:
-            json.dump({"blocks": level_arr, "lightning": lightning_reduced, "turrets": turret_reduced}, f, indent=4)
+            json.dump({"blocks": level_arr, "lighting": lighting_reduced, "turrets": turret_reduced}, f, indent=4)
         
         with open(f"{time.time()}_to_import.json", 'w+') as f:
-            json.dump({"blocks": original_level_arr, "lightning": self.lightning, "turrets": self.turret}, f, indent=4)
+            json.dump({"blocks": original_level_arr, "lighting": self.lighting, "turrets": self.turret}, f, indent=4)
 
     def hex_to_rgb(self, hex_value):
         # Converte o valor inteiro em uma string hexadecimal, removendo o prefixo '0x'
@@ -144,12 +144,12 @@ class LevelBuilder:
                 b.type = blocks[i][j]["type"]
                 self.representation[i][j] = b
         # self.representation = decoded["blocks"]
-        self.lightning = decoded["lightning"]
+        self.lighting = decoded["lighting"]
         self.turret = decoded["turrets"]
 
     def erase(self, tile_x, tile_y):
-        if "color" in self.lightning[tile_x][tile_y]:
-            self.lightning[tile_x][tile_y] = {}
+        if "color" in self.lighting[tile_x][tile_y]:
+            self.lighting[tile_x][tile_y] = {}
         else:
             self.representation[tile_x][tile_y] = Block()
         

@@ -290,11 +290,11 @@ class ResizableScreen:
 
 
     def propagate_color(self, color, block_type):
-        if block_type == "Lightning":
-            for i in range(len(self.level.lightning)):
-                for j in range(len(self.level.lightning[i])):
-                    if "color" in self.level.lightning[i][j]:
-                        self.level.lightning[i][j]["color"] = color
+        if block_type == "lighting":
+            for i in range(len(self.level.lighting)):
+                for j in range(len(self.level.lighting[i])):
+                    if "color" in self.level.lighting[i][j]:
+                        self.level.lighting[i][j]["color"] = color
         else:
             for i in range(len(self.level.representation)):
                 for j in range(len(self.level.representation[i])):
@@ -302,7 +302,7 @@ class ResizableScreen:
                         self.level.representation[i][j].color = color
 
     def set_properties(self):
-        if self.properties_type == "Lightning":
+        if self.properties_type == "lighting":
             r = int(self.light_properties["r"]["value"].get_text())
             g = int(self.light_properties["g"]["value"].get_text())
             b = int(self.light_properties["b"]["value"].get_text())
@@ -372,11 +372,11 @@ class ResizableScreen:
 
     def open_properties_window(self, pos):
         x, y = pos
-        if not self.level.representation[x][y].type == "EmptyBlock" or "color" in self.level.lightning[x][y]:
+        if not self.level.representation[x][y].type == "EmptyBlock" or "color" in self.level.lighting[x][y]:
             self.hide_all()
 
-        if "color" in self.level.lightning[x][y]:
-            self.properties_type = "Lightning"
+        if "color" in self.level.lighting[x][y]:
+            self.properties_type = "lighting"
             for key in self.light_properties:
                 keys = self.light_properties[key]
                 for k in keys:
@@ -640,8 +640,8 @@ class ResizableScreen:
                                 self.level.representation[tile_x][tile_y].color = (self.level.blocks[key]["color"]["r"], self.level.blocks[key]["color"]["g"], self.level.blocks[key]["color"]["b"])
                                 self.level.representation[tile_x][tile_y].type = self.level.blocks[key]["description"]
                             elif self.level.blocks[key]["render_type"] == "triangle":
-                                self.level.lightning[tile_x][tile_y]["angle"] = self.angle
-                                self.level.lightning[tile_x][tile_y]['color'] = (self.level.blocks[key]["color"]["r"], self.level.blocks[key]["color"]["g"], self.level.blocks[key]["color"]["b"])
+                                self.level.lighting[tile_x][tile_y]["angle"] = self.angle
+                                self.level.lighting[tile_x][tile_y]['color'] = (self.level.blocks[key]["color"]["r"], self.level.blocks[key]["color"]["g"], self.level.blocks[key]["color"]["b"])
                             elif self.level.blocks[key]["render_type"] == "eraser":
                                 self.level.erase(tile_x, tile_y)
                             elif self.level.blocks[key]["render_type"] == "selector":
@@ -704,12 +704,12 @@ class ResizableScreen:
                     # Blite a superfície temporária na tela
                     self.screen.blit(temp_surface, (i*self.grid_size, j*self.grid_size))
 
-            for i in range(len(self.level.lightning)):
-                for j in range(len(self.level.lightning[i])):
-                    if "color" in self.level.lightning[i][j]:
+            for i in range(len(self.level.lighting)):
+                for j in range(len(self.level.lighting[i])):
+                    if "color" in self.level.lighting[i][j]:
                         
-                        color = self.level.lightning[i][j]["color"]
-                        pygame.draw.polygon(self.screen, color, self.get_triangle_points((i, j), self.level.lightning[i][j]["angle"]))
+                        color = self.level.lighting[i][j]["color"]
+                        pygame.draw.polygon(self.screen, color, self.get_triangle_points((i, j), self.level.lighting[i][j]["angle"]))
 
             for i in range(len(self.level.turret)):
                 turret = self.level.turret[i]

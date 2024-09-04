@@ -11,46 +11,45 @@ import {
     getLevel,
     getTurrets,
     loadTurrets,
-    getCurrentLevel
+    getCurrentLevel,
 } from "./levels.js";
 
 async function main() {
     const renderer = initRenderer();
 
     let level = getNextLevel();
-    let lightning = getLights();
-    let turret = getTurrets()
+    let lighting = getLights();
+    let turret = getTurrets();
 
-    let manager = new GameManager(level, lightning, turret, renderer);
+    let manager = new GameManager(level, lighting, turret, renderer);
     await manager.start();
 
     const resetFunction = (bool) => {
         console.log("Reseting Level");
         console.log("Restarting game");
-        
-        if(!bool) {
+
+        if (!bool) {
             level = getCurrentLevel();
-        }
-        else {
+        } else {
             level = getNextLevel();
         }
-        lightning = getLights();
-        turret = getTurrets()
-        manager = new GameManager(level, lightning, turret, renderer);
+        lighting = getLights();
+        turret = getTurrets();
+        manager = new GameManager(level, lighting, turret, renderer);
         manager.start();
-        
+
         manager.setResetFunction(resetFunction);
         manager.setChangeLevelFunction(changeLevelFunction);
     };
-    
+
     const changeLevelFunction = (index) => {
         console.log("Changing Level");
         console.log("Restarting game");
 
         level = getLevel(index);
-        lightning = getLights(index);
-        turret = getTurrets(index)
-        manager = new GameManager(level, lightning, turret, renderer);
+        lighting = getLights(index);
+        turret = getTurrets(index);
+        manager = new GameManager(level, lighting, turret, renderer);
         manager.start();
 
         manager.setResetFunction(resetFunction);
