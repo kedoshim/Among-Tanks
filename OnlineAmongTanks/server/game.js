@@ -40,6 +40,7 @@ export default class Game {
         this.playerSpawnPoint = level.spawn;
 
         const getWalls = (level) => {
+            console.log(level);
             const walls = [];
             const levelHeight = 5;
             const data = level.blocks;
@@ -61,8 +62,7 @@ export default class Game {
                     BLOCK_SIZE,
                     BLOCK_SIZE
                 );
-                const material = new THREE.MeshBasicMaterial();
-                const cube = new THREE.Mesh(geometry, material);
+                const cube = new THREE.Mesh(geometry);
                 const translation = getTranslation(i, j, yTranslation);
                 cube.translateX(translation.x);
                 cube.translateY(translation.y);

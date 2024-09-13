@@ -17,6 +17,8 @@ import { Player } from "./entities/player.js";
 import { getConfig, loadConfig } from "./config.js";
 import { loadLevel } from "./levelLoader.js";
 import { Projectile } from "./projectile.js";
+import { preloadCommonTankModel } from "./entities/tanks/models/common_tank_model.js";
+import { loadTexture } from "./loaders/textures.js";
 
 export default class Game {
     constructor() {
@@ -43,6 +45,12 @@ export default class Game {
         this.showInformation = this.showInformation.bind(this);
         this.render = this.render.bind(this);
         this.mainPlayersIds = [];
+    }
+
+    async start() {
+        preloadCommonTankModel();
+        loadTexture("./assets/textures/basic_wall.jpg", "basic_wall");
+        loadTexture("./assets/textures/basic_floor.jpg", "basic_floor");
     }
 
     createGame(state) {

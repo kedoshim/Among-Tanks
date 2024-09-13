@@ -21,7 +21,7 @@ sockets.listen(3001)
 
 // Serve static files from the "client" directory
 const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname, "./T1/client")));
+app.use(express.static(path.join(__dirname, "./OnlineAmongTanks/client")));
 
 await loadLevels();
 

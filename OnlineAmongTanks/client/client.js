@@ -28,6 +28,7 @@ let connectedGamepads = [null, null, null, null];
 const socket = geckos({ port: 3001 });
 
 let game = new Game()
+await game.start()
 let inputListener = new InputListener(document,config);
 
 socket.onConnect(() => {

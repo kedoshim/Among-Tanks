@@ -1,5 +1,6 @@
 import { createGroundPlaneXZ } from "./public/util/util.js";
 import * as THREE from "./public/three/build/three.module.js";
+import { getTexture } from "./loaders/textures.js";
 
 const wallColor = 0x404040;
 const groundColor = 0xb2beb5;
@@ -20,28 +21,28 @@ export function loadLevel(level, scene) {
         };
     };
 
-    const createBlock = (i, j, color, yTranslation) => {
+    const createBlock = (
+        i,
+        j,
+        yTranslation,
+        materialParameters,
+        hasCollision = false
+    ) => {
         const geometry = new THREE.BoxGeometry(
             BLOCK_SIZE,
             BLOCK_SIZE,
             BLOCK_SIZE
         );
-        const material = new THREE.MeshBasicMaterial({ color });
+        let material = new THREE.MeshLambertMaterial(materialParameters);
         const cube = new THREE.Mesh(geometry, material);
+        cube.receiveShadow = true;
+
         const translation = getTranslation(i, j, yTranslation);
+        //console.log(translation)
         cube.translateX(translation.x);
         cube.translateY(translation.y);
         cube.translateZ(translation.z);
-
-        // if (color === wallColor) {
-        //     let wall = new CollisionBlock();
-        //     wall.setBlockSize(BLOCK_SIZE);
-        //     wall.setModel(cube);
-        //     wall.createCollisionShape();
-        //     // this.walls.push(wall);
-        //     let helper = new THREE.Box3Helper(wall.collisionShape, 0x000000);
-        //     scene.add(helper);
-        // }
+        cube.castShadow = true;
 
         scene.add(cube);
     };
@@ -64,28 +65,31 @@ export function loadLevel(level, scene) {
                     createBlock(
                         i,
                         j,
-                        groundColor,
-                        -BLOCK_SIZE / 2 + levelHeight
+                        -BLOCK_SIZE / 2 + levelHeight,
+                        {
+                            color: data[i][j].color,
+                            map: getTexture("basic_floor"),
+                        },
+                        false
                     );
                     break;
                 case "WallBlock":
                     createBlock(
                         i,
                         j,
-                        wallColor,
-                        BLOCK_SIZE / 2 + levelHeight
+                        BLOCK_SIZE / 2 + levelHeight,
+                        {
+                            color: data[i][j].color,
+                            map: getTexture("basic_wall"),
+                        },
+                        true
                     );
                     break;
                 case "Spawn":
-                    createBlock(
-                        i,
-                        j,
-                        spawnColor,
-                        -BLOCK_SIZE / 2 + levelHeight
-                    );
-                    const translation = getTranslation(i, j, -13);
-                    // const spawn = [translation.x, translation.z];
-                    // this.playerSpawnPoint[spawnIndex] = spawn;
+                    createBlock(i, j, -BLOCK_SIZE / 2 + levelHeight, {
+                        color: 0xff0000,
+                        map: getTexture("basic_wall"),
+                    });
                     spawnIndex++;
                     break;
                 default:

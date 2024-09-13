@@ -12,6 +12,8 @@ const levelPaths = {
 };
 
 const levels = {};
+const lightning = {};
+const turrets = {};
 
 let index = 0;
 
@@ -24,7 +26,7 @@ export async function loadLevels() {
         for (const key in levelPaths) {
             const filePath = levelPaths[key];
             const level_json = await fs.readFile(filePath, "utf-8");
-            const level_data = decode(JSON.parse(level_json));
+            const level_data = decode(JSON.parse(level_json).blocks);
             levels[key] = level_data;
         }
     } catch (error) {
