@@ -67,6 +67,10 @@ export class Tank {
 
         this._lastShootTime = 0; // Last time the shoot function was called
         this.died = false;
+
+        this.godMode = false;
+
+        this._originalMaterials = new Map(); // To store original materials
     }
 
     // Getters
@@ -441,7 +445,7 @@ export class Tank {
 
         // console.log(this._projectiles)
 
-        audioSystem.play("player-shoot")
+        audioSystem.play("player-shoot");
     }
 
     canShoot() {
@@ -452,6 +456,69 @@ export class Tank {
     }
 
     takeDamage(damage) {
-        this._health -= damage;
+        if (this.godMode == false) {
+            console.log(this.godMode, this.health);
+            this._health -= damage;
+        }
+    }
+
+    _turnGod() {
+        this._model.traverse((child) => {
+            if (child.isMesh) {
+                if (!this._originalMaterials.has(child)) {
+                    // Store the original material(s)
+                    if (Array.isArray(child.material)) {
+                        const clonedMaterials = child.material.map((material) =>
+                            material.clone()
+                        );
+                        this._originalMaterials.set(child, clonedMaterials);
+                    } else {
+                        this._originalMaterials.set(
+                            child,
+                            child.material.clone()
+                        );
+                    }
+                }
+
+                if (this.godMode) {
+                    // Turn materials emissive with a yellow dragon ball-like color
+                    const yellowColor = new THREE.Color(1.0, 0.9, 0.2); // Example yellow color
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach((material) => {
+                            // Apply god mode emissive color
+                            material.emissive = yellowColor;
+                            material.emissiveIntensity = 1.5;
+                            material.needsUpdate = true; // Force material to update
+                        });
+                    } else {
+                        child.material.emissive = yellowColor;
+                        child.material.emissiveIntensity = 1.5;
+                        child.material.needsUpdate = true; // Force material to update
+                    }
+                } else {
+                    // Restore original materials
+                    const originalMaterial = this._originalMaterials.get(child);
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach((material, index) => {
+                            // Restore the original material at the same index
+                            material.copy(originalMaterial[index]);
+                            material.needsUpdate = true; // Ensure the material is updated
+                        });
+                    } else {
+                        child.material.copy(originalMaterial); // Restore original material
+                        child.material.needsUpdate = true; // Ensure the material is updated
+                    }
+                }
+
+                child.castShadow = true;
+                child.receiveShadow = true;
+            }
+        });
+    }   
+
+    toggleGodMode() {
+        console.log("Toggling God Mode");
+        this.godMode = !this.godMode;
+        this._turnGod();
     }
 }

@@ -120,41 +120,39 @@ export class GameManager {
         }
     }
 
-    
+    // Function to handle zoom adjustment
+    handleZoomAdjustment(zoomingIn) {
+        // Define zoom step
+        const zoomStep = 3; // Change this value based on your needs
 
-// Function to handle zoom adjustment
-handleZoomAdjustment(zoomingIn) {
-    // Define zoom step
-    const zoomStep = 3; // Change this value based on your needs
+        if (this.currentZoom == undefined) {
+            this.currentZoom = 100;
+        }
 
-    if (this.currentZoom == undefined) {
-        this.currentZoom = 100
+        // Adjust zoom amount based on scroll direction
+        if (zoomingIn) {
+            // Scrolling down (zoom out)
+            this.currentZoom += zoomStep;
+        } else {
+            // Scrolling up (zoom in)
+            this.currentZoom -= zoomStep;
+            if (this.currentZoom < 10) currentZoom = 10; // Prevent zooming in too much
+        }
+
+        // Call adjustZoom with the new zoom amount
+        this.cameraController.adjustZoom(this.currentZoom);
     }
-
-    // Adjust zoom amount based on scroll direction
-    if (zoomingIn) {
-        // Scrolling down (zoom out)
-        this.currentZoom += zoomStep;
-    } else {
-        // Scrolling up (zoom in)
-        this.currentZoom -= zoomStep;
-        if (this.currentZoom < 10) currentZoom = 10; // Prevent zooming in too much
-    }
-
-    // Call adjustZoom with the new zoom amount
-    this.cameraController.adjustZoom(this.currentZoom);
-}
-
-
 
     manageOrbitControls() {
         if (this.keyboard.down("O")) {
             this.cameraController.changeCameraMode();
         }
-        if (this.keyboard.down("k")) { //'+'
+        if (this.keyboard.down("k")) {
+            //'+'
             this.handleZoomAdjustment(true);
         }
-        if (this.keyboard.down("m")) { //'-'
+        if (this.keyboard.down("m")) {
+            //'-'
             this.handleZoomAdjustment(false);
         }
         // this.keyboard.debug()
@@ -163,6 +161,15 @@ handleZoomAdjustment(zoomingIn) {
     manageSounds() {
         if (this.keyboard.down("P")) {
             audioSystem.toggleMuteAll();
+        }
+    }
+
+    manageGodMode() {
+        if (this.keyboard.down("G")) {
+            for (const key in this.players) {
+                const player = this.players[key];
+                player._tank.toggleGodMode();
+            }
         }
     }
 
@@ -695,6 +702,7 @@ handleZoomAdjustment(zoomingIn) {
     keyboardUpdate() {
         this.keyboard.update();
         this.manageOrbitControls();
+        this.manageGodMode();
         this.manageSounds();
         this.manageLevelChange();
         const AI = this.ai_system;

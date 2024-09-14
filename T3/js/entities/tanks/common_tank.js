@@ -32,7 +32,7 @@ export class CommonTank extends Tank {
     }
 
     takeDamage(damage) {
-        this._health -= damage;
+        super.takeDamage(damage);
 
         audioSystem.play('player-damage')
     }
