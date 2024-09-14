@@ -900,13 +900,15 @@ export class GameManager {
             this.startGame = true;
         }
         if (this.startGame) {
-            const numberOFAlivePlayers = Object.keys(this.players).length;
-            if (numberOFAlivePlayers <= 0) {
-                this.resetFunction(false);
-                alert("Game Over! Restarting game");
+            const numberOfAlivePlayers = Object.keys(this.players).length;
+            if (numberOfAlivePlayers <= 0) {
+                // this.resetFunction(false);
+
+                window.location.href = "./gameOver.html";
+                //alert("Game Over! Restarting game");
             }
             if (
-                numberOFAlivePlayers <= 1 &&
+                numberOfAlivePlayers <= 1 &&
                 Object.keys(this.enemies).length <= 0
             ) {
                 let winner = 0;
