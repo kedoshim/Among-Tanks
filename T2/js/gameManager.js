@@ -40,6 +40,7 @@ export class GameManager {
         this.config = getConfig();
         this.lighting = lighting;
         this.turretsPos = turret
+        this.movingWalls = []
     }
 
     async start() {
@@ -348,6 +349,56 @@ export class GameManager {
             };
         };
 
+        const createMovingWall = (
+            i,
+            j,
+            yTranslation,
+            materialParameters,
+            hasCollision = false
+        ) => {
+
+            for(let s = 0; s < 3; s++) {
+                const geometry = new THREE.BoxGeometry(
+                    BLOCK_SIZE,
+                    BLOCK_SIZE,
+                    BLOCK_SIZE
+                );
+                let material = new THREE.MeshLambertMaterial(materialParameters);
+                const cube = new THREE.Mesh(geometry, material);
+                cube.receiveShadow = true;
+                let _s = j > 7 ? s*-1 : s
+                const translation = getTranslation(i, j-_s, yTranslation);
+                //console.log(translation)
+                cube.translateX(translation.x);
+                cube.translateY(translation.y);
+                cube.translateZ(translation.z);
+                cube.castShadow = true;
+
+               
+
+                if (hasCollision) {
+                    let wall = new CollisionBlock();
+                    wall.setBlockSize(BLOCK_SIZE);
+                    wall.setModel(cube);
+                    wall.createCollisionShape();
+                    this.walls.push(wall);
+                    // let helper = new THREE.Box3Helper(
+                    //     wall.collisionShape,
+                    //     0x000000
+                    // );
+                    // this.scene.add(helper);
+                }
+
+                this.scene.add(cube);
+                this.movingWalls.push({
+                    "originalDir": j > 7 ? -1 : 1,
+                    "cube": cube,
+                    "originalPosition": translation.z
+                });
+            }
+            
+        }
+
         const createBlock = (
             i,
             j,
@@ -434,6 +485,18 @@ export class GameManager {
                         const spawn = [translation.x, translation.z];
                         this.playerSpawnPoint[spawnIndex] = spawn;
                         spawnIndex++;
+                        break;
+                    case "Moving Wall":
+                        createMovingWall(
+                            i,
+                            j,
+                            BLOCK_SIZE / 2 + levelHeight,
+                            {
+                                color: data[i][j].color,
+                                map: getTexture("basic_wall"),
+                            },
+                            true
+                        );
                         break;
                     default:
                         break;
@@ -866,6 +929,17 @@ export class GameManager {
         scene.clear();
     }
 
+    updateMovingWalls() {
+        let velocity = 0.15;
+        for(let i = 0; i < this.movingWalls.length; i++) {
+            let movingWall = this.movingWalls[i]["cube"]
+            movingWall.position.z += velocity*this.movingWalls[i]["originalDir"];
+            if(movingWall.position.z == this.movingWalls[i]["originalPosition"] || Math.abs(movingWall.position.z - this.movingWalls[i]["originalPosition"]) > 3*17) {
+                this.movingWalls[i]["originalDir"] *= -1
+            }
+        }
+    }
+
     frame() {
         if (!(this.checkEnd() || !this.startGame)) {
             this.keyboardUpdate();
@@ -877,6 +951,7 @@ export class GameManager {
             //this.render();
             this.updateHealthBars();
             this.updateProjectiles();
+            this.updateMovingWalls();
             // this.updateHitBoxDisplay();
         }
     }
