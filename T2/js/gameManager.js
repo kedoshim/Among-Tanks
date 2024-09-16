@@ -377,7 +377,7 @@ export class GameManager {
                
 
                 if (hasCollision) {
-                    let wall = new CollisionBlock();
+                    let wall = new CollisionBlock(true);
                     wall.setBlockSize(BLOCK_SIZE);
                     wall.setModel(cube);
                     wall.createCollisionShape();
