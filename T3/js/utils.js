@@ -32,3 +32,10 @@ export function joinObjectsIntoList(obj1, obj2) {
     // Combine both lists into a single list
     return [...values1, ...values2];
 }
+
+export function isOnMobileEnviroment() {
+    if (navigator.userAgent.match(/iPhone/i)   || navigator.userAgent.match(/iPad/i)  || navigator.userAgent.match(/Android/i)) { 
+        return true
+    } 
+    return false
+}

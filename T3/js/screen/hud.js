@@ -1,5 +1,6 @@
 import { darkenColor } from "../utils.js";
 
+
 export function addPlayerToHud(index, hexAmogColor, hexTankColor) {
     let hudDiv = document.getElementById("hud");
     let playerDiv = document.createElement("div");
@@ -72,4 +73,20 @@ function createHealthbar(index, div) {
 
     healthBar.appendChild(healthBarInside);
     div.appendChild(healthBar);
+}
+
+export function createNipple() {
+    const options = {
+        size: 120,
+        multitouch: true,
+        maxNumberOfNipples: 2,
+        mode: 'static',
+        restJoystick: true,
+        shape: 'circle',
+        // position: { top: 20, left: 20 },
+        position: { bottom: '60px', right: '100px' },
+        dynamicPage: true,
+      }
+    let nipple = nipplejs.create(options);
+    return nipple;
 }

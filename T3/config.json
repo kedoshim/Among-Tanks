@@ -1,5 +1,5 @@
 {
-  "directionalMovementEnabled": false ,
+  "directionalMovementEnabled": false,
   "numberOfPlayers" : 1,
   "numberOfBots" : 2,
   "playerSpawnPoint" : [
@@ -60,5 +60,10 @@
     "FOV" : 45,
     "near":0.1,
     "far": 2000
+  },
+  "cameraConfigMobile": {
+    "FOV" : 25,
+    "near":0.5,
+    "far": 1200
   }
 }

@@ -29,9 +29,9 @@ import { preloadCommonTankModel } from "./entities/tanks/models/common_tank_mode
 import { loadGLBFile } from "./loaders/models.js";
 import { getTexture, loadTexture } from "./loaders/textures.js";
 import { createTurret } from "./entities/turret/model/turret_model.js";
-import { addPlayerToHud, resetHud, updatePlayerHud } from "./screen/hud.js";
+import { addPlayerToHud, resetHud, updatePlayerHud, createNipple } from "./screen/hud.js";
 import { Enemy } from "./entities/enemy.js";
-import { joinObjectsIntoList } from "./utils.js";
+import { joinObjectsIntoList, isOnMobileEnviroment } from "./utils.js";
 import audioSystem from "../audioSystem.js";
 
 export class GameManager {
@@ -41,6 +41,8 @@ export class GameManager {
         this.config = getConfig();
         this.lighting = lighting;
         this.turretsPos = turret;
+        this.mobileEnv = isOnMobileEnviroment();
+        //console.log(this.mobileEnv)
     }
 
     async start() {
@@ -201,17 +203,20 @@ handleZoomAdjustment(zoomingIn) {
         this.scene = new THREE.Scene(); // Create main scene
 
         const loader = new THREE.CubeTextureLoader();
-        const skyboxTexture = loader.load([
-            "./assets/skybox/nightsky.png", // Positive X
-            "./assets/skybox/nightsky.png", // Negative X
-            "./assets/skybox/nightsky.png", // Positive Y
-            "./assets/skybox/nightsky.png", // Negative Y
-            "./assets/skybox/nightsky.png", // Positive Z
-            "./assets/skybox/nightsky.png", // Negative Z
-        ]);
 
-        // Step 2: Set the skybox as the scene background
-        this.scene.background = skyboxTexture;
+        // if(!this.mobileEnv) {
+        //     const skyboxTexture = loader.load([
+        //         "./assets/skybox/nightsky.png", // Positive X
+        //         "./assets/skybox/nightsky.png", // Negative X
+        //         "./assets/skybox/nightsky.png", // Positive Y
+        //         "./assets/skybox/nightsky.png", // Negative Y
+        //         "./assets/skybox/nightsky.png", // Positive Z
+        //         "./assets/skybox/nightsky.png", // Negative Z
+        //     ]);
+    
+        //     // Step 2: Set the skybox as the scene background
+        //     this.scene.background = skyboxTexture;
+        // }
 
         if (this.renderer === null) this.renderer = initRenderer(); // Init a basic renderer
         this.renderer.shadowMap.enabled = true;
@@ -227,7 +232,7 @@ handleZoomAdjustment(zoomingIn) {
         this.keyboard = new KeyboardState();
         console.log("Inicializando GameManager...");
         // Create a basic light to illuminate the scene
-        this.cameraController = new CameraControls(this.renderer, this.config);
+        this.cameraController = new CameraControls(this.renderer, this.config, this.mobileEnv);
         this.camera = this.cameraController.camera;
 
         this.connectedGamepads = [null, null, null, null];
@@ -267,7 +272,35 @@ handleZoomAdjustment(zoomingIn) {
 
     createPlayer(index) {
         let new_player = new Player("", [0, 0], "", "");
+        if(this.mobileEnv) {
+            const nipple = createNipple()
+            nipple['0'].on('move', function (evt, data) {
+                const forward = data.vector.y
+                const turn = data.vector.x
+                let fwdValue;
+                let bkdValue;
+                let rgtValue;
+                let lftValue;
+        
+                if (forward > 0) {
+                fwdValue = Math.abs(forward)
+                bkdValue = 0
+                } else if (forward < 0) {
+                fwdValue = 0
+                bkdValue = Math.abs(forward)
+                }
+        
+                if (turn > 0) {
+                lftValue = 0
+                rgtValue = Math.abs(turn)
+                } else if (turn < 0) {
+                lftValue = Math.abs(turn)
+                rgtValue = 0
+                }
 
+                console.log(`fwd: ${fwdValue}, bkd:${bkdValue}, left: ${lftValue} and right: ${rgtValue}`)
+            })
+        }
         new_player.spawnPoint = this.playerSpawnPoint[Entity.entityNumber - 1];
         addPlayerToHud(
             index,

@@ -13,10 +13,8 @@ export class CameraControls {
      * @constructor
      * @param {THREE.WebGLRenderer} renderer
      */
-    constructor(renderer, config = null) {
-        const cameraConfig = config
-            ? config.cameraConfig
-            : getConfig().cameraConfig;
+    constructor(renderer, config = null, mobile = false) {
+        const cameraConfig = this.getConfiguration(config, mobile)
 
         this._camera = new THREE.PerspectiveCamera(
             cameraConfig.FOV,
@@ -42,8 +40,19 @@ export class CameraControls {
         // Initialize zoom transition parameters
         this._zoomTransitionDuration = 200; // Transition duration in milliseconds
         this._zoomStartTime = null;
-        this._camera.position.y = 500
+        this._camera.position.y = 400
         this._zoomStartHeight = this._camera.position.y;
+    }
+
+    getConfiguration(config,mobile) {
+        let _config = config
+            ? config.cameraConfig
+            : getConfig().cameraConfig;
+        
+        if(mobile) {
+            _config = config.cameraConfigMobile
+        }
+        return _config
     }
 
     enableOrbitControls() {
