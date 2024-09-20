@@ -50,7 +50,7 @@ sockets.onConnection((socket) => {
 
     socket.on("create-players", (command) => {
         console.log(`> Creating players of device ${playerId}`);
-        rooms.createPlayers(command.players);
+        //rooms.createPlayers(command.players);
 
         socket.emit("setup", game.encodedGamestate);
     });
@@ -68,6 +68,7 @@ sockets.onConnection((socket) => {
     });
 
     socket.on("create-room", (command) => {
+        console.log("DOG DOG DOG")
         rooms.create(command.room_id, command.id, (data) => {
             socket.emit("update", data);
         });

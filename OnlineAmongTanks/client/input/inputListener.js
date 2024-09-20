@@ -1,6 +1,6 @@
 // InputListener.js
-import KeyboardListener from "./KeyboardListener.js";
-import GamepadListener from "./GamepadListener.js";
+import KeyboardListener from "./keyboardListener.js";
+import GamepadListener from "./gamepadListener.js";
 
 export default class InputListener {
   constructor(document, config) {

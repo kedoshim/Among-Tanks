@@ -7,6 +7,7 @@ var rooms = {}
 let isCreatingRoom = false
 
 document.getElementById("create-room").addEventListener("click", function () {
+    
     let id = createRoom()
     joinRoom(id)
 });
@@ -31,7 +32,7 @@ function createRoomDiv(id) {
 setInterval(async () => {
     let roomsData = await fetchAvailableRooms()
     
-    for (var room in roomsData.values()) {
+    for (var room in roomsData) {
         createRoomDiv(room)
     }
 },1000)
