@@ -30,10 +30,20 @@ export class CameraControls {
         this._mediumPoint = new THREE.Vector3(0, 0, 0);
         this._camera.lookAt(this._mediumPoint);
         this._padding = 20;
-        this._height = 40;
+        this._height = 500;
+
+        // Default zoom setting
+        this._zoomAmount = 100; // Default zoom amount
+        this._targetHeight = 10000 / this._zoomAmount; // Initial target height
 
         this._orbit = new OrbitControls(this._camera, renderer.domElement); // Enable mouse rotation, pan, zoom etc.
         this._orbit.enabled = false;
+
+        // Initialize zoom transition parameters
+        this._zoomTransitionDuration = 200; // Transition duration in milliseconds
+        this._zoomStartTime = null;
+        this._camera.position.y = 500
+        this._zoomStartHeight = this._camera.position.y;
     }
 
     enableOrbitControls() {
@@ -144,14 +154,47 @@ export class CameraControls {
         const point2 = [borders.maxX, borders.maxZ];
         this._mediumPoint = this._calculateMediumPoint(point1, point2);
 
-        this._height = this._calculateHeight(point1, point2);
+        // this._height = this._calculateHeight(point1, point2);
+        this._height = this._camera.position.y;
 
         this._camera.position.x = this._mediumPoint[0];
-        this._camera.position.y = this._height;
+        // this._camera.position.y = this._height;
         this._camera.position.z = this._mediumPoint[1] + this._height / 4;
         this._camera.lookAt(
             new THREE.Vector3(this._mediumPoint[0], 0, this._mediumPoint[1])
         );
+
+        // console.log(this._zoomStartHeight);
+
+        // Handle zoom transition
+        if (this._zoomStartTime !== null) {
+            const elapsedTime = Date.now() - this._zoomStartTime;
+            const progress = Math.min(
+                elapsedTime / this._zoomTransitionDuration,
+                1
+            );
+            this._camera.position.y =
+                this._zoomStartHeight +
+                (this._targetHeight - this._zoomStartHeight) * progress;
+
+            if (progress === 1) {
+                this._zoomStartTime = null; // Reset zoom transition
+            }
+        }
+    }
+
+    /**
+     * Adjust the zoom amount and start a smooth zoom transition
+     *
+     * @param {number} zoomAmount - The new zoom amount (higher means zoomed out more)
+     */
+    adjustZoom(zoomAmount) {
+        this._zoomAmount = zoomAmount;
+        this._targetHeight = 10000 / this._zoomAmount;
+
+        // Start zoom transition
+        this._zoomStartTime = Date.now();
+        this._zoomStartHeight = this._camera.position.y;
     }
 
     /**

@@ -122,6 +122,29 @@ export class GameManager {
         }
     }
 
+    // Function to handle zoom adjustment
+    handleZoomAdjustment(zoomingIn) {
+        // Define zoom step
+        const zoomStep = 3; // Change this value based on your needs
+
+        if (this.currentZoom == undefined) {
+            this.currentZoom = 100
+        }
+
+        // Adjust zoom amount based on scroll direction
+        if (zoomingIn) {
+            // Scrolling down (zoom out)
+            this.currentZoom += zoomStep;
+        } else {
+            // Scrolling up (zoom in)
+            this.currentZoom -= zoomStep;
+            if (this.currentZoom < 10) currentZoom = 10; // Prevent zooming in too much
+        }
+
+        // Call adjustZoom with the new zoom amount
+        this.cameraController.adjustZoom(this.currentZoom);
+    }
+
     manageOrbitControls() {
         if (this.keyboard.down("O")) {
             this.cameraController.changeCameraMode();
@@ -815,7 +838,7 @@ export class GameManager {
 
     cameraUpdate() {
         this.allTanks = joinObjectsIntoList(this.players, this.enemies);
-        this.cameraController.calculatePosition(this.allTanks);
+        this.cameraController.calculatePosition(Object.values(this.players));
     }
 
     updateAiAction() {
