@@ -43,11 +43,34 @@ export class Block {
     }
 }
 
+
+export class MovingWall {
+    constructor(moveParameters) {
+        this.moveParameters = moveParameters;
+    }
+
+    getParams() {
+        return this.moveParameters;
+    }
+
+    setParams(moveParameters) {
+        this.moveParameters = moveParameters;
+    }
+}
+
+
 export class CollisionBlock extends Block {
-    constructor(isMovingWall=false) {
+    constructor(isMovingWall=false, moveParams=null) {
         super();
         this.collisionShape = null;
         this.isMovingWall = isMovingWall;
+
+        if (isMovingWall) {
+            this.movingWall = new MovingWall(moveParams);
+        }
+        else {
+            this.movingWall = null;
+        }
     }
 
     createCollisionShape() {

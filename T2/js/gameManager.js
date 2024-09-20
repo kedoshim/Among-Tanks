@@ -374,10 +374,15 @@ export class GameManager {
                 cube.translateZ(translation.z);
                 cube.castShadow = true;
 
-               
+               let moveParams = {
+                "velocity": 0.15,
+                "originalDir": j > 7 ? -1 : 1,
+                "originalPosition": translation.z,
+                "cube": cube,
+               };
 
                 if (hasCollision) {
-                    let wall = new CollisionBlock(true);
+                    let wall = new CollisionBlock(true, moveParams);
                     wall.setBlockSize(BLOCK_SIZE);
                     wall.setModel(cube);
                     wall.createCollisionShape();
@@ -387,14 +392,12 @@ export class GameManager {
                     //     0x000000
                     // );
                     // this.scene.add(helper);
+
+                    this.movingWalls.push(wall);
                 }
 
                 this.scene.add(cube);
-                this.movingWalls.push({
-                    "originalDir": j > 7 ? -1 : 1,
-                    "cube": cube,
-                    "originalPosition": translation.z
-                });
+                // this.movingWalls.push(wall);
             }
             
         }
@@ -930,13 +933,17 @@ export class GameManager {
     }
 
     updateMovingWalls() {
-        let velocity = 0.15;
         for(let i = 0; i < this.movingWalls.length; i++) {
-            let movingWall = this.movingWalls[i]["cube"]
-            movingWall.position.z += velocity*this.movingWalls[i]["originalDir"];
-            if(movingWall.position.z == this.movingWalls[i]["originalPosition"] || Math.abs(movingWall.position.z - this.movingWalls[i]["originalPosition"]) > 3*17) {
-                this.movingWalls[i]["originalDir"] *= -1
+            let params = this.movingWalls[i].movingWall.getParams();
+            let movingWall = params.cube;
+            let velocity = params.velocity;
+
+            movingWall.position.z += velocity * params.originalDir;
+            if(movingWall.position.z == params.originalPosition || Math.abs(movingWall.position.z - params.originalPosition) > 3*17) {
+                params.originalDir *= -1
             }
+
+            this.movingWalls[i].movingWall.setParams(params);
         }
     }
 
