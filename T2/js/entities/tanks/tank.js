@@ -2,6 +2,7 @@ import * as THREE from "three";
 import { Projectile } from "../../../js/classes/projectile.js";
 import { Object3D } from "../../../../build/three.module.js";
 import { HealthBar } from "./healthBar.js";
+import audioSystem from "../../../audioSystem.js";
 
 /**
  * General class that represents any tank model
@@ -440,8 +441,7 @@ export class Tank {
 
         // console.log(this._projectiles)
 
-        var audio = new Audio("./assets/audio/shot.mp3"); // Áudio do tiro
-        audio.play();
+        audioSystem.play("player-shoot");
     }
 
     canShoot() {
@@ -449,5 +449,9 @@ export class Tank {
             return false;
         }
         return true;
+    }
+
+    takeDamage(damage) {
+        this._health -= damage;
     }
 }

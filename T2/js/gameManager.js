@@ -32,6 +32,7 @@ import { createTurret } from "./entities/turret/model/turret_model.js";
 import { addPlayerToHud, resetHud, updatePlayerHud } from "./screen/hud.js";
 import { Enemy } from "./entities/enemy.js";
 import { joinObjectsIntoList } from "./utils.js";
+import audioSystem from "../audioSystem.js";
 
 export class GameManager {
     constructor(level, lighting, turret, renderer = null) {
@@ -55,6 +56,7 @@ export class GameManager {
         this.createCollisionSystem();
         this.createAISystem();
         this.createTurretSystem();
+        this.playBackgroundMusic();
     }
 
     async loadModels() {
@@ -66,6 +68,10 @@ export class GameManager {
     async loadTextures() {
         loadTexture("./assets/textures/basic_wall.jpg", "basic_wall");
         loadTexture("./assets/textures/basic_floor.jpg", "basic_floor");
+    }
+
+    playBackgroundMusic() {
+        audioSystem.play("music", true, 0.1);
     }
 
     listening() {
@@ -122,6 +128,12 @@ export class GameManager {
         }
     }
 
+    manageSounds() {
+        if (this.keyboard.down("P")) {
+            audioSystem.toggleMuteAll();
+        }
+    }
+
     manageLevelChange() {
         if (this.keyboard.down("0")) {
             this.changeLevelFunction(0);
@@ -155,6 +167,20 @@ export class GameManager {
     setup() {
         this.setNumberOfEntities();
         this.scene = new THREE.Scene(); // Create main scene
+
+        const loader = new THREE.CubeTextureLoader();
+        const skyboxTexture = loader.load([
+            "./assets/skybox/nightsky.png", // Positive X
+            "./assets/skybox/nightsky.png", // Negative X
+            "./assets/skybox/nightsky.png", // Positive Y
+            "./assets/skybox/nightsky.png", // Negative Y
+            "./assets/skybox/nightsky.png", // Positive Z
+            "./assets/skybox/nightsky.png", // Negative Z
+        ]);
+
+        // Step 2: Set the skybox as the scene background
+        this.scene.background = skyboxTexture;
+
         if (this.renderer === null) this.renderer = initRenderer(); // Init a basic renderer
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -707,6 +733,7 @@ export class GameManager {
     keyboardUpdate() {
         this.keyboard.update();
         this.manageOrbitControls();
+        this.manageSounds();
         this.manageLevelChange();
         const AI = this.ai_system;
 
@@ -921,6 +948,7 @@ export class GameManager {
                 // this.shotInfo.hide();
                 this.deleteScene(this.scene);
                 winner = winner;
+                audioSystem.stop("music");
                 alert("Game Over! Player " + winner + " won!");
                 this.resetFunction(true);
                 return true;

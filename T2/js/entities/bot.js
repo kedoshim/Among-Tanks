@@ -1,3 +1,4 @@
+import audioSystem from '../../audioSystem.js';
 import {Projectile} from '../classes/projectile.js';
 import * as THREE from 'three';
 
@@ -603,7 +604,6 @@ export class Turret {
         );
         this._projectiles.push(projectile);
 
-        var audio = new Audio("./assets/audio/shot.mp3"); // Áudio do tiro
-        audio.play();
+        audioSystem.play("turret-shoot",false,0.2);
     }
 }
