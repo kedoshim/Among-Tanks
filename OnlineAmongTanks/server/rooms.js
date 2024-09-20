@@ -61,13 +61,15 @@ class Rooms {
     async join(id, user_id) {
         // Check if the room exists
         if (this.rooms[id]) {
-            // Increment the players connected count for the room
-            this.rooms[id].players_connected += 1;
-            this.rooms[id].players_ids.push(user_id);
-            this.games[id].createPlayers(user_id);
-            console.log(
-                `Joined room ${id}. Players connected: ${this.rooms[id].players_connected}`
-            );
+            if(!this.rooms[id].players_ids.includes(user_id)) {
+                // Increment the players connected count for the room
+                this.rooms[id].players_connected += 1;
+                this.rooms[id].players_ids.push(user_id);
+                this.games[id].createPlayers(user_id);
+                console.log(
+                    `Joined room ${id}. Players connected: ${this.rooms[id].players_connected}`
+                );
+            }
         } else {
             console.log("Room does not exist");
         }
