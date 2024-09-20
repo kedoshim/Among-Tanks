@@ -1,0 +1,7 @@
+/* Import the custom font */
+@font-face {
+    font-family: "Arialic Hollow";
+    src: url("../fonts/Arialic Hollow.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
