@@ -8,7 +8,7 @@ const levelsDirectory = path.join(__dirname, "levels");
 
 const levelPaths = {
     1: path.join(levelsDirectory, "level1.json"),
-    2: path.join(levelsDirectory, "level2.json"),
+    // 2: path.join(levelsDirectory, "level2.json"),
 };
 
 const levels = {};
@@ -26,6 +26,7 @@ export async function loadLevels() {
         for (const key in levelPaths) {
             const filePath = levelPaths[key];
             const level_json = await fs.readFile(filePath, "utf-8");
+            let parsed = JSON.parse(level_json).blocks;
             const level_data = decode(JSON.parse(level_json).blocks);
             levels[key] = level_data;
         }
@@ -36,7 +37,7 @@ export async function loadLevels() {
 
 export function getNextLevel() {
     index = (index % Object.keys(levelPaths).length) + 1;
-    return levels[index];
+    return levels[1];
 }
 
 function decode(json) {

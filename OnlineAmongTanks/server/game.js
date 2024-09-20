@@ -95,7 +95,7 @@ export default class Game {
 
     createPlayers(players) {
         for (const playerId in players) {
-            const spawnIndex = (Player.playerNumber) % 4;
+            const spawnIndex = (Player.playerNumber) % 3;
             const spawnPoint = [this.playerSpawnPoint[spawnIndex][0] * 17,this.playerSpawnPoint[spawnIndex][1] * 17]
             const newPlayer = new Player(playerId,spawnPoint);
             // console.log(newPlayer._tank._model.position);
