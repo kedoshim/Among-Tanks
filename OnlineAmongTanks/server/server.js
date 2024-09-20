@@ -39,6 +39,7 @@ sockets.onConnection((socket) => {
     const playerId = socket.id;
     console.log(`> Device connected: ${playerId}`);
     let ping = 0;
+    let game;
 
     var PlayerRoomId = ""
 
@@ -68,7 +69,9 @@ sockets.onConnection((socket) => {
     });
 
     socket.on("create-room", (command) => {
-        console.log("DOG DOG DOG")
+        PlayerRoomId = command.room_id;
+        game = rooms.getGame(PlayerRoomId)
+        console.log(game)
         rooms.create(command.room_id, command.id, (data) => {
             socket.emit("update", data);
         });
@@ -77,6 +80,9 @@ sockets.onConnection((socket) => {
 
     socket.on("join-room", (command) => {
         rooms.join(command.room_id, command.id);
+        
+        game = rooms.getGame(PlayerRoomId)
+        console.log(game)
         socket.join(command.room_id);
         PlayerRoomId = command.room_id;
         socket.emit("joined-room",{room_id:command.room_id});

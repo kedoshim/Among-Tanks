@@ -13,7 +13,7 @@ export function preloadCommonTankModel() {
         const loader = new GLTFLoader();
 
         loader.load(
-            "./assets/models/tanks/turtle_tank.glb",
+            "http://localhost:3000/assets/models/tanks/turtle_tank.glb",
             function (gltf) {
                 cachedTank = gltf.scene;
                 const scaleFactor = 10;
