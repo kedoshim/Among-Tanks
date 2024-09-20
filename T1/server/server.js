@@ -6,6 +6,7 @@ import path from "path";
 import Game from "./game.js";
 import { getNextLevel, loadLevels } from "./levels.js";
 import geckos from "@geckos.io/server"
+import Rooms from './rooms.js'
 
 const app = express();
 const server = http.createServer(app);
@@ -36,7 +37,14 @@ game.run();
 //   sockets.emit(command.type, command);
 // });
 
+const rooms = new Rooms();
+
+app.get('/avaliableRooms', async (req, res) => {
+  return res.json(await rooms.avaliableRooms())
+})
+
 sockets.onConnection((socket) => {
+
   const playerId = socket.id;
   console.log(`> Device connected: ${playerId}`);
   let ping = 0;
@@ -69,6 +77,16 @@ sockets.onConnection((socket) => {
   game.subscribe((command) => {
     socket.emit("update", command);
   });
+
+  socket.on("create-room", (command) => {
+    console.log(command)
+    socket.join(command.room_id)
+    rooms.create(command.room_id, socket.id)
+  })
+
+  socket.on("join_room", (command) => {
+    rooms.join(command.room_id)
+  })
 
 
 });

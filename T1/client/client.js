@@ -44,6 +44,10 @@ socket.onConnect(() => {
     console.log(`Error on connect: ${error}`);
   }
 
+  socket.emit("join_room", {
+    "room_id": '0dcfdfcc-16af-4cd5-89d4-25985c865952'
+  });
+
   setInterval(() => {
     const start = Date.now();
     socket.emit("ping", start);
