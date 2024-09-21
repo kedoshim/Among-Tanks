@@ -604,6 +604,6 @@ export class Turret {
         );
         this._projectiles.push(projectile);
 
-        audioSystem.play("turret-shoot",false,0.2)
+        audioSystem.play("turret-shoot",false,0.2);
     }
 }

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { Projectile } from "../../../js/classes/projectile.js";
+import { Projectile } from "../../classes/projectile.js";
 import { Object3D } from "../../../../build/three.module.js";
 import { HealthBar } from "./healthBar.js";
 import audioSystem from "../../../audioSystem.js";
@@ -441,7 +441,7 @@ export class Tank {
 
         // console.log(this._projectiles)
 
-        audioSystem.play("player-shoot")
+        audioSystem.play("player-shoot");
     }
 
     canShoot() {

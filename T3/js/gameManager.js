@@ -40,7 +40,8 @@ export class GameManager {
         this.renderer = renderer;
         this.config = getConfig();
         this.lighting = lighting;
-        this.turretsPos = turret;
+        this.turretsPos = turret
+        this.movingWalls = []
     }
 
     async start() {
@@ -82,6 +83,7 @@ export class GameManager {
         window.addEventListener("gamepaddisconnected", (e) => {
             this.disconnectGamepad(e);
         });
+
         const cam = this.camera;
         const rend = this.renderer;
         window.addEventListener(
@@ -120,44 +122,33 @@ export class GameManager {
         }
     }
 
-    
+    // Function to handle zoom adjustment
+    handleZoomAdjustment(zoomingIn) {
+        // Define zoom step
+        const zoomStep = 3; // Change this value based on your needs
 
-// Function to handle zoom adjustment
-handleZoomAdjustment(zoomingIn) {
-    // Define zoom step
-    const zoomStep = 3; // Change this value based on your needs
+        if (this.currentZoom == undefined) {
+            this.currentZoom = 100
+        }
 
-    if (this.currentZoom == undefined) {
-        this.currentZoom = 100
+        // Adjust zoom amount based on scroll direction
+        if (zoomingIn) {
+            // Scrolling down (zoom out)
+            this.currentZoom += zoomStep;
+        } else {
+            // Scrolling up (zoom in)
+            this.currentZoom -= zoomStep;
+            if (this.currentZoom < 10) currentZoom = 10; // Prevent zooming in too much
+        }
+
+        // Call adjustZoom with the new zoom amount
+        this.cameraController.adjustZoom(this.currentZoom);
     }
-
-    // Adjust zoom amount based on scroll direction
-    if (zoomingIn) {
-        // Scrolling down (zoom out)
-        this.currentZoom += zoomStep;
-    } else {
-        // Scrolling up (zoom in)
-        this.currentZoom -= zoomStep;
-        if (this.currentZoom < 10) currentZoom = 10; // Prevent zooming in too much
-    }
-
-    // Call adjustZoom with the new zoom amount
-    this.cameraController.adjustZoom(this.currentZoom);
-}
-
-
 
     manageOrbitControls() {
         if (this.keyboard.down("O")) {
             this.cameraController.changeCameraMode();
         }
-        if (this.keyboard.down("k")) { //'+'
-            this.handleZoomAdjustment(true);
-        }
-        if (this.keyboard.down("m")) { //'-'
-            this.handleZoomAdjustment(false);
-        }
-        // this.keyboard.debug()
     }
 
     manageSounds() {
@@ -247,8 +238,6 @@ handleZoomAdjustment(zoomingIn) {
         this.walls = [];
 
         this.startGame = false;
-
-        this.currentZoom = 100;
 
         this.listening();
 
@@ -409,6 +398,59 @@ handleZoomAdjustment(zoomingIn) {
             };
         };
 
+        const createMovingWall = (
+            i,
+            j,
+            yTranslation,
+            materialParameters,
+            hasCollision = false
+        ) => {
+
+            for(let s = 0; s < 3; s++) {
+                const geometry = new THREE.BoxGeometry(
+                    BLOCK_SIZE,
+                    BLOCK_SIZE,
+                    BLOCK_SIZE
+                );
+                let material = new THREE.MeshLambertMaterial(materialParameters);
+                const cube = new THREE.Mesh(geometry, material);
+                cube.receiveShadow = true;
+                let _s = j > 7 ? s*-1 : s
+                const translation = getTranslation(i, j-_s, yTranslation);
+                //console.log(translation)
+                cube.translateX(translation.x);
+                cube.translateY(translation.y);
+                cube.translateZ(translation.z);
+                cube.castShadow = true;
+
+               let moveParams = {
+                "velocity": 0.15,
+                "originalDir": j > 7 ? -1 : 1,
+                "originalPosition": translation.z,
+                "cube": cube,
+               };
+
+                if (hasCollision) {
+                    let wall = new CollisionBlock(true, moveParams);
+                    wall.setBlockSize(BLOCK_SIZE);
+                    wall.setModel(cube);
+                    wall.createCollisionShape();
+                    this.walls.push(wall);
+                    // let helper = new THREE.Box3Helper(
+                    //     wall.collisionShape,
+                    //     0x000000
+                    // );
+                    // this.scene.add(helper);
+
+                    this.movingWalls.push(wall);
+                }
+
+                this.scene.add(cube);
+                // this.movingWalls.push(wall);
+            }
+            
+        }
+
         const createBlock = (
             i,
             j,
@@ -496,6 +538,18 @@ handleZoomAdjustment(zoomingIn) {
                         this.playerSpawnPoint[spawnIndex] = spawn;
                         spawnIndex++;
                         break;
+                    case "Moving Wall":
+                        createMovingWall(
+                            i,
+                            j,
+                            BLOCK_SIZE / 2 + levelHeight,
+                            {
+                                color: data[i][j].color,
+                                map: getTexture("basic_wall"),
+                            },
+                            true
+                        );
+                        break;
                     default:
                         break;
                 }
@@ -512,10 +566,14 @@ handleZoomAdjustment(zoomingIn) {
         }
 
         for (let s = 0; s < this.lighting.length; s++) {
-            let lightning = this.lighting[s];
-            let i = lightning.x;
-            let j = lightning.y;
-            let translated = getTranslation(i, j, BLOCK_SIZE / 2 + levelHeight);
+            let lightning = this.lighting[s]
+            let i = lightning.x
+            let j = lightning.y
+            let translated = getTranslation(
+                i,
+                j,
+                BLOCK_SIZE / 2 + levelHeight
+            );
 
             this.drawLights(
                 translated.x,
@@ -524,6 +582,7 @@ handleZoomAdjustment(zoomingIn) {
                 this.lighting[s]["angle"]
             );
         }
+
 
         //
     }
@@ -573,7 +632,9 @@ handleZoomAdjustment(zoomingIn) {
 
             let newPosition = initialPosition
                 .clone()
-                .add(new THREE.Vector3(-BLOCK_SIZE / 2, 0, -BLOCK_SIZE / 2));
+                .add(
+                    new THREE.Vector3(-BLOCK_SIZE / 2, 0, -BLOCK_SIZE / 2)
+                );
             collisionShape1.position.set(
                 newPosition.x,
                 newPosition.y,
@@ -922,6 +983,21 @@ handleZoomAdjustment(zoomingIn) {
         scene.clear();
     }
 
+    updateMovingWalls() {
+        for(let i = 0; i < this.movingWalls.length; i++) {
+            let params = this.movingWalls[i].movingWall.getParams();
+            let movingWall = params.cube;
+            let velocity = params.velocity;
+
+            movingWall.position.z += velocity * params.originalDir;
+            if(movingWall.position.z == params.originalPosition || Math.abs(movingWall.position.z - params.originalPosition) > 3*17) {
+                params.originalDir *= -1
+            }
+
+            this.movingWalls[i].movingWall.setParams(params);
+        }
+    }
+
     frame() {
         if (!(this.checkEnd() || !this.startGame)) {
             this.keyboardUpdate();
@@ -933,6 +1009,7 @@ handleZoomAdjustment(zoomingIn) {
             //this.render();
             this.updateHealthBars();
             this.updateProjectiles();
+            this.updateMovingWalls();
             // this.updateHitBoxDisplay();
         }
     }
