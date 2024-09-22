@@ -995,6 +995,7 @@ export class GameManager {
             }
 
             this.movingWalls[i].movingWall.setParams(params);
+            this.movingWalls[i].createCollisionShape();
         }
     }
 
