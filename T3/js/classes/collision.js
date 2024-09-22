@@ -216,6 +216,8 @@ export class TankCollisionSystem extends CollisionSystem {
         this.vertical = false;
         this.horizontal = false;
         this.slideVector = null;
+
+        this.wallsThatCollided = [];
     }
 
     /**
@@ -232,6 +234,8 @@ export class TankCollisionSystem extends CollisionSystem {
         let theImpactWasInThehorizontal;
         let slideVector;
         let dotProduct;
+
+        this.wallsThatCollided = [];
 
         // itera sobre todos os players
         for (const player of this.players) {
@@ -259,6 +263,11 @@ export class TankCollisionSystem extends CollisionSystem {
                         wall.model.position,
                         player._tank.model.position
                     );
+                
+                if (hitWall) {
+                    this.wallsThatCollided.push(wall);
+                    player._tank.collidedWithWalls = true;
+                }
 
                 /**
                  * Se houve colisão com o muro atual e o tanque está se movimentando em direção ao muro
@@ -290,6 +299,8 @@ export class TankCollisionSystem extends CollisionSystem {
                             this.previousCollision.collided = true;
                             this.previousCollision.horizontal =
                                 theImpactWasInThehorizontal;
+                            
+                            //this.wallsThatCollided.push(wall);
                         } else if (
                             /**
                              * Do contrário, verificar se o impacto foi na vertical e se já houve impacto na vertical. Se não houve
@@ -303,6 +314,8 @@ export class TankCollisionSystem extends CollisionSystem {
                             this.previousCollision.collided = true;
                             this.previousCollision.horizontal =
                                 theImpactWasInThehorizontal;
+                            
+                            //this.wallsThatCollided.push(wall);
                         }
                     }
 
@@ -318,10 +331,73 @@ export class TankCollisionSystem extends CollisionSystem {
             if (this.vertical || Math.abs(slideVector.z) < 0.24)
                 slideVector.z = 0;
 
+            slideVector = this._movingWallsCollision(player, slideVector);
+
             // Aplicar o movimento de deslizar nas paredes no tanque
             player._tank.slideVector = slideVector;
             this.previousBlockThatCollided = null;
             this.previousCollision = { collided: false, horizontal: false };
+        }
+    }
+
+    _movingWallsCollision(player, slideVector) {
+        let movingWalls = [];
+        let counter = this.wallsThatCollided.length;
+        for (let index = 0; index < this.wallsThatCollided.length; index++) {
+            const wall = this.wallsThatCollided[index];
+            
+            if(wall.isMovingWall) {
+                movingWalls.push(wall);
+                counter--;
+            }
+        }
+
+        if (movingWalls.length === 0 || movingWalls.length > 1) {
+            return slideVector;
+        }
+
+        let direction = movingWalls[0].movingWall.moveParameters.originalDir; // -1 or 1 in z-axis
+        let wallPosition = movingWalls[0].model.position;
+        let playerPosition = player._tank.model.position;
+        let block_size = 17;
+
+        if (counter === 0) {
+            if (direction === 1 && playerPosition.z - wallPosition.z >= 0 && Math.abs(playerPosition.x - wallPosition.x) <= block_size) {
+                slideVector.z = direction * movingWalls[0].movingWall.moveParameters.velocity;
+                player._tank._inMovement = true;
+                player._tank._collidedWithMovingWall = true;
+            }
+            else if (direction === -1 && playerPosition.z - wallPosition.z <= 0 && Math.abs(playerPosition.x - wallPosition.x) <= block_size) {
+                slideVector.z = direction * movingWalls[0].movingWall.moveParameters.velocity;
+                player._tank._inMovement = true;
+                player._tank._collidedWithMovingWall = true;
+            }
+
+            return slideVector;
+        }
+        else {
+            let movingWall = movingWalls[0];
+            let staticWall = this.wallsThatCollided.find(wall => !wall.isMovingWall);
+
+            if (staticWall) {
+                let staticWallPosition = staticWall.model.position;
+                
+                // Se o jogador está entre a parede móvel e o muro estático no eixo x
+                if (Math.abs(staticWallPosition.x - wallPosition.x) <= 0 && Math.abs(staticWallPosition.x - playerPosition.x) <= block_size) {
+                    if (playerPosition.x > staticWallPosition.x /*&& playerPosition.x < wallPosition.x*/) {
+                        // Desliza para a direita
+                        slideVector.x = movingWall.movingWall.moveParameters.velocity;
+                    } else if (playerPosition.x < staticWallPosition.x /*&& playerPosition.x > wallPosition.x*/) {
+                        // Desliza para a esquerda
+                        slideVector.x = -movingWall.movingWall.moveParameters.velocity;
+                    }
+                    
+                    player._tank._inMovement = true;
+                    player._tank._collidedWithMovingWall = true;
+                }
+            }
+
+            return slideVector;
         }
     }
 

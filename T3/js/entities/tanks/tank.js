@@ -33,6 +33,8 @@ export class Tank {
         this._inMovement = false;
         this._positiveMovement = true;
 
+        this._collidedWithMovingWall = false;
+
         if (!shootingOpitions) {
             this.shootingOpitions = shootingOpitions = {
                 bulletSpeed: 2,
@@ -87,9 +89,6 @@ export class Tank {
         return this._rotationSpeed;
     }
 
-    get inMovement() {
-        return this._inMovement;
-    }
 
     get model() {
         return this._model;
@@ -180,10 +179,6 @@ export class Tank {
 
     set collidedWithWalls(collided) {
         this._collidedWithWalls = collided;
-    }
-
-    set inMovement(inMovement) {
-        trhis._inMovement = inMovement;
     }
 
     set health(health) {
@@ -313,7 +308,7 @@ export class Tank {
             // Movimento normal se não houver colisão com as paredes
             this.model.translateZ(forwardForce * this._moveSpeed);
         } else {
-            if ((this.inMovement || isMoving) && forwardForce !== 0) {
+            if (((this._inMovement || isMoving) && forwardForce !== 0) || this._collidedWithMovingWall) {
                 // Deslizar enquanto estiver em contato com a parede
                 this.model.position.add(this.slideVector);
             }
@@ -324,6 +319,9 @@ export class Tank {
 
         // Resetar o movimento
         this._inMovement = false;
+
+        // Reseta a flag de colisão dos muros em movimento
+        this._collidedWithMovingWall = false;
 
         // Rodar o tanque
         if (forwardForce == 0)
