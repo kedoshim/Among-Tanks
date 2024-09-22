@@ -990,7 +990,7 @@ export class GameManager {
             let velocity = params.velocity;
 
             movingWall.position.z += velocity * params.originalDir;
-            if(movingWall.position.z == params.originalPosition || Math.abs(movingWall.position.z - params.originalPosition) > 3*17) {
+            if(movingWall.position.z == params.originalPosition || Math.abs(movingWall.position.z - params.originalPosition) > 4*17) {
                 params.originalDir *= -1
             }
 
