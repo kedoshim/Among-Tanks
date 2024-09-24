@@ -36,21 +36,21 @@ const socket = geckos({ port: 3001 });
 var id = "";
 export function createRoom() {
   try {
-      let room_id = generateUUID();
-      socket.emit("create-room", {
-        id: socket.id,
+    let room_id = generateUUID();
+    socket.emit("create-room", {
+      id: socket.id,
         room_id: room_id
       })
       console.log("Room created:", {
           id: socket.id,
           room_id: room_id,
-      });
-      return room_id 
-    } catch (error) {
+        });
+        return room_id 
+      } catch (error) {
         console.error("Error creating room:", error);
     }
-}
-
+  }
+  
 export function joinRoom(id) {
     socket.emit("join-room", {
         room_id: id,
@@ -58,21 +58,22 @@ export function joinRoom(id) {
     });
 
     switchToGamePage()
-}
-
+  }
+  
 export async function fetchAvailableRooms() {
     try {
         const response = await fetch("http://localhost:3000/avaliableRooms");
         const data = await response.json();
         return data
-    } catch (error) {
+      } catch (error) {
         console.error("Erro:", error);
-    }
+      }
 }
 socket.onConnect(() => {
   
   let game;
-
+  let inputListener = new InputListener(document, config);
+  
   // socket.emit("join_room", {
   //   "room_id": '0dcfdfcc-16af-4cd5-89d4-25985c865952'
   // });
@@ -84,24 +85,32 @@ socket.onConnect(() => {
 
   socket.on("joined-room", async (data) => {
     try {
-      console.log(`joined room ${data.room_id}`);
+      console.log(`> Player successfully Joined room '${data.room_id}'`);
     
       game = new Game()
       await game.start()
-      let inputListener = new InputListener(document, config);
 
-      
       id = socket.id;
 
       let command = {};
       command.players = {};
       let players = [];
+
+
+      // for (let i = 1; i < config.numberOfPlayers + 1; i++) {
+      //   const playerId = socket.id;
+      //   // console.log(`Player connected on Client with id: ${playerId}`);
+      //   command.players[playerId] = playerId;
+      //   players.push(playerId);
+      // }
       for (let i = 1; i < config.numberOfPlayers + 1; i++) {
         const playerId = socket.id + "." + i;
         console.log(`Player connected on Client with id: ${playerId}`);
         command.players[playerId] = playerId;
         players.push(playerId);
       }
+
+
       command.room_id = data.room_id
       game.mainPlayers = players;
       socket.emit("create-players", command);
@@ -116,7 +125,7 @@ socket.onConnect(() => {
   });
 
   socket.on("setup", (state) => {
-    // console.log(state);
+    console.log(state);
     game.createGame(state);
     game.render()
   
@@ -132,11 +141,13 @@ socket.onConnect(() => {
   });
   
   socket.on("update", (state) => {
-    if(!game)
+    if (game)
+      // console.log(game);
+      // console.log("a");
       game.updateGamestate(state);
   })
 });
-
+//
 
 
 

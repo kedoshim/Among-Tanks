@@ -25,7 +25,7 @@ export function loadConfig() {
     // Parse JSON data
     config = JSON.parse(configFileData);
 
-    console.log("Config loaded successfully:", config);
+    // console.log("Config loaded successfully:", config);
   } catch (error) {
     console.error("Error loading config:", error);
     throw error;

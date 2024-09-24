@@ -40,7 +40,7 @@ export default class Game {
         this.playerSpawnPoint = level.spawn;
 
         const getWalls = (level) => {
-            console.log(level);
+            // console.log(level);
             const walls = [];
             const levelHeight = 5;
             const data = level.blocks;
@@ -133,6 +133,7 @@ export default class Game {
     insertMovement(commands) {
         commands.forEach((command) => {
             const id = commands.playerId + "." + command.localPlayerId;
+            // const id = commands.playerId + "." + command.localPlayerId;
 
             this.bufferedMovement.push({ id, movement: command });
         });

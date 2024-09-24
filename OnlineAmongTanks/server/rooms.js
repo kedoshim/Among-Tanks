@@ -5,6 +5,7 @@ class Rooms {
     constructor() {
         this.rooms = {}; // Store room data locally
         this.games = {}; // Store game instances locally
+        this.previousState = [];
     }
 
     async create(id, user_id, update_command) {
@@ -14,13 +15,15 @@ class Rooms {
             this.rooms[id] = {
                 creation_date: new Date().toLocaleString(),
                 creation_user: user_id,
-                players_connected: 0,
-                players_ids: [user_id],
+                devices_connected: 0,
+                devices_ids: [],
             };
+
+            console.log(`> Player '${user_id}' created new room with id '${id}':`);
+            console.log(this.rooms[id]);
 
             let game = new Game();
             let level = getNextLevel();
-            console.log(level);
             game.levelMap = getNextLevel();
             game.run();
             
@@ -28,9 +31,11 @@ class Rooms {
                 update_command(command);
             });
 
+            console.log(game);
+
             this.games[id] = game;
 
-            console.log("Rooms: ", JSON.stringify(this.rooms));
+            // console.log("Rooms: ", JSON.stringify(this.rooms));
         } else {
             console.log("Room already exists");
         }
@@ -38,6 +43,8 @@ class Rooms {
 
     async avaliableRooms() {
         const availableRooms = Object.keys(this.rooms);
+        return this.rooms;
+
         let roomsList = [];
 
         // Loop through each room and push its data to the list
@@ -48,7 +55,12 @@ class Rooms {
             roomsList.push(room);
         }
 
-        console.log("Available Rooms: ", roomsList);
+        // Compare stringified versions of the arrays to check if they have different content
+        if (JSON.stringify(roomsList) !== JSON.stringify(this.previousState)) {
+            // console.log("Available Rooms: ", roomsList);
+            this.previousState = roomsList; // Update previousData to the latest roomsData
+        }
+
         return roomsList;
     }
 
@@ -60,14 +72,14 @@ class Rooms {
 
     async join(id, user_id) {
         // Check if the room exists
+        // console.log(this.rooms);
         if (this.rooms[id]) {
-            if(!this.rooms[id].players_ids.includes(user_id)) {
+            if(!this.rooms[id].devices_ids.includes(user_id)) {
                 // Increment the players connected count for the room
-                this.rooms[id].players_connected += 1;
-                this.rooms[id].players_ids.push(user_id);
-                this.games[id].createPlayers(user_id);
+                this.rooms[id].devices_connected += 1;
+                this.rooms[id].devices_ids.push(user_id);
                 console.log(
-                    `Joined room ${id}. Players connected: ${this.rooms[id].players_connected}`
+                    `> Device '${user_id}' joined room ${id}. Devices connected: ${this.rooms[id].devices_connected}`
                 );
             }
         } else {

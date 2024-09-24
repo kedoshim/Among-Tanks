@@ -38,7 +38,7 @@ export class Tank {
 
         this._nickBar = new NickDisplay(nick);
         let nickModel = this._nickBar.model;
-        console.log(nickModel);
+        // console.log(nickModel);
 
         this._display = this.createDisplay(
             this._healthBar.getHealthBar(),

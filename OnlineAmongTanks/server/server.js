@@ -51,7 +51,9 @@ sockets.onConnection((socket) => {
 
     socket.on("create-players", (command) => {
         console.log(`> Creating players of device ${playerId}`);
-        //rooms.createPlayers(command.players);
+        game.createPlayers(command.players);
+
+        // console.log(game);
 
         socket.emit("setup", game.encodedGamestate);
     });
@@ -64,26 +66,32 @@ sockets.onConnection((socket) => {
     socket.on("move-player", (command) => {
         command.playerId = playerId;
         command.type = "move-player";
-
+        // console.log(command);
+        
         rooms.getGame(PlayerRoomId).insertMovement(command);
     });
 
     socket.on("create-room", (command) => {
         PlayerRoomId = command.room_id;
-        game = rooms.getGame(PlayerRoomId)
-        console.log(game)
+        // console.log(game)
         rooms.create(command.room_id, command.id, (data) => {
             socket.emit("update", data);
         });
+        game = rooms.getGame(PlayerRoomId)
     });
     
 
     socket.on("join-room", (command) => {
+        PlayerRoomId = command.room_id;
         rooms.join(command.room_id, command.id);
         
-        game = rooms.getGame(PlayerRoomId)
-        console.log(game)
+        game = rooms.getGame(command.room_id);
+        game.subscribe((data) => {
+            socket.emit("update", data);
+        });
+
         socket.join(command.room_id);
+        console.log(game)
         PlayerRoomId = command.room_id;
         socket.emit("joined-room",{room_id:command.room_id});
     });

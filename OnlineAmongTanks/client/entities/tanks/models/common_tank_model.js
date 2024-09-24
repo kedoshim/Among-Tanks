@@ -9,9 +9,14 @@ let cachedTank = null;
 let material = new THREE.MeshPhongMaterial({ color: "white" });
 
 export function preloadCommonTankModel() {
+    if (cachedTank)
+        return true;
     return new Promise((resolve, reject) => {
         const loader = new GLTFLoader();
 
+        console.log("> Preloading tank");
+        
+        
         loader.load(
             "http://localhost:3000/assets/models/tanks/turtle_tank.glb",
             function (gltf) {
@@ -43,9 +48,13 @@ export function preloadCommonTankModel() {
             },
             undefined,
             function (error) {
-                reject(error);
+                console.log(error);
             }
         );
+        if (cachedTank)
+            return true;
+        else
+            return false;
     });
 }
 
