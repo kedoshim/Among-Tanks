@@ -41,7 +41,7 @@ sockets.onConnection((socket) => {
     let ping = 0;
     let game;
 
-    var PlayerRoomId = ""
+    var PlayerRoomId = "";
 
     socket.on("ping", (timestamp) => {
         const pongTimestamp = Date.now();
@@ -59,15 +59,18 @@ sockets.onConnection((socket) => {
     });
 
     socket.onDisconnect(() => {
-        // rooms.getGame(PlayerRoomId).removeDevice({ playerId: playerId });
-        console.log(`> Player disconnected: ${playerId}`);
+        if (game) {
+            game.removeDevice({ playerId: playerId });
+            rooms.leave(PlayerRoomId, socket.id);
+            console.log(`> Player disconnected: ${playerId}`);
+        }
     });
 
     socket.on("move-player", (command) => {
         command.playerId = playerId;
         command.type = "move-player";
         // console.log(command);
-        
+
         rooms.getGame(PlayerRoomId).insertMovement(command);
     });
 
@@ -77,23 +80,22 @@ sockets.onConnection((socket) => {
         rooms.create(command.room_id, command.id, (data) => {
             socket.emit("update", data);
         });
-        game = rooms.getGame(PlayerRoomId)
+        game = rooms.getGame(PlayerRoomId);
     });
-    
 
     socket.on("join-room", (command) => {
         PlayerRoomId = command.room_id;
         rooms.join(command.room_id, command.id);
-        
+
         game = rooms.getGame(command.room_id);
         game.subscribe((data) => {
             socket.emit("update", data);
         });
 
         socket.join(command.room_id);
-        console.log(game)
+        console.log(game);
         PlayerRoomId = command.room_id;
-        socket.emit("joined-room",{room_id:command.room_id});
+        socket.emit("joined-room", { room_id: command.room_id });
     });
 });
 
