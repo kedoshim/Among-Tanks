@@ -360,14 +360,15 @@ export class TankCollisionSystem extends CollisionSystem {
         let wallPosition = movingWalls[0].model.position;
         let playerPosition = player._tank.model.position;
         let block_size = 17;
+        let distance = block_size * 0.7;
 
         if (counter === 0) {
-            if (direction === 1 && playerPosition.z - wallPosition.z >= 0 && Math.abs(playerPosition.x - wallPosition.x) <= block_size) {
+            if (direction === 1 && playerPosition.z - wallPosition.z >= 0 && Math.abs(playerPosition.x - wallPosition.x) <= distance) {
                 slideVector.z = direction * movingWalls[0].movingWall.moveParameters.velocity;
                 player._tank._inMovement = true;
                 player._tank._collidedWithMovingWall = true;
             }
-            else if (direction === -1 && playerPosition.z - wallPosition.z <= 0 && Math.abs(playerPosition.x - wallPosition.x) <= block_size) {
+            else if (direction === -1 && playerPosition.z - wallPosition.z <= 0 && Math.abs(playerPosition.x - wallPosition.x) <= distance) {
                 slideVector.z = direction * movingWalls[0].movingWall.moveParameters.velocity;
                 player._tank._inMovement = true;
                 player._tank._collidedWithMovingWall = true;

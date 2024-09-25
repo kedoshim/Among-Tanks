@@ -45,6 +45,8 @@ export class BotController extends Controller{
             return;
         }
         AI.nextAction(this.index);
+
+        this.isMoving = true;
         this.move();
     }
 
