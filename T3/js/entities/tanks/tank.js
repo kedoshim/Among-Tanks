@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { Projectile } from "../../classes/projectile.js";
 import { Object3D } from "../../../../build/three.module.js";
 import { HealthBar } from "./healthBar.js";
-import audioSystem from "../../../audioSystem.js";
+import audioSystem from "../../audioSystem.js";
 
 /**
  * General class that represents any tank model
@@ -88,7 +88,6 @@ export class Tank {
     get rotationSpeed() {
         return this._rotationSpeed;
     }
-
 
     get model() {
         return this._model;
@@ -308,7 +307,10 @@ export class Tank {
             // Movimento normal se não houver colisão com as paredes
             this.model.translateZ(forwardForce * this._moveSpeed);
         } else {
-            if (((this._inMovement || isMoving) && forwardForce !== 0) || this._collidedWithMovingWall) {
+            if (
+                ((this._inMovement || isMoving) && forwardForce !== 0) ||
+                this._collidedWithMovingWall
+            ) {
                 // Deslizar enquanto estiver em contato com a parede
                 this.model.position.add(this.slideVector);
             }

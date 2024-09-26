@@ -32,7 +32,7 @@ import { createTurret } from "./entities/turret/model/turret_model.js";
 import { addPlayerToHud, resetHud, updatePlayerHud } from "./screen/hud.js";
 import { Enemy } from "./entities/enemy.js";
 import { joinObjectsIntoList } from "./utils.js";
-import audioSystem from "../audioSystem.js";
+import audioSystem from "./audioSystem.js";
 
 export class GameManager {
     constructor(level, lighting, turret, renderer = null) {
@@ -40,8 +40,8 @@ export class GameManager {
         this.renderer = renderer;
         this.config = getConfig();
         this.lighting = lighting;
-        this.turretsPos = turret
-        this.movingWalls = []
+        this.turretsPos = turret;
+        this.movingWalls = [];
     }
 
     async start() {
@@ -128,7 +128,7 @@ export class GameManager {
         const zoomStep = 3; // Change this value based on your needs
 
         if (this.currentZoom == undefined) {
-            this.currentZoom = 100
+            this.currentZoom = 100;
         }
 
         // Adjust zoom amount based on scroll direction
@@ -193,12 +193,12 @@ export class GameManager {
 
         const loader = new THREE.CubeTextureLoader();
         const skyboxTexture = loader.load([
-            "./assets/skybox/nightsky.png", // Positive X
-            "./assets/skybox/nightsky.png", // Negative X
-            "./assets/skybox/nightsky.png", // Positive Y
-            "./assets/skybox/nightsky.png", // Negative Y
-            "./assets/skybox/nightsky.png", // Positive Z
-            "./assets/skybox/nightsky.png", // Negative Z
+            "./assets/skybox/left.jpg", // Negative Z
+            "./assets/skybox/right.jpg", // Positive Z
+            "./assets/skybox/top.jpg", // Positive Y
+            "./assets/skybox/bottom.jpg", // Negative Y
+            "./assets/skybox/face.jpg", // Positive X
+            "./assets/skybox/door.jpg", // Negative X
         ]);
 
         // Step 2: Set the skybox as the scene background
@@ -405,30 +405,31 @@ export class GameManager {
             materialParameters,
             hasCollision = false
         ) => {
-
-            for(let s = 0; s < 3; s++) {
+            for (let s = 0; s < 3; s++) {
                 const geometry = new THREE.BoxGeometry(
                     BLOCK_SIZE,
                     BLOCK_SIZE,
                     BLOCK_SIZE
                 );
-                let material = new THREE.MeshLambertMaterial(materialParameters);
+                let material = new THREE.MeshLambertMaterial(
+                    materialParameters
+                );
                 const cube = new THREE.Mesh(geometry, material);
                 cube.receiveShadow = true;
-                let _s = j > 7 ? s*-1 : s
-                const translation = getTranslation(i, j-_s, yTranslation);
+                let _s = j > 7 ? s * -1 : s;
+                const translation = getTranslation(i, j - _s, yTranslation);
                 //console.log(translation)
                 cube.translateX(translation.x);
                 cube.translateY(translation.y);
                 cube.translateZ(translation.z);
                 cube.castShadow = true;
 
-               let moveParams = {
-                "velocity": 0.15,
-                "originalDir": j > 7 ? -1 : 1,
-                "originalPosition": translation.z,
-                "cube": cube,
-               };
+                let moveParams = {
+                    velocity: 0.15,
+                    originalDir: j > 7 ? -1 : 1,
+                    originalPosition: translation.z,
+                    cube: cube,
+                };
 
                 if (hasCollision) {
                     let wall = new CollisionBlock(true, moveParams);
@@ -448,8 +449,7 @@ export class GameManager {
                 this.scene.add(cube);
                 // this.movingWalls.push(wall);
             }
-            
-        }
+        };
 
         const createBlock = (
             i,
@@ -566,14 +566,10 @@ export class GameManager {
         }
 
         for (let s = 0; s < this.lighting.length; s++) {
-            let lightning = this.lighting[s]
-            let i = lightning.x
-            let j = lightning.y
-            let translated = getTranslation(
-                i,
-                j,
-                BLOCK_SIZE / 2 + levelHeight
-            );
+            let lightning = this.lighting[s];
+            let i = lightning.x;
+            let j = lightning.y;
+            let translated = getTranslation(i, j, BLOCK_SIZE / 2 + levelHeight);
 
             this.drawLights(
                 translated.x,
@@ -582,7 +578,6 @@ export class GameManager {
                 this.lighting[s]["angle"]
             );
         }
-
 
         //
     }
@@ -632,9 +627,7 @@ export class GameManager {
 
             let newPosition = initialPosition
                 .clone()
-                .add(
-                    new THREE.Vector3(-BLOCK_SIZE / 2, 0, -BLOCK_SIZE / 2)
-                );
+                .add(new THREE.Vector3(-BLOCK_SIZE / 2, 0, -BLOCK_SIZE / 2));
             collisionShape1.position.set(
                 newPosition.x,
                 newPosition.y,
@@ -984,14 +977,18 @@ export class GameManager {
     }
 
     updateMovingWalls() {
-        for(let i = 0; i < this.movingWalls.length; i++) {
+        for (let i = 0; i < this.movingWalls.length; i++) {
             let params = this.movingWalls[i].movingWall.getParams();
             let movingWall = params.cube;
             let velocity = params.velocity;
 
             movingWall.position.z += velocity * params.originalDir;
-            if(movingWall.position.z == params.originalPosition || Math.abs(movingWall.position.z - params.originalPosition) > 4*17) {
-                params.originalDir *= -1
+            if (
+                movingWall.position.z == params.originalPosition ||
+                Math.abs(movingWall.position.z - params.originalPosition) >
+                    4 * 17
+            ) {
+                params.originalDir *= -1;
             }
 
             this.movingWalls[i].movingWall.setParams(params);

@@ -1,7 +1,6 @@
-import audioSystem from '../../audioSystem.js';
-import {Projectile} from '../classes/projectile.js';
-import * as THREE from 'three';
-
+import audioSystem from "../audioSystem.js";
+import { Projectile } from "../classes/projectile.js";
+import * as THREE from "three";
 
 class SceneMap {
     constructor(walls, blockSize) {
@@ -9,23 +8,29 @@ class SceneMap {
         this.walls = walls;
 
         // Determine the size of the grid
-        this.minX = Math.min(...walls.map(wall => wall.model.position.x));
-        this.minZ = Math.min(...walls.map(wall => wall.model.position.z));
-        this.maxX = Math.max(...walls.map(wall => wall.model.position.x));
-        this.maxZ = Math.max(...walls.map(wall => wall.model.position.z));
+        this.minX = Math.min(...walls.map((wall) => wall.model.position.x));
+        this.minZ = Math.min(...walls.map((wall) => wall.model.position.z));
+        this.maxX = Math.max(...walls.map((wall) => wall.model.position.x));
+        this.maxZ = Math.max(...walls.map((wall) => wall.model.position.z));
 
         this.rows = Math.round((this.maxZ - this.minZ) / blockSize) + 1;
         this.cols = Math.round((this.maxX - this.minX) / blockSize) + 1;
 
         // Create and fill the grid
-        this.sceneMap = Array.from({ length: this.rows }, () => Array(this.cols).fill(1)); // Fill with 1s
+        this.sceneMap = Array.from({ length: this.rows }, () =>
+            Array(this.cols).fill(1)
+        ); // Fill with 1s
         this.fillSceneMap();
     }
 
     fillSceneMap() {
-        this.walls.forEach(wall => {
-            let x = Math.round((wall.model.position.x - this.minX) / this.blockSize);
-            let z = Math.round((wall.model.position.z - this.minZ) / this.blockSize);
+        this.walls.forEach((wall) => {
+            let x = Math.round(
+                (wall.model.position.x - this.minX) / this.blockSize
+            );
+            let z = Math.round(
+                (wall.model.position.z - this.minZ) / this.blockSize
+            );
             this.sceneMap[z][x] = 0; // 0 represents a wall
         });
     }
@@ -44,7 +49,12 @@ class SceneMap {
 }
 
 class Node {
-    constructor(position, startNodeDistance, heuristicDistanceToEndNode, parentNode=null) {
+    constructor(
+        position,
+        startNodeDistance,
+        heuristicDistanceToEndNode,
+        parentNode = null
+    ) {
         this.position = position;
         this.startNodeDistance = startNodeDistance;
         this.heuristicDistanceToEndNode = heuristicDistanceToEndNode;
@@ -66,15 +76,22 @@ class AStar {
         let openList = [];
         let closedList = [];
 
-        openList.push(new Node(startNode, 0, this.heuristic(startNode, endNode)));
+        openList.push(
+            new Node(startNode, 0, this.heuristic(startNode, endNode))
+        );
 
         //console.log("=================== NEW ===================")
         while (openList.length > 0) {
-            let currentNode = openList.reduce((lowest,node) => (node.cost < lowest.cost ? node : lowest));
+            let currentNode = openList.reduce((lowest, node) =>
+                node.cost < lowest.cost ? node : lowest
+            );
 
             //console.log(openList)
 
-            if (currentNode.position.row === endNode.row && currentNode.position.col === endNode.col) {
+            if (
+                currentNode.position.row === endNode.row &&
+                currentNode.position.col === endNode.col
+            ) {
                 // Path found
                 let path = [];
                 while (currentNode) {
@@ -84,16 +101,23 @@ class AStar {
 
                 return path.reverse();
             }
-            
+
             // Remove currentNode from openList and add to closedList
-            openList = openList.filter(node => node !== currentNode);
+            openList = openList.filter((node) => node !== currentNode);
             closedList.push(currentNode);
 
             // Get neighbors
             let neighbors = this.getNeighbors(currentNode.position);
 
-            neighbors.forEach(neighbor => {
-                if (this.sceneMap.sceneMap[neighbor.row][neighbor.col] === 0 || closedList.find(node => node.position.row === neighbor.row && node.position.col === neighbor.col)) {
+            neighbors.forEach((neighbor) => {
+                if (
+                    this.sceneMap.sceneMap[neighbor.row][neighbor.col] === 0 ||
+                    closedList.find(
+                        (node) =>
+                            node.position.row === neighbor.row &&
+                            node.position.col === neighbor.col
+                    )
+                ) {
                     return; // Ignore walls and already evaluated nodes
                 }
 
@@ -101,7 +125,14 @@ class AStar {
                 let h = this.heuristic(neighbor, endNode);
                 let neighborNode = new Node(neighbor, g, h, currentNode);
 
-                if (!openList.find(node => node.position.row === neighbor.row && node.position.col === neighbor.col && node.startNodeDistance <= g)) {
+                if (
+                    !openList.find(
+                        (node) =>
+                            node.position.row === neighbor.row &&
+                            node.position.col === neighbor.col &&
+                            node.startNodeDistance <= g
+                    )
+                ) {
                     openList.push(neighborNode);
                 }
             });
@@ -111,7 +142,9 @@ class AStar {
     }
 
     heuristic(nodeA, nodeB) {
-        return Math.abs(nodeA.row - nodeB.row) + Math.abs(nodeA.col - nodeB.col);
+        return (
+            Math.abs(nodeA.row - nodeB.row) + Math.abs(nodeA.col - nodeB.col)
+        );
     }
 
     getNeighbors(position) {
@@ -120,14 +153,19 @@ class AStar {
             { row: -1, col: 0 },
             { row: 1, col: 0 },
             { row: 0, col: -1 },
-            { row: 0, col: 1 }
+            { row: 0, col: 1 },
         ];
-        
-        directions.forEach(direction => {
+
+        directions.forEach((direction) => {
             let newRow = position.row + direction.row;
             let newCol = position.col + direction.col;
 
-            if (newRow >= 0 && newRow < this.sceneMap.rows && newCol >= 0 && newCol < this.sceneMap.cols) {
+            if (
+                newRow >= 0 &&
+                newRow < this.sceneMap.rows &&
+                newCol >= 0 &&
+                newCol < this.sceneMap.cols
+            ) {
                 neighbors.push({ row: newRow, col: newCol });
             }
         });
@@ -136,12 +174,11 @@ class AStar {
     }
 }
 
-
 export class AISystem {
-    constructor(player, walls, bots, turrets=null) {
+    constructor(player, walls, bots, turrets = null) {
         this.player = player;
         this.walls = walls;
-        this.bots = bots
+        this.bots = bots;
         this.turrets = turrets;
 
         this.sceneMap = new SceneMap(walls, walls[0].BLOCK_SIZE);
@@ -152,24 +189,25 @@ export class AISystem {
 
         this.lastPosition = null;
         this.lastNextPosition = null;
-
     }
 
     nextAction(botIndex) {
         let test = this.thereIsObjectsBetweenPlayerAndBot(botIndex);
         if (test) {
             this.moveTank(botIndex);
-        }
-        else if (this.isPlayerInFrontOfBot(botIndex)) {
-            if (this.bots[botIndex]._tank.model.position.distanceTo(this.player._tank.model.position) >= 5 * this.walls[0].BLOCK_SIZE) {
+        } else if (this.isPlayerInFrontOfBot(botIndex)) {
+            if (
+                this.bots[botIndex]._tank.model.position.distanceTo(
+                    this.player._tank.model.position
+                ) >=
+                5 * this.walls[0].BLOCK_SIZE
+            ) {
                 this.shoot(botIndex);
-            }
-            else {
+            } else {
                 this.reverseMove(botIndex);
                 this.shoot(botIndex);
             }
-        }
-        else {
+        } else {
             this.trackPlayer(botIndex);
         }
     }
@@ -184,11 +222,15 @@ export class AISystem {
 
         // Calculate tank's back position
         let botPosition = this.bots[botIndex]._tank._model.position.clone();
-        let backPosition = botPosition.clone().add(direction.multiplyScalar(safeDistance));
+        let backPosition = botPosition
+            .clone()
+            .add(direction.multiplyScalar(safeDistance));
 
         // Verify the small distance between tank's back position and a wall
         for (let index = 0; index < this.walls.length; index++) {
-            let wallDistance = backPosition.distanceTo(this.walls[index].model.position);
+            let wallDistance = backPosition.distanceTo(
+                this.walls[index].model.position
+            );
             if (wallDistance < smallDistance) {
                 smallDistance = wallDistance;
             }
@@ -197,7 +239,7 @@ export class AISystem {
         if (smallDistance >= safeDistance) {
             this.bots[botIndex]._controller._nextMove.movement = -1; // Mover para trás
         } else {
-            this.bots[botIndex]._controller._nextMove.movement = 0;  // Não se mover
+            this.bots[botIndex]._controller._nextMove.movement = 0; // Não se mover
         }
     }
 
@@ -216,11 +258,16 @@ export class AISystem {
         let botPosition = bot._tank._model.position.clone();
 
         // Create a Raycaster
-        let direction = new THREE.Vector3().subVectors(botPosition, playerPosition).normalize();
+        let direction = new THREE.Vector3()
+            .subVectors(botPosition, playerPosition)
+            .normalize();
         let raycaster = new THREE.Raycaster(playerPosition, direction);
 
         // Verify intersections with walls
-        let intersects = raycaster.intersectObjects(walls.map(wall => wall.model), true);
+        let intersects = raycaster.intersectObjects(
+            walls.map((wall) => wall.model),
+            true
+        );
 
         // Verify if some intersections is betwenn the player and the bot
         for (let i = 0; i < intersects.length; i++) {
@@ -232,7 +279,6 @@ export class AISystem {
 
         return false;
     }
-    
 
     isPlayerInFrontOfBot(botIndex) {
         let bot = this.bots[botIndex];
@@ -241,7 +287,7 @@ export class AISystem {
         let playerPosition = player._tank._model.position.clone();
         let botPosition = bot._tank._model.position.clone();
         let dif = playerPosition.sub(botPosition);
-        let direction = new THREE.Vector3(0,0,1);
+        let direction = new THREE.Vector3(0, 0, 1);
         direction.applyQuaternion(bot.tank._model.quaternion);
 
         if (direction.angleTo(dif) <= 0.05) {
@@ -261,16 +307,16 @@ export class AISystem {
             rotation: 0,
             movement: 0,
             moveX: 0,
-            movez: 0
+            movez: 0,
         };
 
         let playerPosition = player._tank._model.position.clone();
         let botPosition = bot._tank._model.position.clone();
         let dif = playerPosition.sub(botPosition);
-        let direction = new THREE.Vector3(0,0,1);
+        let direction = new THREE.Vector3(0, 0, 1);
         direction.applyQuaternion(bot._tank._model.quaternion);
 
-        let y_axis = new THREE.Vector3(0,1,0);
+        let y_axis = new THREE.Vector3(0, 1, 0);
         let actualAngle = direction.angleTo(dif);
 
         // rotate right
@@ -283,8 +329,7 @@ export class AISystem {
 
         if (new_angle < actualAngle) {
             nextMove["rotation"] = 1;
-        }
-        else {
+        } else {
             nextMove["rotation"] = -1;
         }
 
@@ -300,23 +345,42 @@ export class AISystem {
         let botPosition = bot._tank._model.position.clone();
         let player = this.player;
 
-        
         if (botIndex % 2 == 0) {
-            let path = this.aStar.findPath(bot._tank._model.position, player._tank._model.position);
+            let path = this.aStar.findPath(
+                bot._tank._model.position,
+                player._tank._model.position
+            );
 
             if (path.length > 1) {
-                
-                let actualPosition = this.sceneMap.indexToSpatial(path[0].row, path[0].col);
+                let actualPosition = this.sceneMap.indexToSpatial(
+                    path[0].row,
+                    path[0].col
+                );
 
-                if (this.lastPosition && this.lastNextPosition && path.length > 2) {
+                if (
+                    this.lastPosition &&
+                    this.lastNextPosition &&
+                    path.length > 2
+                ) {
                     this.lastPosition = path[0];
                     this.lastNextPosition = path[1];
                 }
 
-                actualPosition = new THREE.Vector3(actualPosition.x, botPosition.y, actualPosition.z);
+                actualPosition = new THREE.Vector3(
+                    actualPosition.x,
+                    botPosition.y,
+                    actualPosition.z
+                );
 
-                let nextPosition = this.sceneMap.indexToSpatial(path[1].row, path[1].col);
-                nextPosition = new THREE.Vector3(nextPosition.x, botPosition.y, nextPosition.z);
+                let nextPosition = this.sceneMap.indexToSpatial(
+                    path[1].row,
+                    path[1].col
+                );
+                nextPosition = new THREE.Vector3(
+                    nextPosition.x,
+                    botPosition.y,
+                    nextPosition.z
+                );
 
                 let direction = new THREE.Vector3(0, 0, 1);
                 direction.applyQuaternion(bot._tank._model.quaternion);
@@ -324,95 +388,102 @@ export class AISystem {
                 // rotate right
                 let rotationAngle = Math.PI / 32;
                 let imaginary_vector_rotation = direction.clone();
-                let y_axis = new THREE.Vector3(0,1,0);
+                let y_axis = new THREE.Vector3(0, 1, 0);
 
                 imaginary_vector_rotation.applyAxisAngle(y_axis, rotationAngle);
 
                 let chosenDirection = nextPosition.sub(botPosition);
                 let actualDirection = actualPosition.sub(botPosition);
-                
-                if (direction.angleTo(actualDirection) < 0.15 && botPosition.distanceTo(actualPosition) > block_size / 8) {
+
+                if (
+                    direction.angleTo(actualDirection) < 0.15 &&
+                    botPosition.distanceTo(actualPosition) > block_size / 8
+                ) {
                     this.bots[botIndex]._controller._nextMove.movement = 1;
                     this.bots[botIndex]._controller.isMoving = true;
-                
-                }
-                else {
-                    if (imaginary_vector_rotation.angleTo(chosenDirection) < direction.angleTo(chosenDirection)) {
+                } else {
+                    if (
+                        imaginary_vector_rotation.angleTo(chosenDirection) <
+                        direction.angleTo(chosenDirection)
+                    ) {
                         this.bots[botIndex]._controller._nextMove.rotation = 1;
-                    }
-                    else {
+                    } else {
                         this.bots[botIndex]._controller._nextMove.rotation = -1;
                     }
-        
+
                     if (direction.angleTo(chosenDirection) < 0.09) {
                         this.bots[botIndex]._controller._nextMove.movement = 1;
                         this.bots[botIndex]._controller.isMoving = true;
                     }
                 }
             }
-        }
-        else {
+        } else {
             let direction = new THREE.Vector3(0, 0, 1);
             direction.applyQuaternion(bot._tank._model.quaternion);
-    
+
             let botPosition = bot._tank._model.position.clone();
-    
+
             // rotate right
             let rotationAngle = Math.PI / 32;
             let imaginary_vector_rotation = direction.clone();
-            let y_axis = new THREE.Vector3(0,1,0);
-    
+            let y_axis = new THREE.Vector3(0, 1, 0);
+
             imaginary_vector_rotation.applyAxisAngle(y_axis, rotationAngle);
-    
-            let chosenDirection = this.decideTankMovement(botPosition, direction);
-            
+
+            let chosenDirection = this.decideTankMovement(
+                botPosition,
+                direction
+            );
+
             if (direction.angleTo(chosenDirection) < 0.03) {
                 this.bots[botIndex]._controller._nextMove.movement = 1;
-            }
-            else {
-                if (imaginary_vector_rotation.angleTo(chosenDirection) < direction.angleTo(chosenDirection)) {
+            } else {
+                if (
+                    imaginary_vector_rotation.angleTo(chosenDirection) <
+                    direction.angleTo(chosenDirection)
+                ) {
                     this.bots[botIndex]._controller._nextMove.rotation = 1;
-                }
-                else {
+                } else {
                     this.bots[botIndex]._controller._nextMove.rotation = -1;
                 }
-    
+
                 if (direction.angleTo(chosenDirection) < 0.09) {
                     this.bots[botIndex]._controller._nextMove.movement = 1;
                 }
             }
         }
-
     }
 
     decideTankMovement(botPosition, botDirection) {
         const wallsDirections = this.checkClosestsWalls(botPosition);
-    
+
         // Vetores de direção possíveis
         const directions = {
             up: new THREE.Vector3(0, 0, -1),
             right: new THREE.Vector3(1, 0, 0),
             down: new THREE.Vector3(0, 0, 1),
-            left: new THREE.Vector3(-1, 0, 0)
+            left: new THREE.Vector3(-1, 0, 0),
         };
-    
+
         // Filtra direções viáveis (sem paredes)
-        const viableDirections = Object.keys(wallsDirections).filter(direction => !wallsDirections[direction]);
-    
+        const viableDirections = Object.keys(wallsDirections).filter(
+            (direction) => !wallsDirections[direction]
+        );
+
         // Calcula o menor ângulo de rotação
         let minAngle = Infinity;
         let chosenDirection = null;
-    
-        viableDirections.forEach(direction => {
+
+        viableDirections.forEach((direction) => {
             const targetDirection = directions[direction];
             const angle = botDirection.angleTo(targetDirection);
-    
+
             if (angle < minAngle) {
                 minAngle = angle;
                 chosenDirection = direction;
             }
         });
-    
+
         return directions[chosenDirection];
     }
 
@@ -421,14 +492,14 @@ export class AISystem {
             up: false,
             right: false,
             down: false,
-            left: false
+            left: false,
         };
 
         let walls = this.walls;
         const BLOCK_SIZE = walls[0].BLOCK_SIZE;
         const margin = BLOCK_SIZE;
 
-        walls.forEach(wall => {
+        walls.forEach((wall) => {
             let dx = wall.model.position.x - botPosition.x;
             let dz = wall.model.position.z - botPosition.z;
 
@@ -477,7 +548,6 @@ export class AISystem {
     }
 }
 
-
 export class TurretSystem {
     constructor(turrets) {
         this.turrets = turrets;
@@ -486,15 +556,15 @@ export class TurretSystem {
     nextAction() {
         let turrets = this.turrets;
 
-        turrets.forEach(turret => {
+        turrets.forEach((turret) => {
             turret.trackNearestTank();
             turret.shoot();
-        })
+        });
     }
 }
 
 export class Turret {
-    constructor(model, players, bots, shootParams=null) {
+    constructor(model, players, bots, shootParams = null) {
         this.model = model;
         this.players = players;
         this.bots = bots;
@@ -505,9 +575,9 @@ export class Turret {
                 damage: 1,
                 shootCooldown: 3000,
                 ricochetsAmount: 0,
-                rotationSpeed: 0.20,
-                bulletSize: 2
-            }
+                rotationSpeed: 0.2,
+                bulletSize: 2,
+            };
         }
 
         this.shootParams = shootParams;
@@ -517,30 +587,27 @@ export class Turret {
 
         this._shootCooldown = this.shootParams.shootCooldown;
         this._lastShootTime = Date.now();
-        this._projectiles = []
+        this._projectiles = [];
     }
 
     trackNearestTank() {
-        
         let playerPosition = this.players._tank.model.position.clone();
         let bots = this.bots;
         let turretPosition = this.model.position.clone();
 
         let positions = [];
 
-        if (!this.players._tank.died)
-            positions.push(playerPosition);
+        if (!this.players._tank.died) positions.push(playerPosition);
         Object.values(bots).forEach((bot) => {
             if (!bot._tank.died) {
                 positions.push(bot._tank.model.position.clone());
             }
         });
 
-
         let shortestDistance = Infinity;
         let nearestPosition = turretPosition.clone();
 
-        positions.forEach(pos => {
+        positions.forEach((pos) => {
             const actualDistance = pos.distanceTo(turretPosition.clone());
             if (actualDistance < shortestDistance) {
                 shortestDistance = actualDistance;
@@ -556,25 +623,32 @@ export class Turret {
         // rotate right
         let rotationAngle = Math.PI / 32;
         let imaginary_vector_rotation = turretDirection.clone();
-        let y_axis = new THREE.Vector3(0,1,0);
+        let y_axis = new THREE.Vector3(0, 1, 0);
 
         imaginary_vector_rotation.applyAxisAngle(y_axis, rotationAngle);
 
         let rotationDirection;
 
-        if (imaginary_vector_rotation.angleTo(target) < turretDirection.angleTo(target)) {
+        if (
+            imaginary_vector_rotation.angleTo(target) <
+            turretDirection.angleTo(target)
+        ) {
             rotationDirection = 1;
-        }
-        else {
+        } else {
             rotationDirection = -1;
         }
-        
-        this.model.rotateY(this.shootParams.rotationSpeed * 0.25 * rotationDirection * 0.75);
+
+        this.model.rotateY(
+            this.shootParams.rotationSpeed * 0.25 * rotationDirection * 0.75
+        );
     }
 
     shoot() {
         const currentTime = Date.now();
-        if (currentTime - this._lastShootTime < this.shootParams.shootCooldown) {
+        if (
+            currentTime - this._lastShootTime <
+            this.shootParams.shootCooldown
+        ) {
             return;
         }
         this._lastShootTime = currentTime;
@@ -598,12 +672,12 @@ export class Turret {
             originalDirection.clone(),
             this._bulletSpeed,
             this._damage,
-            0, 
+            0,
             this._bulletSize,
-            true,
+            true
         );
         this._projectiles.push(projectile);
 
-        audioSystem.play("turret-shoot",false,0.2);
+        audioSystem.play("turret-shoot", false, 0.2);
     }
 }
