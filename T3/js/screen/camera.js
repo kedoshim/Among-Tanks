@@ -26,7 +26,7 @@ export class CameraControls {
         );
         this._camera.name = "Main Camera";
 
-        this._camera.position.copy(new THREE.Vector3(-30, 40, 30));
+        this._camera.position.copy(new THREE.Vector3(-30, 40, 80));
         this._mediumPoint = new THREE.Vector3(0, 0, 0);
         this._camera.lookAt(this._mediumPoint);
         this._padding = 20;
@@ -42,7 +42,7 @@ export class CameraControls {
         // Initialize zoom transition parameters
         this._zoomTransitionDuration = 200; // Transition duration in milliseconds
         this._zoomStartTime = null;
-        this._camera.position.y = 500
+        this._camera.position.y = 400
         this._zoomStartHeight = this._camera.position.y;
     }
 
@@ -181,6 +181,7 @@ export class CameraControls {
                 this._zoomStartTime = null; // Reset zoom transition
             }
         }
+        
     }
 
     /**

@@ -1,5 +1,5 @@
 {
-  "directionalMovementEnabled": false ,
+  "directionalMovementEnabled": true ,
   "numberOfPlayers" : 1,
   "numberOfBots" : 2,
   "playerSpawnPoint" : [

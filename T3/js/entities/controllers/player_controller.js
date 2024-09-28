@@ -133,6 +133,7 @@ export class PlayerController extends Controller {
    * Called when "directionalMovement" is enabled in the config.json
    */
   _directionalMovement(keyboard, gamepad) {
+    
     var moveX = 0;
     var moveZ = 0;
 
@@ -140,18 +141,42 @@ export class PlayerController extends Controller {
       return;
     }
     // Check movement direction based on pressed keys
-    if (keyboard.pressed(this._keys.up)) {
-      moveZ--;
-    }
-    if (keyboard.pressed(this._keys.down)) {
-      moveZ++;
-    }
-    if (keyboard.pressed(this._keys.left)) {
-      moveX--;
-    }
-    if (keyboard.pressed(this._keys.right)) {
-      moveX++;
-    }
+    this._keys.up.forEach(key => {
+      if (keyboard.pressed(key)) {
+        moveZ = -1
+        this._target._inMovement = true;
+        this._target._positiveMovement = true;
+      }
+    });
+
+    this._keys.down.forEach(key => {
+      if (keyboard.pressed(key)) {
+        moveZ = 1
+        this._target._inMovement = true;
+        this._target._positiveMovement = true;
+      }
+    });
+
+    this._keys.left.forEach(key => {
+      if (keyboard.pressed(key)) {
+        moveX = -1
+      }
+    });
+
+    this._keys.right.forEach(key => {
+      if (keyboard.pressed(key)) {
+        moveX = 1
+      }
+    });
+
+    this._keys.shoot.every((key, index) => {
+      if (keyboard.down(key)) {
+        this._target.shoot();
+        return false;
+      } else {
+        return true;
+      }
+    });
 
     this._keys.shoot.every((key, index) => {
       if (keyboard.down(key)) {
@@ -191,7 +216,7 @@ export class PlayerController extends Controller {
       if (gamepadAxes[0] > this._deadzone || gamepadAxes[0] < -this._deadzone)
         moveX += gamepadAxes[0] * this._stickMultiplier;
     }
-
+    console.log(`X: ${moveX} - Z: ${moveZ}`)
     this._target.moveDirectional(moveX, moveZ);
   }
 
