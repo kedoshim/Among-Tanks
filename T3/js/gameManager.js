@@ -53,6 +53,13 @@ export class GameManager {
         this.nippleData = {}
         this.muteButtonStopped = false
         this.audioStopped = false
+
+        if(isMobile()) {
+            this.config.directionalMovementEnabled = true;
+        }
+        else {
+            this.config.directionalMovementEnabled = false;
+        }
     }
 
     setLevelIndex(index) {
@@ -1163,90 +1170,90 @@ export class GameManager {
         }
     }
 
-    updatePowerUps() {
-        if (this.powerUps.length == 0) {
-            this.createPowerUp("life");
-        }
-        else {
-            if (this.powerUps[0].isPlayerGet()) {
-                let time = 10000;
-                if (Date.now() - this.powerUps[0].getTime >= time) {
-                    const type = this.powerUps[0].type;
-                    this.scene.remove(this.powerUps[0].model);
-                    this.powerUps = [];
+    // updatePowerUps() {
+    //     if (this.powerUps.length == 0) {
+    //         this.createPowerUp("life");
+    //     }
+    //     else {
+    //         if (this.powerUps[0].isPlayerGet()) {
+    //             let time = 10000;
+    //             if (Date.now() - this.powerUps[0].getTime >= time) {
+    //                 const type = this.powerUps[0].type;
+    //                 this.scene.remove(this.powerUps[0].model);
+    //                 this.powerUps = [];
 
-                    if (type == "life") {
-                        this.createDamagePowerUp();
-                    }
-                    else {
-                        this.players[1]._tank._damage = this.players[1]._tank._damage / 2;
-                        this.createLifePowerUp();
-                    }
-                }
-            }
-        }
-    }
+    //                 if (type == "life") {
+    //                     this.createDamagePowerUp();
+    //                 }
+    //                 else {
+    //                     this.players[1]._tank._damage = this.players[1]._tank._damage / 2;
+    //                     this.createLifePowerUp();
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
-    createPowerUp(type) {
-        if (type == "life") {
-            this.createLifePowerUp();
-        }
-        else if (type == "damage") {
-            this.createDamagePowerUp();
-        }
-    }
+    // createPowerUp(type) {
+    //     if (type == "life") {
+    //         this.createLifePowerUp();
+    //     }
+    //     else if (type == "damage") {
+    //         this.createDamagePowerUp();
+    //     }
+    // }
 
-    createLifePowerUp() {
-        const geometry = new THREE.CapsuleGeometry( 5, 5, 4, 8 ); 
-        const material = new THREE.MeshBasicMaterial( {color: 0x00AA00} ); 
-        let capsule = new THREE.Mesh( geometry, material );
+    // createLifePowerUp() {
+    //     const geometry = new THREE.CapsuleGeometry( 5, 5, 4, 8 ); 
+    //     const material = new THREE.MeshBasicMaterial( {color: 0x00AA00} ); 
+    //     let capsule = new THREE.Mesh( geometry, material );
 
-        let sceneMap = new SceneMap(this.walls, this.walls[0].BLOCK_SIZE);
-        let indexes = this.getRandomOneCell(sceneMap.sceneMap);
-        let position = sceneMap.indexToSpatial(indexes.row, indexes.col);
+    //     let sceneMap = new SceneMap(this.walls, this.walls[0].BLOCK_SIZE);
+    //     let indexes = this.getRandomOneCell(sceneMap.sceneMap);
+    //     let position = sceneMap.indexToSpatial(indexes.row, indexes.col);
 
-        capsule.position.set(position.x, 15 ,position.z);
+    //     capsule.position.set(position.x, 15 ,position.z);
 
-        this.powerUps.push(new PowerUp(capsule));
+    //     this.powerUps.push(new PowerUp(capsule));
 
-        this.scene.add(capsule);
-    }
+    //     this.scene.add(capsule);
+    // }
 
-    createDamagePowerUp() {
-        const geometry = new THREE.IcosahedronGeometry( 10, 0 ); 
-        const material = new THREE.MeshBasicMaterial( {color: 0xffff00} ); 
-        let icosahedron = new THREE.Mesh( geometry, material );
+    // createDamagePowerUp() {
+    //     const geometry = new THREE.IcosahedronGeometry( 10, 0 ); 
+    //     const material = new THREE.MeshBasicMaterial( {color: 0xffff00} ); 
+    //     let icosahedron = new THREE.Mesh( geometry, material );
 
-        let sceneMap = new SceneMap(this.walls, this.walls[0].BLOCK_SIZE);
-        let indexes = this.getRandomOneCell(sceneMap.sceneMap);
-        let position = sceneMap.indexToSpatial(indexes.row, indexes.col);
+    //     let sceneMap = new SceneMap(this.walls, this.walls[0].BLOCK_SIZE);
+    //     let indexes = this.getRandomOneCell(sceneMap.sceneMap);
+    //     let position = sceneMap.indexToSpatial(indexes.row, indexes.col);
 
-        icosahedron.position.set(position.x, 15 ,position.z);
+    //     icosahedron.position.set(position.x, 15 ,position.z);
 
-        this.powerUps.push(new PowerUp(icosahedron));
+    //     this.powerUps.push(new PowerUp(icosahedron));
 
-        this.scene.add(icosahedron);
-    }
+    //     this.scene.add(icosahedron);
+    // }
 
-    getRandomOneCell(matrix) {
-        let oneCells = [];
-        for (let i = 0; i < matrix.length; i++) {
-            for (let j = 0; j < matrix[i].length; j++) {
-                if (matrix[i][j] === 1) {
-                    oneCells.push({ row: i, col: j });
-                }
-            }
-        }
+    // getRandomOneCell(matrix) {
+    //     let oneCells = [];
+    //     for (let i = 0; i < matrix.length; i++) {
+    //         for (let j = 0; j < matrix[i].length; j++) {
+    //             if (matrix[i][j] === 1) {
+    //                 oneCells.push({ row: i, col: j });
+    //             }
+    //         }
+    //     }
     
-        // Verifica se existe ao menos uma célula com valor 1
-        if (oneCells.length === 0) {
-            return null; // Nenhum valor 1 encontrado
-        }
+    //     // Verifica se existe ao menos uma célula com valor 1
+    //     if (oneCells.length === 0) {
+    //         return null; // Nenhum valor 1 encontrado
+    //     }
     
-        // Seleciona aleatoriamente uma célula da lista
-        let randomIndex = Math.floor(Math.random() * oneCells.length);
-        return oneCells[randomIndex];
-    }
+    //     // Seleciona aleatoriamente uma célula da lista
+    //     let randomIndex = Math.floor(Math.random() * oneCells.length);
+    //     return oneCells[randomIndex];
+    // }
 
     frame() {
         if (!(this.checkEnd() || !this.startGame)) {
@@ -1260,7 +1267,7 @@ export class GameManager {
             this.updateHealthBars();
             this.updateProjectiles();
             this.updateMovingWalls();
-            this.updatePowerUps();
+            //this.updatePowerUps();
             // this.updateHitBoxDisplay();
         }
     }
