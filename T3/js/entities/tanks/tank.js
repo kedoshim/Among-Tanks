@@ -3,6 +3,7 @@ import { Projectile } from "../../classes/projectile.js";
 import { Object3D } from "../../../../build/three.module.js";
 import { HealthBar } from "./healthBar.js";
 import audioSystem from "../../audioSystem.js";
+import {isMobile} from '../../utils.js'
 
 /**
  * General class that represents any tank model
@@ -73,6 +74,12 @@ export class Tank {
         this.godMode = false;
 
         this._originalMaterials = new Map(); // To store original materials
+
+        if(isMobile()) {
+            document.getElementById("shot").addEventListener('click', () => {
+                this.shoot()
+            })
+        }
     }
 
     // Getters
@@ -226,6 +233,7 @@ export class Tank {
         if (moveMagnitude > 0) {
             moveX /= moveMagnitude;
             moveZ /= moveMagnitude;
+            this._inMovement = true;
         }
 
         // If there's movement input, calculate the target angle
@@ -245,7 +253,7 @@ export class Tank {
         }
 
         // Calculate the difference between current rotation and target angle
-        let rotationDifference = targetAngle - this.model.rotation.y;
+        let rotationDifference = Math.PI - targetAngle - this.model.rotation.y;
         // Wrap the difference into range [-π, π]
         rotationDifference =
             THREE.MathUtils.euclideanModulo(
@@ -258,7 +266,8 @@ export class Tank {
             this.model.position.x += this._moveSpeed * moveX;
             this.model.position.z += this._moveSpeed * moveZ;
         } else {
-            if (this.inMovement && forwardForce !== 0) {
+            if ((this._inMovement && moveMagnitude !== 0) ||
+            this._collidedWithMovingWall) {
                 // Deslizar enquanto estiver em contato com a parede
                 this.model.position.add(this.slideVector);
             }

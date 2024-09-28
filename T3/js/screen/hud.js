@@ -89,6 +89,7 @@ function createHealthbar(index, div, mobile = false) {
 
 export function createNipple() {
     const options = {
+        zone: document.getElementById('nipple-container'),
         size: 120,
         multitouch: true,
         maxNumberOfNipples: 2,

@@ -48,6 +48,9 @@ export class GameManager {
         this.portal = null;
 
         this.levelIndex = 0;
+        this.nippleData = {}
+        this.muteButtonStopped = false
+        this.audioStopped = false
     }
 
     setLevelIndex(index) {
@@ -69,7 +72,7 @@ export class GameManager {
         this.createCollisionSystem();
         this.createAISystem();
         this.createTurretSystem();
-        this.playBackgroundMusic();
+        
     }
 
     async loadModels() {
@@ -174,6 +177,31 @@ export class GameManager {
     }
 
     manageSounds() {
+        if(isMobile()) {
+            if(!this.muteButtonStopped) {
+                
+                const muteButton = document.getElementById('mute')
+                
+                muteButton.addEventListener('click', () => {
+                    audioSystem.toggleMuteAll();
+                    this.muteButtonStopped = true
+                    setInterval(() => {
+                        this.muteButtonStopped = false
+                    }, 2000)
+                    this.audioStopped = !this.audioStopped
+                    if(this.audioStopped) {
+                        document.querySelector('#mute i').classList.remove('fa-play')
+                        document.querySelector('#mute i').classList.add('fa-pause')
+                    }
+                    else {
+                        document.querySelector('#mute i').classList.remove('fa-pause')
+                        document.querySelector('#mute i').classList.add('fa-play')
+                    }
+
+                })
+                
+            }
+        }
         if (this.keyboard.down("P")) {
             audioSystem.toggleMuteAll();
         }
@@ -287,7 +315,17 @@ export class GameManager {
 
     createPlayer(index) {
         let new_player = new Player("", [0, 0], "", "");
-        const nipple = createNipple()
+        if(isMobile()) {
+            const nipple = createNipple()
+            nipple.on('move', (evt, data) => {
+                console.log(this.nippleData)
+                this.nippleData = {angle: data.angle.degree, force: data.force}
+            });
+        
+            nipple.on('end', (evt, data) => {
+                this.nippleData = {...this.nippleData, force: 0}
+            });
+        }
         new_player.spawnPoint = this.playerSpawnPoint[Entity.entityNumber - 1];
         addPlayerToHud(
             index,
@@ -803,7 +841,7 @@ export class GameManager {
             if (this.connectedGamepads[key] != null) {
                 playerGamepad = navigator.getGamepads()[key];
             }
-            const inputs = { keyboard: this.keyboard, gamepad: playerGamepad };
+            const inputs = { keyboard: this.keyboard, gamepad: playerGamepad, nipple: this.nippleData};
             player.runController(inputs);
         }
 

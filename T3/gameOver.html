@@ -13,8 +13,26 @@
     <button class="play-button" onclick="restartGame()">RESTART</button>
 
     <script>
+
+        function isMobile() {
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        
+        // Verifica se o userAgent corresponde a dispositivos mobile
+        if (/android/i.test(userAgent) || /iPhone|iPad|iPod/i.test(userAgent)) {
+            return true;
+        }
+        
+        return false;
+        }
+        
         function restartGame() {
-            window.location.href = 'game.html'; // Redirect to the game page
+            
+            if(isMobile()) {
+                window.location.href = 'appMobile.html';
+            }
+            else {
+                window.location.href = 'game.html';
+            } // Redirect to the game page
         }
     </script>
 </body>

@@ -8,7 +8,11 @@
         <link rel="stylesheet" href="./assets/css/lifeBar.css" />
         <link rel="stylesheet" href="./assets/css/font.css" />
         <link rel="stylesheet" href="./assets/css/hud.css" />
+        <link rel="stylesheet" href="./assets/css/mobile.css" />
+        <script src="https://kit.fontawesome.com/91248aca6a.js" crossorigin="anonymous"></script>
+
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        
     </head>
 
     <body>
@@ -24,6 +28,21 @@
         <script src="./js/nipple/nipple.js" type="module"></script>
         <div id="webgl-output">
             <script type="module" src="js/main.js"></script>
+        </div>
+        <button style="position: fixed; bottom: 80px; right: 30px; width: 3.5em; line-height: 1.4em; font-size: 10pt;"
+        id="shot" class="video-game-button">
+        <i class="fa-solid fa-gun" style="color: #ffffff;"></i>
+        </button>
+        <button style="position: fixed; top: 60px; right: 30px; width: 3.5em; line-height: 1.4em; font-size: 10pt;"
+        id="mute" class="video-game-button">
+        <i class="fa-solid fa-play" style="color: #ffffff;"></i>
+        </button>
+        <button style="position: fixed; top: 60px; right: 100px; width: 3.5em; line-height: 1.4em; font-size: 10pt;"
+        id="fullscreen" class="video-game-button">
+        <i class="fa-solid fa-gun" style="color: #ffffff;"></i>
+        </button>
+        <div id="nipple-container">
+            <p></p>
         </div>
         <div id="hud-mobile">
          <!-- <img src = "./assets/svg/Amogus.svg" alt="amogus" class="profile"> -->

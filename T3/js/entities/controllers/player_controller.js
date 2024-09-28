@@ -132,10 +132,18 @@ export class PlayerController extends Controller {
    * Movement mode where the movement is based on the input direction
    * Called when "directionalMovement" is enabled in the config.json
    */
-  _directionalMovement(keyboard, gamepad) {
+  _directionalMovement(keyboard, gamepad, nipple) {
     
     var moveX = 0;
     var moveZ = 0;
+
+    if (nipple) {
+      if (nipple.force > 0) {
+        let angle = (90 - nipple.angle) * (Math.PI / 180);
+        moveX = Math.sin(angle);
+        moveZ = -Math.cos(angle);
+      }
+    }
 
     if (this.isBot) {
       return;
@@ -216,7 +224,6 @@ export class PlayerController extends Controller {
       if (gamepadAxes[0] > this._deadzone || gamepadAxes[0] < -this._deadzone)
         moveX += gamepadAxes[0] * this._stickMultiplier;
     }
-    console.log(`X: ${moveX} - Z: ${moveZ}`)
     this._target.moveDirectional(moveX, moveZ);
   }
 
@@ -314,8 +321,9 @@ export class PlayerController extends Controller {
   async control(input) {
     const keyboard = input.keyboard;
     const gamepad = input.gamepad;
+    const nipple = input.nipple
     if (this.config.directionalMovementEnabled) {
-      this._directionalMovement(keyboard, gamepad);
+      this._directionalMovement(keyboard, gamepad, nipple);
     } else {
       this._rotatingMovement(keyboard, gamepad);
     }
