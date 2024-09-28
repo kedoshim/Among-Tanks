@@ -33,6 +33,7 @@ import { addPlayerToHud, resetHud, updatePlayerHud } from "./screen/hud.js";
 import { Enemy } from "./entities/enemy.js";
 import { joinObjectsIntoList } from "./utils.js";
 import audioSystem from "../audioSystem.js";
+import { Portal } from "./classes/portals.js";
 
 export class GameManager {
     constructor(level, lighting, turret, renderer = null) {
@@ -42,6 +43,15 @@ export class GameManager {
         this.lighting = lighting;
         this.turretsPos = turret
         this.movingWalls = []
+
+        this.portals = [];
+        this.portal = null;
+
+        this.levelIndex = 0;
+    }
+
+    setLevelIndex(index) {
+        this.levelIndex = index;
     }
 
     async start() {
@@ -480,6 +490,15 @@ export class GameManager {
                 wall.setModel(cube);
                 wall.createCollisionShape();
                 this.walls.push(wall);
+
+                if (this.levelIndex === 0) {
+                    if (i === 16 && j >= 5 && j <= 9) {
+                        this.portals.push(wall);
+                    }
+                }
+
+                // let obj = {x: i, y:j};
+                // console.log(obj)
                 // let helper = new THREE.Box3Helper(
                 //     wall.collisionShape,
                 //     0x000000
@@ -583,7 +602,8 @@ export class GameManager {
             );
         }
 
-
+        let portal = new Portal(this.portals);
+        this.portal = portal;
         //
     }
 
@@ -969,16 +989,18 @@ export class GameManager {
                     }
                 }
                 // this.shotInfo.hide();
-                this.deleteScene(this.scene);
+
+                //this.deleteScene(this.scene);
                 winner = winner;
                 audioSystem.stop("music");
-                alert("Game Over! Player " + winner + " won!");
-                this.resetFunction(true);
+                //alert("Game Over! Player " + winner + " won!");
+                //this.resetFunction(true);
                 return true;
             }
         }
         return false;
     }
+    
     deleteScene(scene) {
         scene.clear();
     }
@@ -1002,8 +1024,8 @@ export class GameManager {
     frame() {
         if (!(this.checkEnd() || !this.startGame)) {
             this.keyboardUpdate();
-            this.updateAiAction();
-            this.updateTurretsActions();
+            //this.updateAiAction();
+            //this.updateTurretsActions();
             this.cameraUpdate();
             this.checkCollision();
             this.displayUpdate();
@@ -1013,6 +1035,48 @@ export class GameManager {
             this.updateMovingWalls();
             // this.updateHitBoxDisplay();
         }
+
+        if (this.checkEnd()) {
+            this.changeLevelProcedure();
+            this.keyboardUpdate();
+            this.cameraUpdate();
+            this.checkCollision();
+            this.displayUpdate();
+            //this.render();
+            this.updateHealthBars();
+            this.updateProjectiles();
+            this.updateMovingWalls();
+        }
+    }
+
+    changeLevelProcedure() {
+
+        if (!this.portal.playerPassThePortal)
+            this.openGate();
+        let playerPassThePortal = this.checkPlayerPosition();
+
+        if (playerPassThePortal && !this.portal.playerPassThePortal) {
+            this.closeGate();
+        }
+    }
+
+    openGate() {
+        this.portal.open();
+    }
+
+    checkPlayerPosition() {
+        for (const key in this.players) {
+            const player = this.players[key];
+
+            if (player._tank.model.position.x > this.portal.walls[0].model.position.x) {
+                return true;
+            }
+            return false;
+        }
+    }
+
+    closeGate() {
+        this.portal.close();
     }
 
     updateHitBoxDisplay() {
