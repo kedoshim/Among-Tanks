@@ -32,7 +32,7 @@ import { createTurret } from "./entities/turret/model/turret_model.js";
 import { addPlayerToHud, resetHud, updatePlayerHud } from "./screen/hud.js";
 import { Enemy } from "./entities/enemy.js";
 import { joinObjectsIntoList } from "./utils.js";
-import audioSystem from "../audioSystem.js";
+import audioSystem from "../js/audioSystem.js";
 import { Portal } from "./classes/portals.js";
 
 export class GameManager {
