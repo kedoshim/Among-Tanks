@@ -1,13 +1,17 @@
-import { darkenColor } from "../utils.js";
+import { darkenColor, isMobile } from "../utils.js";
 
-export function addPlayerToHud(index, hexAmogColor, hexTankColor) {
+
+export function addPlayerToHud(index, hexAmogColor, hexTankColor, mobile = false) {
     let hudDiv = document.getElementById("hud");
+    if(isMobile()) {
+        hudDiv = document.getElementById("hud-mobile");
+    }
     let playerDiv = document.createElement("div");
     playerDiv.className = "player";
     playerDiv.id = `div-p${index}`;
     
     createAmogusProfile(hexAmogColor,hexTankColor, index, playerDiv);
-    createHealthbar(index, playerDiv);
+    createHealthbar(index, playerDiv, isMobile());
 
     hudDiv.appendChild(playerDiv);
 }
@@ -19,11 +23,17 @@ export function updatePlayerHud(index, lifePercent) {
 }
 
 export function resetHud() {
-    let hudDiv = document.getElementById("hud");
-    hudDiv.innerHTML = "";
+    if(isMobile()) {
+        let hudDiv = document.getElementById("hud-mobile");
+        hudDiv.innerHTML = "";
+    }
+    else {
+        let hudDiv = document.getElementById("hud");
+        hudDiv.innerHTML = "";
+    }
 }
 
-function createAmogusProfile(hexColor,hexTankColor, index, div) {
+function createAmogusProfile(hexColor,hexTankColor, index, div, mobile) {
     const svgUrl = "./assets/svg/Amogus.svg"; // Path to your SVG file
     const bodyColor = "#3f5aa8"; // Color to replace
     const capColor = "#3d472e"; // Color to replace
@@ -63,13 +73,32 @@ function createAmogusProfile(hexColor,hexTankColor, index, div) {
         .catch((error) => console.error("Error fetching SVG:", error));
 }
 
-function createHealthbar(index, div) {
+function createHealthbar(index, div, mobile = false) {
     let healthBar = document.createElement("div");
     healthBar.className = "life-bar";
+    if(mobile) {
+        healthBar.className = "life-bar-mobile";
+    }
     let healthBarInside = document.createElement("div");
     healthBarInside.id = `life-bar-p${index}`;
     healthBarInside.className = `life-bar-value`;
 
     healthBar.appendChild(healthBarInside);
     div.appendChild(healthBar);
+}
+
+export function createNipple() {
+    const options = {
+        size: 120,
+        multitouch: true,
+        maxNumberOfNipples: 2,
+        mode: 'static',
+        restJoystick: true,
+        shape: 'circle',
+        // position: { top: 20, left: 20 },
+        position: { bottom: '60px', left: '100px' },
+        dynamicPage: true,
+      }
+    let nipple = nipplejs.create(options);
+    return nipple;
 }

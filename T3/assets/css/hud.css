@@ -7,6 +7,15 @@
     align-items: end;
 }
 
+#hud-mobile {
+    top: 0px;
+    left: 0px;
+    position: fixed;
+    display: flex;
+    gap: 20px;
+    align-items: end;
+}
+
 .player{
     display: flex;
     flex-direction: row-reverse;

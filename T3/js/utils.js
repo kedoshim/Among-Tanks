@@ -32,3 +32,15 @@ export function joinObjectsIntoList(obj1, obj2) {
     // Combine both lists into a single list
     return [...values1, ...values2];
 }
+
+
+export function isMobile() {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  
+  // Verifica se o userAgent corresponde a dispositivos mobile
+  if (/android/i.test(userAgent) || /iPhone|iPad|iPod/i.test(userAgent)) {
+    return true;
+  }
+  
+  return false;
+}

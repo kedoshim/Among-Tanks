@@ -29,9 +29,9 @@ import { preloadCommonTankModel } from "./entities/tanks/models/common_tank_mode
 import { loadGLBFile } from "./loaders/models.js";
 import { getTexture, loadTexture } from "./loaders/textures.js";
 import { createTurret } from "./entities/turret/model/turret_model.js";
-import { addPlayerToHud, resetHud, updatePlayerHud } from "./screen/hud.js";
+import { addPlayerToHud, resetHud, updatePlayerHud, createNipple } from "./screen/hud.js";
 import { Enemy } from "./entities/enemy.js";
-import { joinObjectsIntoList } from "./utils.js";
+import { joinObjectsIntoList, isMobile } from "./utils.js";
 import audioSystem from "./audioSystem.js";
 
 export class GameManager {
@@ -42,6 +42,7 @@ export class GameManager {
         this.lighting = lighting;
         this.turretsPos = turret;
         this.movingWalls = [];
+        this.isMobile = isMobile();
     }
 
     async start() {
@@ -256,12 +257,13 @@ export class GameManager {
 
     createPlayer(index) {
         let new_player = new Player("", [0, 0], "", "");
-
+        const nipple = createNipple()
         new_player.spawnPoint = this.playerSpawnPoint[Entity.entityNumber - 1];
         addPlayerToHud(
             index,
             new_player.tank._amogColor,
-            new_player.tank._tankColor
+            new_player.tank._tankColor,
+            this.isMobile
         );
 
         // if (index == 2) {
