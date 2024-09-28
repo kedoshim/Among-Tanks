@@ -95,5 +95,7 @@ export class Player extends Entity {
 
         // console.info("creating player " + this._name);
         Player.playerNumber++;
+
+        this.godMode = false
     }
 }

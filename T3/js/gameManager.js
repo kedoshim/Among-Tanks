@@ -162,11 +162,29 @@ export class GameManager {
         if (this.keyboard.down("O")) {
             this.cameraController.changeCameraMode();
         }
+        if (this.keyboard.down("k")) {
+            //'+'
+            this.handleZoomAdjustment(true);
+        }
+        if (this.keyboard.down("m")) {
+            //'-'
+            this.handleZoomAdjustment(false);
+        }
+        // this.keyboard.debug()
     }
 
     manageSounds() {
         if (this.keyboard.down("P")) {
             audioSystem.toggleMuteAll();
+        }
+    }
+
+    manageGodMode() {
+        if (this.keyboard.down("G")) {
+            for (const key in this.players) {
+                const player = this.players[key];
+                player._tank.toggleGodMode();
+            }
         }
     }
 
@@ -774,6 +792,7 @@ export class GameManager {
     keyboardUpdate() {
         this.keyboard.update();
         this.manageOrbitControls();
+        this.manageGodMode();
         this.manageSounds();
         this.manageLevelChange();
         const AI = this.ai_system;
@@ -971,13 +990,15 @@ export class GameManager {
             this.startGame = true;
         }
         if (this.startGame) {
-            const numberOFAlivePlayers = Object.keys(this.players).length;
-            if (numberOFAlivePlayers <= 0) {
-                this.resetFunction(false);
-                alert("Game Over! Restarting game");
+            const numberOfAlivePlayers = Object.keys(this.players).length;
+            if (numberOfAlivePlayers <= 0) {
+                // this.resetFunction(false);
+
+                window.location.href = "./gameOver.html";
+                //alert("Game Over! Restarting game");
             }
             if (
-                numberOFAlivePlayers <= 1 &&
+                numberOfAlivePlayers <= 1 &&
                 Object.keys(this.enemies).length <= 0
             ) {
                 let winner = 0;
