@@ -186,7 +186,7 @@ export class CameraControls {
 
     /**
      * Adjust the zoom amount and start a smooth zoom transition
-     *
+     *d
      * @param {number} zoomAmount - The new zoom amount (higher means zoomed out more)
      */
     adjustZoom(zoomAmount) {

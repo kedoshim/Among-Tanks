@@ -220,6 +220,20 @@ export class TankCollisionSystem extends CollisionSystem {
         this.wallsThatCollided = [];
     }
 
+    // checkCollisionWithPowerUps(player, powerUps) {
+    //     if (this.checkCollisionBetwennCollisionShapes(player._tank.collisionShape, powerUps[0].collisionShape)) {
+    //         if (powerUps[0].type == "life") {
+    //             if (player.health != 10) {
+    //                 player.health += player.health * 0.2;
+    //             }
+    //             powerUps[0].playerGet();
+    //         }
+    //         else {
+    //             player._tank._damage = player._tank._damage * 2;
+    //         }
+    //     }
+    // }
+
     /**
      * Método responsável por detectar a colisão entre os tanques e os muros
      */

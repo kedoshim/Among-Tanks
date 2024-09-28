@@ -100,80 +100,80 @@
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -192,38 +192,38 @@
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -234,130 +234,38 @@
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 6651116,
-                "type": "WallBlock",
-                "blockSize": 4,
-                "colision": true
-            }
-        ],
-        [
-            {
-                "color": 6651116,
-                "type": "WallBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -376,172 +284,80 @@
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 6651116,
-                "type": "WallBlock",
-                "blockSize": 4,
-                "colision": true
-            }
-        ],
-        [
-            {
-                "color": 6651116,
-                "type": "WallBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -560,11 +376,183 @@
                 "colision": true
             },
             {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 6651116,
+                "type": "WallBlock",
+                "blockSize": 4,
+                "colision": true
+            }
+        ],
+        [
+            {
                 "color": 6651116,
                 "type": "WallBlock",
                 "blockSize": 4,
                 "colision": true
             },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 6651116,
+                "type": "WallBlock",
+                "blockSize": 4,
+                "colision": true
+            }
+        ],
+        [
             {
                 "color": 6651116,
                 "type": "WallBlock",
@@ -584,8 +572,20 @@
                 "colision": true
             },
             {
-                "color": 6651116,
-                "type": "WallBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -596,32 +596,26 @@
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 6651116,
-                "type": "WallBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -640,92 +634,6 @@
             {
                 "color": 6651116,
                 "type": "WallBlock",
-                "blockSize": 4,
-                "colision": true
-            }
-        ],
-        [
-            {
-                "color": 6651116,
-                "type": "WallBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -744,80 +652,80 @@
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -836,172 +744,80 @@
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 16711680,
+                "type": "Spawn",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 6651116,
-                "type": "WallBlock",
-                "blockSize": 4,
-                "colision": true
-            }
-        ],
-        [
-            {
-                "color": 6651116,
-                "type": "WallBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -1020,6 +836,184 @@
                 "colision": true
             },
             {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 6651116,
+                "type": "WallBlock",
+                "blockSize": 4,
+                "colision": true
+            }
+        ],
+        [
+            {
+                "color": 6651116,
+                "type": "WallBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 6651116,
+                "type": "WallBlock",
+                "blockSize": 4,
+                "colision": true
+            }
+        ],
+        [
+            {
                 "color": 6651116,
                 "type": "WallBlock",
                 "blockSize": 4,
@@ -1038,26 +1032,32 @@
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 6651116,
+                "type": "WallBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -1068,20 +1068,20 @@
                 "colision": true
             },
             {
-                "color": 6651116,
-                "type": "WallBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 6651116,
-                "type": "WallBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 6651116,
-                "type": "WallBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -1112,172 +1112,80 @@
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 6651116,
-                "type": "WallBlock",
-                "blockSize": 4,
-                "colision": true
-            }
-        ],
-        [
-            {
-                "color": 6651116,
-                "type": "WallBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -1296,172 +1204,80 @@
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 16711680,
+                "type": "Spawn",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 6651116,
-                "type": "WallBlock",
-                "blockSize": 4,
-                "colision": true
-            }
-        ],
-        [
-            {
-                "color": 6651116,
-                "type": "WallBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -1480,11 +1296,183 @@
                 "colision": true
             },
             {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 6651116,
+                "type": "WallBlock",
+                "blockSize": 4,
+                "colision": true
+            }
+        ],
+        [
+            {
                 "color": 6651116,
                 "type": "WallBlock",
                 "blockSize": 4,
                 "colision": true
             },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 6651116,
+                "type": "WallBlock",
+                "blockSize": 4,
+                "colision": true
+            }
+        ],
+        [
             {
                 "color": 6651116,
                 "type": "WallBlock",
@@ -1504,8 +1492,20 @@
                 "colision": true
             },
             {
-                "color": 6651116,
-                "type": "WallBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -1516,32 +1516,26 @@
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 6651116,
-                "type": "WallBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -1560,92 +1554,6 @@
             {
                 "color": 6651116,
                 "type": "WallBlock",
-                "blockSize": 4,
-                "colision": true
-            }
-        ],
-        [
-            {
-                "color": 6651116,
-                "type": "WallBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -1664,172 +1572,80 @@
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 6651116,
-                "type": "WallBlock",
-                "blockSize": 4,
-                "colision": true
-            }
-        ],
-        [
-            {
-                "color": 6651116,
-                "type": "WallBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
-                "blockSize": 4,
-                "colision": true
-            },
-            {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
@@ -1848,80 +1664,264 @@
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 16711680,
+                "type": "Spawn",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },
             {
-                "color": 16777215,
-                "type": "EmptyBlock",
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 6651116,
+                "type": "WallBlock",
+                "blockSize": 4,
+                "colision": true
+            }
+        ],
+        [
+            {
+                "color": 6651116,
+                "type": "WallBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 6651116,
+                "type": "WallBlock",
+                "blockSize": 4,
+                "colision": true
+            }
+        ],
+        [
+            {
+                "color": 6651116,
+                "type": "WallBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
+                "blockSize": 4,
+                "colision": true
+            },
+            {
+                "color": 12895428,
+                "type": "GroundBlock",
                 "blockSize": 4,
                 "colision": true
             },

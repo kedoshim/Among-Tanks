@@ -12,7 +12,7 @@ class AudioSystem {
             "bot-damage": new Audio("./assets/audio/villager_damage.mp3"),
             "player-shoot": new Audio("./assets/audio/shot.mp3"),
             "turret-shoot": new Audio("./assets/audio/beam-rifle-fire.mp3"),
-            music: new Audio("./assets/audio/pigstep.mp3"),
+            "music": new Audio("./assets/audio/pigstep.mp3"),
         };
 
         // Optionally, set default volume for all sounds

@@ -2,7 +2,7 @@ import audioSystem from "../audioSystem.js";
 import { Projectile } from "../classes/projectile.js";
 import * as THREE from "three";
 
-class SceneMap {
+export class SceneMap {
     constructor(walls, blockSize) {
         this.blockSize = blockSize;
         this.walls = walls;

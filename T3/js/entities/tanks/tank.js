@@ -4,6 +4,8 @@ import { Object3D } from "../../../../build/three.module.js";
 import { HealthBar } from "./healthBar.js";
 import audioSystem from "../../audioSystem.js";
 import {isMobile} from '../../utils.js'
+import { Buttons } from "../../../../libs/other/buttons.js";
+
 
 /**
  * General class that represents any tank model
@@ -76,9 +78,25 @@ export class Tank {
         this._originalMaterials = new Map(); // To store original materials
 
         if(isMobile()) {
-            document.getElementById("shot").addEventListener('click', () => {
-                this.shoot()
-            })
+            // document.getElementById("shot").addEventListener('click', () => {
+            //     this.shoot()
+            // })
+            const buttonDown = (event) => {
+                console.log(event.target.id)
+                switch(event.target.id)
+                {
+                    case "shot":
+                        this.shoot()
+                        break;
+                    default:
+                        break;
+                }
+            }
+              
+            const buttonUp = (event) => {
+        
+            }
+            var buttons = new Buttons(buttonDown, this.onButtonUp);
         }
     }
 
@@ -218,6 +236,8 @@ export class Tank {
     set projectiles(projectiles) {
         this._projectiles = projectiles;
     }
+
+    
 
     /**
      * Moves the tank following the directionalMovement mode
@@ -391,6 +411,7 @@ export class Tank {
      * Makes the tank shoot
      */
     shoot() {
+        
         const currentTime = Date.now();
 
         if (currentTime - this._lastShootTime < this._shootCooldown) {

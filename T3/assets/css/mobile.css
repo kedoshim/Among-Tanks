@@ -1,12 +1,11 @@
-#nipple-container {
-    position: fixed;
+#joystickWrapper1 {
+    pointer-events: auto;
+    position: absolute;       
     bottom: 0;
     left: 0;
-    margin-left: 30px;
-    margin-bottom: 10px;
-    width: 15%;
-    height: 25%;
-}
+    display: block; 
+    touch-action: manipulation;
+  } 
 
 .video-game-button {
     background-color: rgba(185, 0, 0, 0.7);
@@ -14,4 +13,5 @@
     border-radius: 25px;
     width: 50px;
     height: 50px;
+    z-index: 1000;
 }

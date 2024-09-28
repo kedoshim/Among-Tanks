@@ -148,8 +148,9 @@ class LevelBuilder:
         self.turret = decoded["turrets"]
 
     def erase(self, tile_x, tile_y):
-        if "color" in self.lighting[tile_x][tile_y]:
-            self.lighting[tile_x][tile_y] = {}
+        if len(self.lighting) > tile_x:
+            if len(self.lighting[tile_x]) > tile_y:
+                self.lighting[tile_x][tile_y] = {}
         else:
             self.representation[tile_x][tile_y] = Block()
         

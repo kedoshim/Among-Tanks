@@ -24,7 +24,7 @@ import {
 import { Entity } from "./entities/entity.js";
 import { getConfig } from "./config.js";
 import { CollisionBlock } from "./classes/blocks.js";
-import { AISystem, Turret, TurretSystem } from "./entities/bot.js";
+import { AISystem, Turret, TurretSystem, SceneMap } from "./entities/bot.js";
 import { preloadCommonTankModel } from "./entities/tanks/models/common_tank_model.js";
 import { loadGLBFile } from "./loaders/models.js";
 import { getTexture, loadTexture } from "./loaders/textures.js";
@@ -34,6 +34,8 @@ import { Enemy } from "./entities/enemy.js";
 import audioSystem from "../js/audioSystem.js";
 import { Portal } from "./classes/portals.js";
 import { joinObjectsIntoList, isMobile } from "./utils.js";
+import { PowerUp, PowerUpSystem } from "./classes/powerups.js";
+import { Buttons } from "../../libs/other/buttons.js";
 
 export class GameManager {
     constructor(level, lighting, turret, renderer = null) {
@@ -67,12 +69,14 @@ export class GameManager {
         await this.loadTextures();
         this.loadLevel(this.levelData);
         this.createPlayers();
-        this.createBots();
+        
         this.createTurrets(this.levelData);
+        this.createBots();
         this.createCollisionSystem();
         this.createAISystem();
         this.createTurretSystem();
-        
+        this.playBackgroundMusic();
+        //this.createPowerUpsSystem();
     }
 
     async loadModels() {
@@ -88,6 +92,7 @@ export class GameManager {
 
     playBackgroundMusic() {
         audioSystem.play("music", true, 0.1);
+        console.log("music");
     }
 
     listening() {
@@ -115,6 +120,28 @@ export class GameManager {
         Player.playerNumber = 0;
         Entity.entityNumber = 0;
 
+        if(isMobile()) {
+            // document.getElementById("shot").addEventListener('click', () => {
+            //     this.shoot()
+            // })
+            const buttonDown = (event) => {
+                console.log(event.target.id)
+                switch(event.target.id)
+                {
+                    case "mute":
+                        this.manageSounds()
+                        break;
+                    default:
+                        break;
+                }
+            }
+              
+            const buttonUp = (event) => {
+        
+            }
+            this.buttons = new Buttons(buttonDown, buttonUp);
+        }
+
         for (let i = 1; i <= this.numberOfPlayers; i++) {
             this.createPlayer(i);
         }
@@ -127,8 +154,11 @@ export class GameManager {
 
     createBots() {
         Enemy.enemyNumber = 0;
-
-        for (let i = 1; i <= this.numberOfBots; i++) {
+        let size = 1;
+        
+        if(this.turrets.length > 0) size = 2
+        if(this.movingWalls.length > 0) size = 3
+        for (let i = 1; i <= this.numberOfBots*size; i++) {
             this.createBot(i);
         }
         for (const key in this.enemies) {
@@ -139,9 +169,12 @@ export class GameManager {
     }
 
     // Function to handle zoom adjustment
-    handleZoomAdjustment(zoomingIn) {
+    handleZoomAdjustment(zoomingIn,step = null) {
         // Define zoom step
-        const zoomStep = 3; // Change this value based on your needs
+        let zoomStep = 3; // Change this value based on your needs
+
+        if (step)
+            zoomStep = step
 
         if (this.currentZoom == undefined) {
             this.currentZoom = 100;
@@ -154,7 +187,7 @@ export class GameManager {
         } else {
             // Scrolling up (zoom in)
             this.currentZoom -= zoomStep;
-            if (this.currentZoom < 10) currentZoom = 10; // Prevent zooming in too much
+            if (this.currentZoom < 10) {this.currentZoom = 10;} // Prevent zooming in too much
         }
 
         // Call adjustZoom with the new zoom amount
@@ -162,6 +195,16 @@ export class GameManager {
     }
 
     manageOrbitControls() {
+        // Evento de rolagem do mouse para controle de zoom
+        window.addEventListener('wheel', (event) => {
+            if (event.deltaY < 0) {
+                // Scroll para cima (zoom in)
+                this.handleZoomAdjustment(true,0.01);
+            } else {
+                // Scroll para baixo (zoom out)
+                this.handleZoomAdjustment(false,0.01);
+            }
+        });
         if (this.keyboard.down("O")) {
             this.cameraController.changeCameraMode();
         }
@@ -217,12 +260,15 @@ export class GameManager {
     }
 
     manageLevelChange() {
-        if (this.keyboard.down("0")) {
-            this.changeLevelFunction(0);
-        } else if (this.keyboard.down("1")) {
+        if (this.keyboard.down("1")) {
             this.changeLevelFunction(1);
+            this.levelIndex = 0;
         } else if (this.keyboard.down("2")) {
+            this.levelIndex = 1;
             this.changeLevelFunction(2);
+        } else if (this.keyboard.down("3")) {
+            this.levelIndex = 2;
+            this.changeLevelFunction(3);
         }
     }
 
@@ -296,6 +342,8 @@ export class GameManager {
         this.tankCollisionSystem = null;
         this.walls = [];
 
+        this.powerUps = [];
+
         this.startGame = false;
 
         this.listening();
@@ -318,6 +366,7 @@ export class GameManager {
         if(isMobile()) {
             const nipple = createNipple()
             nipple.on('move', (evt, data) => {
+                
                 console.log(this.nippleData)
                 this.nippleData = {angle: data.angle.degree, force: data.force}
             });
@@ -803,6 +852,22 @@ export class GameManager {
         this.turrets_system = new TurretSystem(this.turrets);
     }
 
+    createPowerUpsSystem() {
+        let life = {
+            type: "life",
+            amount: 1,
+            respawnTime: 10
+        };
+
+        let damage = {
+            type: "damage",
+            amount: 1,
+            respawnTime: 10
+        };
+
+        this.powerUpsSystem = new PowerUpSystem([life,damage]);
+    }
+
     showInformation() {
         // Use this to show information onscreen
         this.controls.add("Controls");
@@ -869,6 +934,8 @@ export class GameManager {
 
         this.projectileCollisionSystem.checkCollisionWithWalls();
         this.tankCollisionSystem.checkCollisionWithWalls();
+
+        //this.tankCollisionSystem.checkCollisionWithPowerUps(this)
     }
 
     removeDeadEntity(entity, key) {
@@ -1047,11 +1114,11 @@ export class GameManager {
                 }
                 // this.shotInfo.hide();
 
-                //this.deleteScene(this.scene);
+                this.deleteScene(this.scene);
                 winner = winner;
                 audioSystem.stop("music");
-                //alert("Game Over! Player " + winner + " won!");
-                //this.resetFunction(true);
+                alert("Game Over! Player " + winner + " won!");
+                this.resetFunction(true);
                 return true;
             }
         }
@@ -1063,10 +1130,22 @@ export class GameManager {
     }
 
     updateMovingWalls() {
+        let counter = 0;
+
         for (let i = 0; i < this.movingWalls.length; i++) {
             let params = this.movingWalls[i].movingWall.getParams();
             let movingWall = params.cube;
-            let velocity = params.velocity;
+            let velocity = 0;
+
+            if (counter <= 2) {
+                velocity = params.velocity;
+            }
+            else if (counter <= 5) {
+                velocity = params.velocity + 0.05;
+            }
+            else {
+                velocity = params.velocity + 0.075;
+            }
 
             movingWall.position.z += velocity * params.originalDir;
             if (
@@ -1079,14 +1158,101 @@ export class GameManager {
 
             this.movingWalls[i].movingWall.setParams(params);
             this.movingWalls[i].createCollisionShape();
+
+            counter++;
         }
+    }
+
+    updatePowerUps() {
+        if (this.powerUps.length == 0) {
+            this.createPowerUp("life");
+        }
+        else {
+            if (this.powerUps[0].isPlayerGet()) {
+                let time = 10000;
+                if (Date.now() - this.powerUps[0].getTime >= time) {
+                    const type = this.powerUps[0].type;
+                    this.scene.remove(this.powerUps[0].model);
+                    this.powerUps = [];
+
+                    if (type == "life") {
+                        this.createDamagePowerUp();
+                    }
+                    else {
+                        this.players[1]._tank._damage = this.players[1]._tank._damage / 2;
+                        this.createLifePowerUp();
+                    }
+                }
+            }
+        }
+    }
+
+    createPowerUp(type) {
+        if (type == "life") {
+            this.createLifePowerUp();
+        }
+        else if (type == "damage") {
+            this.createDamagePowerUp();
+        }
+    }
+
+    createLifePowerUp() {
+        const geometry = new THREE.CapsuleGeometry( 5, 5, 4, 8 ); 
+        const material = new THREE.MeshBasicMaterial( {color: 0x00AA00} ); 
+        let capsule = new THREE.Mesh( geometry, material );
+
+        let sceneMap = new SceneMap(this.walls, this.walls[0].BLOCK_SIZE);
+        let indexes = this.getRandomOneCell(sceneMap.sceneMap);
+        let position = sceneMap.indexToSpatial(indexes.row, indexes.col);
+
+        capsule.position.set(position.x, 15 ,position.z);
+
+        this.powerUps.push(new PowerUp(capsule));
+
+        this.scene.add(capsule);
+    }
+
+    createDamagePowerUp() {
+        const geometry = new THREE.IcosahedronGeometry( 10, 0 ); 
+        const material = new THREE.MeshBasicMaterial( {color: 0xffff00} ); 
+        let icosahedron = new THREE.Mesh( geometry, material );
+
+        let sceneMap = new SceneMap(this.walls, this.walls[0].BLOCK_SIZE);
+        let indexes = this.getRandomOneCell(sceneMap.sceneMap);
+        let position = sceneMap.indexToSpatial(indexes.row, indexes.col);
+
+        icosahedron.position.set(position.x, 15 ,position.z);
+
+        this.powerUps.push(new PowerUp(icosahedron));
+
+        this.scene.add(icosahedron);
+    }
+
+    getRandomOneCell(matrix) {
+        let oneCells = [];
+        for (let i = 0; i < matrix.length; i++) {
+            for (let j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] === 1) {
+                    oneCells.push({ row: i, col: j });
+                }
+            }
+        }
+    
+        // Verifica se existe ao menos uma célula com valor 1
+        if (oneCells.length === 0) {
+            return null; // Nenhum valor 1 encontrado
+        }
+    
+        // Seleciona aleatoriamente uma célula da lista
+        let randomIndex = Math.floor(Math.random() * oneCells.length);
+        return oneCells[randomIndex];
     }
 
     frame() {
         if (!(this.checkEnd() || !this.startGame)) {
             this.keyboardUpdate();
-            //this.updateAiAction();
-            //this.updateTurretsActions();
+            this.updateAiAction();
+            this.updateTurretsActions();
             this.cameraUpdate();
             this.checkCollision();
             this.displayUpdate();
@@ -1094,19 +1260,8 @@ export class GameManager {
             this.updateHealthBars();
             this.updateProjectiles();
             this.updateMovingWalls();
+            this.updatePowerUps();
             // this.updateHitBoxDisplay();
-        }
-
-        if (this.checkEnd()) {
-            this.changeLevelProcedure();
-            this.keyboardUpdate();
-            this.cameraUpdate();
-            this.checkCollision();
-            this.displayUpdate();
-            //this.render();
-            this.updateHealthBars();
-            this.updateProjectiles();
-            this.updateMovingWalls();
         }
     }
 

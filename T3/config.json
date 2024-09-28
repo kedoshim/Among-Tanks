@@ -1,7 +1,7 @@
 {
   "directionalMovementEnabled": true ,
   "numberOfPlayers" : 1,
-  "numberOfBots" : 2,
+  "numberOfBots" : 1,
   "playerSpawnPoint" : [
     [-20, -20],
     [20, -20],

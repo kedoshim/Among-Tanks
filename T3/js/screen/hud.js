@@ -23,6 +23,7 @@ export function updatePlayerHud(index, lifePercent) {
 }
 
 export function resetHud() {
+    console.log(isMobile())
     if(isMobile()) {
         let hudDiv = document.getElementById("hud-mobile");
         hudDiv.innerHTML = "";
@@ -88,18 +89,23 @@ function createHealthbar(index, div, mobile = false) {
 }
 
 export function createNipple() {
-    const options = {
-        zone: document.getElementById('nipple-container'),
-        size: 120,
-        multitouch: true,
-        maxNumberOfNipples: 2,
-        mode: 'static',
-        restJoystick: true,
-        shape: 'circle',
-        // position: { top: 20, left: 20 },
-        position: { bottom: '60px', left: '100px' },
-        dynamicPage: true,
-      }
-    let nipple = nipplejs.create(options);
+    // const options = {
+    //     zone: document.getElementById('nipple-container'),
+    //     size: 120,
+    //     multitouch: false,
+    //     maxNumberOfNipples: 2,
+    //     mode: 'static',
+    //     restJoystick: true,
+    //     shape: 'circle',
+    //     // position: { top: 20, left: 20 },
+    //     position: { bottom: '60px', left: '100px' },
+    //     dynamicPage: false,
+    //   }
+    let nipple = nipplejs.create({
+		zone: document.getElementById('joystickWrapper1'),
+		mode: 'static',			
+		position: { top: '-80px', left: '80px' }
+	});
+    //nipple.prepareEvent = function (evt) { if (evt.target.className == 'front' || evt.target.className == 'back') evt.preventDefault(); return evt.type.match(/^touch/) ? evt.changedTouches : evt; };
     return nipple;
 }
